@@ -6,6 +6,7 @@ import {
   useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createSaleAction } from "@/app/(dashboard)/pos/actions";
 
 type Product = {
@@ -62,7 +63,7 @@ export function PosClient({
         if (
           existing.quantity >= stock
         ) {
-          alert(
+          toast.error(
             "No hay más stock disponible."
           );
 
@@ -114,7 +115,7 @@ export function PosClient({
       product?.stock ?? 0;
 
     if (quantity > stock) {
-      alert(
+      toast.warning(
         `Solo hay ${stock} unidades disponibles`
       );
 
@@ -140,7 +141,7 @@ export function PosClient({
 
   async function finishSale() {
     if (cart.length === 0) {
-      alert(
+      toast.info(
         "Agrega productos al carrito."
       );
       return;
@@ -163,7 +164,7 @@ export function PosClient({
 
         setCart([]);
 
-        alert(
+        toast.success(
           "Venta registrada correctamente."
         );
 
@@ -171,7 +172,7 @@ export function PosClient({
       } catch (error) {
         console.error(error);
 
-        alert(
+        toast.error(
           "Ocurrió un error al registrar la venta."
         );
       }
@@ -276,15 +277,17 @@ export function PosClient({
       </div>
 
       <div>
-        <div className="
-  rounded-3xl
-  border
-  border-white/60
-  bg-white/80
-  p-6
-  shadow-sm
-  backdrop-blur-xl
-">
+        <div
+          className="
+            rounded-3xl
+            border
+            border-white/60
+            bg-white/80
+            p-6
+            shadow-sm
+            backdrop-blur-xl
+          "
+        >
           <h2 className="mb-4 text-lg font-semibold">
             Carrito
           </h2>
