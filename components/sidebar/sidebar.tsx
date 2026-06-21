@@ -17,6 +17,12 @@ export function Sidebar() {
         <Link href="/inventario/productos">
           Productos
         </Link>
+
+        <br />
+
+        <Link href="/inventario/movimientos">
+  Movimientos
+</Link>
       </nav>
     </aside>
   );
