@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { deleteProduct } from "@/app/(dashboard)/inventario/productos/actions";
+
 type Product = {
   id: string;
   name: string;
@@ -85,6 +88,10 @@ export function ProductsTable({
             <th className="p-4 text-left">
               Estado
             </th>
+
+            <th className="p-4 text-left">
+  Acciones
+</th>
           </tr>
         </thead>
 
@@ -122,6 +129,33 @@ export function ProductsTable({
                   product.min_stock ?? 0
                 )}
               </td>
+              <td className="p-4">
+  <div className="flex gap-3">
+    <Link
+      href={`/inventario/productos/${product.id}/editar`}
+      className="text-pink-600 hover:underline"
+    >
+      Editar
+    </Link>
+
+    <form
+  action={async () => {
+    "use server";
+
+    await deleteProduct(
+      product.id
+    );
+  }}
+>
+  <button
+    type="submit"
+    className="text-red-600 hover:underline"
+  >
+    Eliminar
+  </button>
+</form>
+  </div>
+</td>
             </tr>
           ))}
         </tbody>
