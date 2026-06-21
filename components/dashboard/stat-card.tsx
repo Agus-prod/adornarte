@@ -1,3 +1,10 @@
+import {
+  Package,
+  AlertTriangle,
+  XCircle,
+  Wallet,
+} from "lucide-react";
+
 type Props = {
   title: string;
   value: string;
@@ -7,15 +14,75 @@ export function StatCard({
   title,
   value,
 }: Props) {
-  return (
-    <div className="rounded-2xl border bg-white p-6 shadow-sm">
-      <p className="text-sm text-gray-500">
-        {title}
-      </p>
+  const getIcon = () => {
+    switch (title) {
+      case "Productos":
+        return <Package size={20} />;
 
-      <h2 className="mt-2 text-3xl font-bold">
+      case "Stock Bajo":
+        return (
+          <AlertTriangle size={20} />
+        );
+
+      case "Sin Stock":
+        return (
+          <XCircle size={20} />
+        );
+
+      case "Valor Inventario":
+        return <Wallet size={20} />;
+
+      default:
+        return <Package size={20} />;
+    }
+  };
+
+  return (
+    <div
+      className="
+        group
+        rounded-3xl
+        border
+        bg-white
+        p-6
+        shadow-sm
+        transition-all
+        duration-300
+        hover:-translate-y-1
+        hover:shadow-xl
+      "
+    >
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-medium text-gray-500">
+          {title}
+        </p>
+
+        <div
+          className="
+            rounded-2xl
+            bg-pink-100
+            p-3
+            text-pink-600
+          "
+        >
+          {getIcon()}
+        </div>
+      </div>
+
+      <h2
+        className="
+          mt-4
+          text-4xl
+          font-bold
+          tracking-tight
+        "
+      >
         {value}
       </h2>
+
+      <p className="mt-2 text-xs text-gray-400">
+        Actualizado en tiempo real
+      </p>
     </div>
   );
 }

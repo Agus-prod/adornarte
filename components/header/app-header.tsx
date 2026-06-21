@@ -1,26 +1,71 @@
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import {
+  Bell,
+  UserCircle2,
+} from "lucide-react";
 
 export async function AppHeader() {
-  const user = await getCurrentUser();
+  const user =
+    await getCurrentUser();
 
   return (
-    <header className="flex items-center justify-between border-b bg-white px-6 py-4">
-      <h1 className="text-xl font-bold text-pink-500">
-        AdornArte
-      </h1>
+    <header
+      className="
+        flex items-center
+        justify-between
+        border-b
+        bg-white
+        px-6
+        py-4
+      "
+    >
+      <div>
+        <h1 className="text-2xl font-bold text-pink-500">
+          AdornArte
+        </h1>
 
-      <div className="flex items-center gap-4">
-        <button>🔔</button>
+        <p className="text-sm text-gray-500">
+          Sistema de Gestión
+        </p>
+      </div>
 
-        <div className="text-right">
-          <p className="font-medium">
-            {user?.email ?? "Usuario"}
-          </p>
+      <div className="flex items-center gap-5">
+        <button
+          className="
+            rounded-xl
+            p-2
+            text-gray-500
+            transition-all
+            hover:bg-pink-50
+            hover:text-pink-600
+          "
+        >
+          <Bell size={20} />
+        </button>
 
-          <p className="text-sm text-gray-500">
-            owner
-          </p>
+        <div className="flex items-center gap-3">
+          <div
+            className="
+              rounded-full
+              bg-pink-100
+              p-2
+              text-pink-600
+            "
+          >
+            <UserCircle2 size={28} />
+          </div>
+
+          <div>
+            <p className="font-medium">
+              {user?.email ??
+                "Usuario"}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              Administrador
+            </p>
+          </div>
         </div>
 
         <LogoutButton />

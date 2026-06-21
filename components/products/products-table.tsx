@@ -61,10 +61,27 @@ export function ProductsTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-white">
+    <div
+  className="
+    overflow-hidden
+    rounded-3xl
+    border
+    bg-white
+    shadow-sm
+  "
+>
       <table className="w-full">
         <thead>
-          <tr className="border-b bg-gray-50">
+          <tr
+  className="
+    border-b
+    bg-gray-50
+    text-sm
+    uppercase
+    tracking-wide
+    text-gray-500
+  "
+>
             <th className="p-4 text-left">
               Nombre
             </th>
@@ -97,11 +114,15 @@ export function ProductsTable({
 
         <tbody>
           {products.map((product) => (
-            <tr
-              key={product.id}
-              className="border-b"
-            >
-              <td className="p-4 font-medium">
+       <tr
+  key={product.id}
+  className="
+    border-b
+    transition-colors
+    hover:bg-pink-50/40
+  "
+>
+            <td className="p-4 font-semibold">
                 {product.name}
               </td>
 
@@ -115,9 +136,9 @@ export function ProductsTable({
                   "-"}
               </td>
 
-              <td className="p-4">
-                L {product.sale_price ?? 0}
-              </td>
+<td className="p-4 font-medium text-gray-900">
+  L {(product.sale_price ?? 0).toFixed(2)}
+</td>
 
               <td className="p-4">
                 {product.stock ?? 0}
@@ -133,7 +154,13 @@ export function ProductsTable({
   <div className="flex gap-3">
     <Link
       href={`/inventario/productos/${product.id}/editar`}
-      className="text-pink-600 hover:underline"
+      className="
+  rounded-lg
+  px-3 py-1
+  text-pink-600
+  transition-all
+  hover:bg-pink-100
+"
     >
       Editar
     </Link>
@@ -149,7 +176,13 @@ export function ProductsTable({
 >
   <button
     type="submit"
-    className="text-red-600 hover:underline"
+    className="
+  rounded-lg
+  px-3 py-1
+  text-red-600
+  transition-all
+  hover:bg-red-100
+"
   >
     Eliminar
   </button>
