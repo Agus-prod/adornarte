@@ -3,37 +3,144 @@ import {
   LayoutDashboard,
   Package,
   ArrowLeftRight,
+  ShoppingCart,
+  BarChart3,
 } from "lucide-react";
 
 export function Sidebar() {
   return (
-    <aside className="w-64 border-r bg-white p-5">
-      <h2 className="mb-8 text-2xl font-bold text-pink-500">
-        AdornArte
-      </h2>
+    <aside
+      className="
+        w-72
+        px-5
+        py-6
+      "
+    >
+      <div
+        className="
+          rounded-3xl
+          border
+          border-white/60
+          bg-white/70
+          p-5
+          shadow-sm
+          backdrop-blur-xl
+        "
+      >
+        <h2
+          className="
+            mb-8
+            text-xl
+            font-bold
+            text-pink-500
+          "
+        >
+          Navegación
+        </h2>
 
-      <nav className="space-y-2">
-<SidebarLink
-  href="/"
-  icon={<LayoutDashboard size={18} />}
->
-  Dashboard
-</SidebarLink>
+        <div className="space-y-6">
+          <div>
+            <p
+              className="
+                mb-2
+                px-3
+                text-xs
+                font-semibold
+                uppercase
+                tracking-wider
+                text-gray-400
+              "
+            >
+              Inicio
+            </p>
 
-<SidebarLink
-  href="/inventario/productos"
-  icon={<Package size={18} />}
->
-  Productos
-</SidebarLink>
+            <SidebarLink
+              href="/"
+              icon={
+                <LayoutDashboard
+                  size={18}
+                />
+              }
+            >
+              Dashboard
+            </SidebarLink>
+          </div>
 
-<SidebarLink
-  href="/inventario/movimientos"
-  icon={<ArrowLeftRight size={18} />}
->
-  Movimientos
-</SidebarLink>
-      </nav>
+          <div>
+            <p
+              className="
+                mb-2
+                px-3
+                text-xs
+                font-semibold
+                uppercase
+                tracking-wider
+                text-gray-400
+              "
+            >
+              Inventario
+            </p>
+
+            <SidebarLink
+              href="/inventario/productos"
+              icon={
+                <Package size={18} />
+              }
+            >
+              Productos
+            </SidebarLink>
+
+            <SidebarLink
+              href="/inventario/movimientos"
+              icon={
+                <ArrowLeftRight
+                  size={18}
+                />
+              }
+            >
+              Movimientos
+            </SidebarLink>
+          </div>
+
+          <div>
+            <p
+              className="
+                mb-2
+                px-3
+                text-xs
+                font-semibold
+                uppercase
+                tracking-wider
+                text-gray-400
+              "
+            >
+              Ventas
+            </p>
+
+            <SidebarLink
+              href="/pos"
+              icon={
+                <ShoppingCart
+                  size={18}
+                />
+              }
+            >
+              Punto de Venta
+            </SidebarLink>
+
+            <SidebarLink
+              href="/ventas"
+              icon={
+                <BarChart3
+                  size={18}
+                />
+              }
+            >
+              Ventas
+            </SidebarLink>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 }

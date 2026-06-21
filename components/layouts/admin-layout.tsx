@@ -7,13 +7,26 @@ export function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <Sidebar />
+    <div
+      className="
+        min-h-screen
+        bg-gradient-to-br
+        from-slate-50
+        via-white
+        to-pink-50/40
+      "
+    >
+      <AppHeader />
 
-      <div className="flex-1">
-        <AppHeader />
+      <div className="flex">
+        <Sidebar />
 
-        <main className="p-6">
+        <main
+          className="
+            flex-1
+            p-8
+          "
+        >
           {children}
         </main>
       </div>

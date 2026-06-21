@@ -18,6 +18,8 @@ export async function getDashboardStats() {
     await supabase
       .from("products")
       .select(`
+        id,
+        name,
         stock,
         min_stock,
         cost_price
@@ -59,10 +61,84 @@ export async function getDashboardStats() {
       0
     );
 
+  const today = new Date();
+
+  const startOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  const startOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+
+  const {
+    data: salesToday,
+  } = await supabase
+    .from("sales")
+    .select("total")
+    .eq(
+      "organization_id",
+      profile.organization_id
+    )
+    .gte(
+      "created_at",
+      startOfDay.toISOString()
+    );
+
+  const {
+    data: salesMonth,
+  } = await supabase
+    .from("sales")
+    .select("total")
+    .eq(
+      "organization_id",
+      profile.organization_id
+    )
+    .gte(
+      "created_at",
+      startOfMonth.toISOString()
+    );
+
+  const {
+    data: totalSalesData,
+  } = await supabase
+    .from("sales")
+    .select("id")
+    .eq(
+      "organization_id",
+      profile.organization_id
+    );
+
+  const salesTodayAmount =
+    salesToday?.reduce(
+      (sum, sale) =>
+        sum +
+        Number(sale.total ?? 0),
+      0
+    ) ?? 0;
+
+  const salesMonthAmount =
+    salesMonth?.reduce(
+      (sum, sale) =>
+        sum +
+        Number(sale.total ?? 0),
+      0
+    ) ?? 0;
+
+  const totalSales =
+    totalSalesData?.length ?? 0;
+
   return {
     totalProducts,
     lowStock,
     outOfStock,
     inventoryValue,
+    salesTodayAmount,
+    salesMonthAmount,
+    totalSales,
   };
 }

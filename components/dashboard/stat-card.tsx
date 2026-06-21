@@ -3,6 +3,9 @@ import {
   AlertTriangle,
   XCircle,
   Wallet,
+  DollarSign,
+  CalendarDays,
+  Receipt,
 } from "lucide-react";
 
 type Props = {
@@ -32,6 +35,21 @@ export function StatCard({
       case "Valor Inventario":
         return <Wallet size={20} />;
 
+      case "Ventas Hoy":
+        return (
+          <DollarSign size={20} />
+        );
+
+      case "Ventas Mes":
+        return (
+          <CalendarDays size={20} />
+        );
+
+      case "Total Ventas":
+        return (
+          <Receipt size={20} />
+        );
+
       default:
         return <Package size={20} />;
     }
@@ -43,9 +61,11 @@ export function StatCard({
         group
         rounded-3xl
         border
-        bg-white
+        border-white/60
+        bg-white/80
         p-6
         shadow-sm
+        backdrop-blur-xl
         transition-all
         duration-300
         hover:-translate-y-1

@@ -29,12 +29,14 @@ export async function createStockMovement({
   const supabase =
     await createClient();
 
-  const { data: product, error: productError } =
-    await supabase
-      .from("products")
-      .select("id, stock")
-      .eq("id", productId)
-      .single();
+  const {
+    data: product,
+    error: productError,
+  } = await supabase
+    .from("products")
+    .select("id, stock")
+    .eq("id", productId)
+    .single();
 
   if (productError) {
     throw productError;
@@ -53,44 +55,52 @@ export async function createStockMovement({
     movementType === "SALIDA"
   ) {
     newStock -= quantity;
+
+    if (newStock < 0) {
+      throw new Error(
+        "Stock insuficiente"
+      );
+    }
   }
 
   if (
     movementType === "AJUSTE"
   ) {
-    newStock += quantity;
+    newStock = quantity;
   }
 
-  const { error: stockError } =
-    await supabase
-      .from("products")
-      .update({
-        stock: newStock,
-      })
-      .eq("id", productId);
+  const {
+    error: stockError,
+  } = await supabase
+    .from("products")
+    .update({
+      stock: newStock,
+    })
+    .eq("id", productId);
 
   if (stockError) {
     throw stockError;
   }
 
-  const { error: movementError } =
-    await supabase
-      .from("stock_movements")
-      .insert({
-        organization_id:
-          profile.organization_id,
+  const {
+    error: movementError,
+  } = await supabase
+    .from("stock_movements")
+    .insert({
+      organization_id:
+        profile.organization_id,
 
-        product_id:
-          productId,
+      product_id:
+        productId,
 
-        movement_type:
-          movementType,
+      movement_type:
+        movementType,
 
-        quantity,
+      quantity,
 
-        notes:
-          notes ?? null,
-      });
+      notes:
+        notes ?? null,
+    });
 
   if (movementError) {
     throw movementError;

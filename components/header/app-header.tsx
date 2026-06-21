@@ -12,63 +12,101 @@ export async function AppHeader() {
   return (
     <header
       className="
-        flex items-center
-        justify-between
+        sticky
+        top-0
+        z-50
         border-b
-        bg-white
-        px-6
-        py-4
+        border-white/60
+        bg-white/80
+        backdrop-blur-xl
       "
     >
-      <div>
-        <h1 className="text-2xl font-bold text-pink-500">
-          AdornArte
-        </h1>
-
-        <p className="text-sm text-gray-500">
-          Sistema de Gestión
-        </p>
-      </div>
-
-      <div className="flex items-center gap-5">
-        <button
-          className="
-            rounded-xl
-            p-2
-            text-gray-500
-            transition-all
-            hover:bg-pink-50
-            hover:text-pink-600
-          "
-        >
-          <Bell size={20} />
-        </button>
-
-        <div className="flex items-center gap-3">
-          <div
+      <div
+        className="
+          flex
+          items-center
+          justify-between
+          px-8
+          py-4
+        "
+      >
+        <div>
+          <h1
             className="
-              rounded-full
-              bg-pink-100
-              p-2
-              text-pink-600
+              text-2xl
+              font-bold
+              bg-gradient-to-r
+              from-pink-500
+              to-fuchsia-500
+              bg-clip-text
+              text-transparent
             "
           >
-            <UserCircle2 size={28} />
-          </div>
+            AdornArte
+          </h1>
 
-          <div>
-            <p className="font-medium">
-              {user?.email ??
-                "Usuario"}
-            </p>
-
-            <p className="text-sm text-gray-500">
-              Administrador
-            </p>
-          </div>
+          <p className="text-sm text-gray-500">
+            Sistema de Gestión
+          </p>
         </div>
 
-        <LogoutButton />
+        <div className="flex items-center gap-4">
+          <button
+            className="
+              rounded-2xl
+              border
+              border-gray-100
+              bg-white
+              p-3
+              text-gray-500
+              transition-all
+              hover:-translate-y-0.5
+              hover:shadow-md
+              hover:text-pink-600
+            "
+          >
+            <Bell size={18} />
+          </button>
+
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+              rounded-2xl
+              border
+              border-gray-100
+              bg-white
+              px-4
+              py-2
+              shadow-sm
+            "
+          >
+            <div
+              className="
+                rounded-full
+                bg-pink-100
+                p-2
+                text-pink-600
+              "
+            >
+              <UserCircle2 size={24} />
+            </div>
+
+            <div>
+              <p className="font-medium text-sm">
+                {user?.email ??
+                  "Usuario"}
+              </p>
+
+              <p className="text-xs text-gray-500">
+                Administrador
+              </p>
+            </div>
+          </div>
+
+          <LogoutButton />
+        </div>
       </div>
     </header>
   );

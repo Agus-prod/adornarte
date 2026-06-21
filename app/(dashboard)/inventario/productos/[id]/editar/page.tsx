@@ -32,7 +32,14 @@ export default async function EditarProductoPage({
 
   return (
     <div className="max-w-4xl">
-      <h1 className="mb-6 text-3xl font-bold">
+      <h1 className="mb-6 <h2
+  className="
+    mt-4
+    text-3xl
+    font-bold
+    tracking-tight
+  "
+> font-bold">
         Editar Producto
       </h1>
 
