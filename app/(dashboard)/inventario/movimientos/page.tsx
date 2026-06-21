@@ -1,9 +1,13 @@
 import { getProducts } from "@/lib/products/get-products";
 import { StockMovementForm } from "@/components/stock/stock-movement-form";
+import { getStockMovements } from "@/lib/stock/get-stock-movements";
+import { StockMovementsTable } from "@/components/stock/stock-movements-table";
 
 export default async function MovimientosPage() {
   const products =
     await getProducts();
+    const movements =
+  await getStockMovements();
 
   return (
     <div className="space-y-6">
@@ -20,6 +24,9 @@ export default async function MovimientosPage() {
       <StockMovementForm
         products={products}
       />
+      <StockMovementsTable
+  movements={movements}
+/>
     </div>
   );
 }
