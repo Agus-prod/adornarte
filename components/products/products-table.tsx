@@ -2,13 +2,49 @@ type Product = {
   id: string;
   name: string;
   sku: string | null;
-  sale_price: number;
-  stock: number;
+  sale_price: number | null;
+  stock: number | null;
+  min_stock: number | null;
+
+  categories?: {
+    name: string;
+  } | null;
+
+  brands?: {
+    name: string;
+  } | null;
 };
 
 type Props = {
   products: Product[];
 };
+
+function getStockStatus(
+  stock: number,
+  minStock: number
+) {
+  if (stock <= 0) {
+    return (
+      <span className="rounded-full bg-red-100 px-3 py-1 text-sm text-red-700">
+        Sin stock
+      </span>
+    );
+  }
+
+  if (stock <= minStock) {
+    return (
+      <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
+        Stock bajo
+      </span>
+    );
+  }
+
+  return (
+    <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-700">
+      Disponible
+    </span>
+  );
+}
 
 export function ProductsTable({
   products,
@@ -31,7 +67,11 @@ export function ProductsTable({
             </th>
 
             <th className="p-4 text-left">
-              SKU
+              Categoría
+            </th>
+
+            <th className="p-4 text-left">
+              Marca
             </th>
 
             <th className="p-4 text-left">
@@ -40,6 +80,10 @@ export function ProductsTable({
 
             <th className="p-4 text-left">
               Stock
+            </th>
+
+            <th className="p-4 text-left">
+              Estado
             </th>
           </tr>
         </thead>
@@ -50,20 +94,33 @@ export function ProductsTable({
               key={product.id}
               className="border-b"
             >
-              <td className="p-4">
+              <td className="p-4 font-medium">
                 {product.name}
               </td>
 
               <td className="p-4">
-                {product.sku}
+                {product.categories?.name ??
+                  "-"}
               </td>
 
               <td className="p-4">
-                L {product.sale_price}
+                {product.brands?.name ??
+                  "-"}
               </td>
 
               <td className="p-4">
-                {product.stock}
+                L {product.sale_price ?? 0}
+              </td>
+
+              <td className="p-4">
+                {product.stock ?? 0}
+              </td>
+
+              <td className="p-4">
+                {getStockStatus(
+                  product.stock ?? 0,
+                  product.min_stock ?? 0
+                )}
               </td>
             </tr>
           ))}

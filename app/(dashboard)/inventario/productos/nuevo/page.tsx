@@ -1,8 +1,16 @@
 import { createProduct } from "../actions";
+import { getCategories } from "@/lib/categories/get-categories";
+import { getBrands } from "@/lib/brands/get-brands";
 
-export default function NuevoProductoPage() {
+export default async function NuevoProductoPage() {
+  const categories =
+    await getCategories();
+
+  const brands =
+    await getBrands();
+
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-4xl">
       <h1 className="mb-6 text-3xl font-bold">
         Nuevo Producto
       </h1>
@@ -12,7 +20,7 @@ export default function NuevoProductoPage() {
         className="space-y-6"
       >
         <div>
-          <label className="block mb-2">
+          <label className="mb-2 block">
             Nombre
           </label>
 
@@ -24,7 +32,7 @@ export default function NuevoProductoPage() {
         </div>
 
         <div>
-          <label className="block mb-2">
+          <label className="mb-2 block">
             SKU
           </label>
 
@@ -35,28 +43,136 @@ export default function NuevoProductoPage() {
         </div>
 
         <div>
-          <label className="block mb-2">
-            Precio Venta
+          <label className="mb-2 block">
+            Descripción
           </label>
 
-          <input
-            type="number"
-            step="0.01"
-            name="sale_price"
+          <textarea
+            name="description"
+            rows={4}
             className="w-full rounded-xl border p-3"
           />
         </div>
 
-        <div>
-          <label className="block mb-2">
-            Stock Inicial
-          </label>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block">
+              Categoría
+            </label>
 
-          <input
-            type="number"
-            name="stock"
-            className="w-full rounded-xl border p-3"
-          />
+            <select
+              name="category_id"
+              className="w-full rounded-xl border p-3"
+            >
+              <option value="">
+                Seleccionar
+              </option>
+
+              {categories.map(
+                (category) => (
+                  <option
+                    key={category.id}
+                    value={category.id}
+                  >
+                    {category.name}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-2 block">
+              Marca
+            </label>
+
+            <select
+              name="brand_id"
+              className="w-full rounded-xl border p-3"
+            >
+              <option value="">
+                Seleccionar
+              </option>
+
+              {brands.map(
+                (brand) => (
+                  <option
+                    key={brand.id}
+                    value={brand.id}
+                  >
+                    {brand.name}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div>
+            <label className="mb-2 block">
+              Costo
+            </label>
+
+            <input
+              type="number"
+              step="0.01"
+              name="cost_price"
+              className="w-full rounded-xl border p-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block">
+              Precio Venta
+            </label>
+
+            <input
+              type="number"
+              step="0.01"
+              name="sale_price"
+              className="w-full rounded-xl border p-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block">
+              Precio Oferta
+            </label>
+
+            <input
+              type="number"
+              step="0.01"
+              name="offer_price"
+              className="w-full rounded-xl border p-3"
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block">
+              Stock Inicial
+            </label>
+
+            <input
+              type="number"
+              name="stock"
+              className="w-full rounded-xl border p-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block">
+              Stock Mínimo
+            </label>
+
+            <input
+              type="number"
+              name="min_stock"
+              className="w-full rounded-xl border p-3"
+            />
+          </div>
         </div>
 
         <button

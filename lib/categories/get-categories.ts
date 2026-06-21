@@ -13,7 +13,10 @@ export async function getCategories() {
   const { data, error } = await supabase
     .from("categories")
     .select("*")
-    .eq("organization_id", profile.organization_id)
+    .eq(
+      "organization_id",
+      profile.organization_id
+    )
     .order("name");
 
   if (error) {
