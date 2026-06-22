@@ -1,8 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+import { createClient } from "@/lib/supabase/server";
 
 export async function createProduct(
   formData: FormData
@@ -19,74 +20,85 @@ export async function createProduct(
   const supabase =
     await createClient();
 
-  const name =
-    formData.get("name")?.toString() ?? "";
+  const { error } =
+    await supabase
+      .from("products")
+      .insert({
+        organization_id:
+          profile.organization_id,
 
-  const sku =
-    formData.get("sku")?.toString() ?? "";
+        name:
+          formData
+            .get("name")
+            ?.toString() ?? "",
 
-  const description =
-    formData.get("description")?.toString() ??
-    "";
+        sku:
+          formData
+            .get("sku")
+            ?.toString() ?? "",
 
-  const category_id =
-    formData.get("category_id")?.toString() ||
-    null;
+        description:
+          formData
+            .get("description")
+            ?.toString() ?? "",
 
-  const brand_id =
-    formData.get("brand_id")?.toString() ||
-    null;
+        category_id:
+          formData
+            .get("category_id")
+            ?.toString() || null,
 
-  const cost_price = Number(
-    formData.get("cost_price") || 0
-  );
+        brand_id:
+          formData
+            .get("brand_id")
+            ?.toString() || null,
 
-  const sale_price = Number(
-    formData.get("sale_price") || 0
-  );
+        cost_price: Number(
+          formData.get(
+            "cost_price"
+          ) || 0
+        ),
 
-  const offer_price = Number(
-    formData.get("offer_price") || 0
-  );
+        sale_price: Number(
+          formData.get(
+            "sale_price"
+          ) || 0
+        ),
 
-  const stock = Number(
-    formData.get("stock") || 0
-  );
+        offer_price: Number(
+          formData.get(
+            "offer_price"
+          ) || 0
+        ),
 
-  const min_stock = Number(
-    formData.get("min_stock") || 0
-  );
+        stock: Number(
+          formData.get(
+            "stock"
+          ) || 0
+        ),
 
-  const { error } = await supabase
-    .from("products")
-    .insert({
-      organization_id:
-        profile.organization_id,
+        min_stock: Number(
+          formData.get(
+            "min_stock"
+          ) || 0
+        ),
 
-      name,
-      sku,
-      description,
-
-      category_id,
-      brand_id,
-
-      cost_price,
-      sale_price,
-      offer_price,
-
-      stock,
-      min_stock,
-
-      is_active: true,
-      is_featured: false,
-    });
+        is_active: true,
+        is_featured: false,
+      });
 
   if (error) {
-    throw new Error(error.message);
+    throw error;
   }
 
-  redirect("/inventario/productos");
+  revalidatePath(
+    "/inventario/productos"
+  );
+
+  redirect(
+    "/inventario/productos"
+  );
 }
+
 export async function updateProduct(
   id: string,
   formData: FormData
@@ -172,10 +184,15 @@ export async function updateProduct(
     throw error;
   }
 
+  revalidatePath(
+    "/inventario/productos"
+  );
+
   redirect(
     "/inventario/productos"
   );
 }
+
 export async function deleteProduct(
   id: string
 ) {
@@ -191,6 +208,48 @@ export async function deleteProduct(
   const supabase =
     await createClient();
 
+  const {
+    data: salesItems,
+    error: salesError,
+  } = await supabase
+    .from("sale_items")
+    .select("id")
+    .eq("product_id", id)
+    .limit(1);
+
+  if (salesError) {
+    throw salesError;
+  }
+
+  if (
+    salesItems &&
+    salesItems.length > 0
+  ) {
+    const { error } =
+      await supabase
+        .from("products")
+        .update({
+          is_active: false,
+        })
+        .eq("id", id)
+        .eq(
+          "organization_id",
+          profile.organization_id
+        );
+
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath(
+      "/inventario/productos"
+    );
+
+    redirect(
+      "/inventario/productos"
+    );
+  }
+
   const { error } =
     await supabase
       .from("products")
@@ -204,6 +263,10 @@ export async function deleteProduct(
   if (error) {
     throw error;
   }
+
+  revalidatePath(
+    "/inventario/productos"
+  );
 
   redirect(
     "/inventario/productos"

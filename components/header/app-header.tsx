@@ -26,14 +26,16 @@ export async function AppHeader() {
           flex
           items-center
           justify-between
-          px-8
+          px-4
+          md:px-8
           py-4
         "
       >
         <div>
           <h1
             className="
-              text-2xl
+              text-xl
+              md:text-2xl
               font-bold
               bg-gradient-to-r
               from-pink-500
@@ -45,12 +47,12 @@ export async function AppHeader() {
             AdornArte
           </h1>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-xs md:text-sm text-gray-500">
             Sistema de Gestión
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <button
             className="
               rounded-2xl
@@ -70,7 +72,8 @@ export async function AppHeader() {
 
           <div
             className="
-              flex
+              hidden
+              md:flex
               items-center
               gap-3
               rounded-2xl

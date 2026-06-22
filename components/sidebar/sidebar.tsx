@@ -11,6 +11,8 @@ export function Sidebar() {
   return (
     <aside
       className="
+        hidden
+        lg:block
         w-72
         px-5
         py-6
@@ -18,6 +20,8 @@ export function Sidebar() {
     >
       <div
         className="
+          sticky
+          top-24
           rounded-3xl
           border
           border-white/60
@@ -57,9 +61,7 @@ export function Sidebar() {
             <SidebarLink
               href="/"
               icon={
-                <LayoutDashboard
-                  size={18}
-                />
+                <LayoutDashboard size={18} />
               }
             >
               Dashboard
@@ -83,9 +85,7 @@ export function Sidebar() {
 
             <SidebarLink
               href="/inventario/productos"
-              icon={
-                <Package size={18} />
-              }
+              icon={<Package size={18} />}
             >
               Productos
             </SidebarLink>
@@ -93,9 +93,7 @@ export function Sidebar() {
             <SidebarLink
               href="/inventario/movimientos"
               icon={
-                <ArrowLeftRight
-                  size={18}
-                />
+                <ArrowLeftRight size={18} />
               }
             >
               Movimientos
@@ -120,9 +118,7 @@ export function Sidebar() {
             <SidebarLink
               href="/pos"
               icon={
-                <ShoppingCart
-                  size={18}
-                />
+                <ShoppingCart size={18} />
               }
             >
               Punto de Venta
@@ -131,9 +127,7 @@ export function Sidebar() {
             <SidebarLink
               href="/ventas"
               icon={
-                <BarChart3
-                  size={18}
-                />
+                <BarChart3 size={18} />
               }
             >
               Ventas

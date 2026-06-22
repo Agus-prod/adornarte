@@ -9,22 +9,15 @@ export default async function NuevoProductoPage() {
   const brands =
     await getBrands();
 
-  return (
-    <div className="max-w-4xl">
-      <h1 className="mb-6 <h2
-  className="
-    mt-4
-    text-3xl
-    font-bold
-    tracking-tight
-  "
-> font-bold">
-        Nuevo Producto
-      </h1>
+return (
+  <div className="max-w-4xl">
+    <h1 className="mb-6 text-3xl font-bold tracking-tight">
+      Nuevo Producto
+    </h1>
 
-      <form
-        action={createProduct}
-        className="space-y-6"
+    <form
+      action={createProduct}
+      className="space-y-6"
       >
         <div>
           <label className="mb-2 block">

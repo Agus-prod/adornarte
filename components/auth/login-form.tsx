@@ -34,7 +34,8 @@ export function LoginForm() {
         return;
       }
 
-      window.location.href = "/";
+      alert("LOGIN EXITOSO");
+window.location.href = "/";
     } catch {
       setError(
         "Ocurrió un error inesperado. Intenta nuevamente."
@@ -43,7 +44,7 @@ export function LoginForm() {
       setLoading(false);
     }
   }
-
+  
   return (
     <form
       onSubmit={handleLogin}

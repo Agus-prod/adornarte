@@ -50,6 +50,21 @@ export async function getDashboardStats() {
         (p.stock ?? 0) <= 0
     ).length;
 
+  const criticalProducts =
+    products
+      .filter(
+        (p) =>
+          (p.stock ?? 0) > 0 &&
+          (p.stock ?? 0) <=
+            (p.min_stock ?? 0)
+      )
+      .sort(
+        (a, b) =>
+          (a.stock ?? 0) -
+          (b.stock ?? 0)
+      )
+      .slice(0, 5);
+
   const inventoryValue =
     products.reduce(
       (total, product) =>
@@ -140,5 +155,6 @@ export async function getDashboardStats() {
     salesTodayAmount,
     salesMonthAmount,
     totalSales,
+    criticalProducts,
   };
 }

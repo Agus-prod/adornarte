@@ -16,7 +16,6 @@ export default async function PosPage() {
           Crear una nueva venta.
         </p>
       </div>
-
       <PosClient
         products={products ?? []}
       />

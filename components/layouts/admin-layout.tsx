@@ -24,7 +24,9 @@ export function AdminLayout({
         <main
           className="
             flex-1
-            p-8
+            p-4
+            md:p-6
+            xl:p-8
           "
         >
           {children}
