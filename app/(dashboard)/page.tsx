@@ -1,6 +1,11 @@
+import Link from "next/link";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { getDashboardStats } from "@/lib/dashboard/get-dashboard-stats";
 import { getTopProduct } from "@/lib/dashboard/get-top-product";
+import {
+  getLatestSales,
+  type LatestSale,
+} from "@/lib/dashboard/get-latest-sales";
 
 export default async function DashboardPage() {
   const stats =
@@ -8,6 +13,9 @@ export default async function DashboardPage() {
 
   const topProduct =
     await getTopProduct();
+
+  const latestSales =
+    await getLatestSales();
 
   const criticalProducts =
     [...stats.criticalProducts].sort(
@@ -244,15 +252,14 @@ export default async function DashboardPage() {
 
                       <p className="text-sm text-gray-500">
                         Mínimo:{" "}
-                        {product.min_stock ??
-                          0}
+                        {product.min_stock ?? 0}
                       </p>
                     </div>
 
                     <div
                       className={`rounded-full px-3 py-1 text-sm font-semibold ${
-                        (product.stock ??
-                          0) === 0
+                        (product.stock ?? 0) ===
+                        0
                           ? "bg-red-100 text-red-700"
                           : "bg-yellow-100 text-yellow-700"
                       }`}
@@ -266,6 +273,67 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div
+        className="
+          rounded-3xl
+          border
+          bg-white
+          p-6
+          shadow-sm
+        "
+      >
+        <h3 className="mb-6 text-xl font-bold">
+          Últimas Ventas
+        </h3>
+
+        {!latestSales.length ? (
+          <p className="text-gray-500">
+            No hay ventas registradas.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {latestSales.map(
+              (sale: LatestSale) => (
+                <Link
+                  key={sale.id}
+                  href={`/ventas/${sale.id}`}
+                  className="
+                    flex
+                    items-center
+                    justify-between
+                    rounded-2xl
+                    border
+                    p-4
+                    transition-colors
+                    hover:bg-pink-50
+                  "
+                >
+                  <div>
+                    <p className="font-semibold">
+                      {sale.customers?.name ??
+                        "Consumidor Final"}
+                    </p>
+
+                    <p className="text-sm text-gray-500">
+                      {new Date(
+                        sale.created_at
+                      ).toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="font-bold text-pink-600">
+                    L{" "}
+                    {Number(
+                      sale.total
+                    ).toFixed(2)}
+                  </div>
+                </Link>
+              )
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
