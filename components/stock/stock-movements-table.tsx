@@ -8,6 +8,10 @@ type Movement = {
   products?: {
     name: string;
   } | null;
+  
+  profiles?: {
+  full_name: string;
+} | null;
 };
 
 function getMovementBadge(
@@ -80,12 +84,16 @@ export function StockMovementsTable({
             "
           >
             <th className="p-4 text-left">
-              Producto
-            </th>
+  Producto
+</th>
 
-            <th className="p-4 text-left">
-              Tipo
-            </th>
+<th className="p-4 text-left">
+  Usuario
+</th>
+
+<th className="p-4 text-left">
+  Tipo
+</th>
 
             <th className="p-4 text-left">
               Cantidad
@@ -113,15 +121,19 @@ export function StockMovementsTable({
                 "
               >
                 <td className="p-4 font-semibold">
-                  {movement.products?.name ??
-                    "-"}
-                </td>
+  {movement.products?.name ?? "-"}
+</td>
 
-                <td className="p-4">
-                  {getMovementBadge(
-                    movement.movement_type
-                  )}
-                </td>
+<td className="p-4">
+  {movement.profiles?.full_name ??
+    "Sistema"}
+</td>
+
+<td className="p-4">
+  {getMovementBadge(
+    movement.movement_type
+  )}
+</td>
 
                 <td className="p-4 font-medium">
                   {movement.quantity}

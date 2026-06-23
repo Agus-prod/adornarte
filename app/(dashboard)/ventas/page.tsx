@@ -6,6 +6,12 @@ type Sale = {
   id: string;
   total: number;
   created_at: string;
+
+  customers:
+    | {
+        name: string;
+      }
+    | null;
 };
 
 export default async function SalesPage() {
@@ -15,13 +21,16 @@ export default async function SalesPage() {
   const supabase =
     await createClient();
 
-  const { data: sales } =
+  const { data, error } =
     await supabase
       .from("sales")
       .select(`
         id,
         total,
-        created_at
+        created_at,
+        customers (
+          name
+        )
       `)
       .eq(
         "organization_id",
@@ -31,12 +40,18 @@ export default async function SalesPage() {
         ascending: false,
       });
 
+  if (error) {
+    throw error;
+  }
+
+const sales = (data ?? []) as unknown as Sale[];
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-  Ventas
-</h1>
+          Ventas
+        </h1>
 
         <p className="mt-2 text-gray-500">
           Historial de ventas realizadas.
@@ -54,57 +69,56 @@ export default async function SalesPage() {
           backdrop-blur-xl
         "
       >
-        {!sales?.length ? (
+        {!sales.length ? (
           <p className="text-gray-500">
             No hay ventas registradas.
           </p>
         ) : (
           <div className="space-y-3">
-            {sales.map(
-              (sale: Sale) => (
-                <Link
-                  key={sale.id}
-                  href={`/ventas/${sale.id}`}
-                  className="
-                    block
-                    rounded-2xl
-                    bg-gray-50
-                    p-4
-                    transition-all
-                    hover:-translate-y-1
-                    hover:bg-white
-                    hover:shadow-md
-                  "
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold">
-                        Venta
-                      </p>
+            {sales.map((sale) => (
+              <Link
+                key={sale.id}
+                href={`/ventas/${sale.id}`}
+                className="
+                  block
+                  rounded-2xl
+                  bg-gray-50
+                  p-4
+                  transition-all
+                  hover:-translate-y-1
+                  hover:bg-white
+                  hover:shadow-md
+                "
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold">
+                      {sale.customers?.name ??
+                        "Consumidor Final"}
+                    </p>
 
-                      <p className="text-sm text-gray-500">
-                        {new Date(
-                          sale.created_at
-                        ).toLocaleString()}
-                      </p>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-pink-600">
-                        L{" "}
-                        {Number(
-                          sale.total
-                        ).toFixed(2)}
-                      </p>
-
-                      <p className="mt-1 text-xs text-pink-500">
-                        Ver detalle →
-                      </p>
-                    </div>
+                    <p className="text-sm text-gray-500">
+                      {new Date(
+                        sale.created_at
+                      ).toLocaleString()}
+                    </p>
                   </div>
-                </Link>
-              )
-            )}
+
+                  <div className="text-right">
+                    <p className="text-xl font-bold text-pink-600">
+                      L{" "}
+                      {Number(
+                        sale.total
+                      ).toFixed(2)}
+                    </p>
+
+                    <p className="mt-1 text-xs text-pink-500">
+                      Ver detalle →
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </div>

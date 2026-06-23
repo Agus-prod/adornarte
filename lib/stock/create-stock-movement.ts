@@ -87,20 +87,23 @@ export async function createStockMovement({
   } = await supabase
     .from("stock_movements")
     .insert({
-      organization_id:
-        profile.organization_id,
+  organization_id:
+    profile.organization_id,
 
-      product_id:
-        productId,
+  created_by:
+    profile.id,
 
-      movement_type:
-        movementType,
+  product_id:
+    productId,
 
-      quantity,
+  movement_type:
+    movementType,
 
-      notes:
-        notes ?? null,
-    });
+  quantity,
+
+  notes:
+    notes ?? null,
+});
 
   if (movementError) {
     throw movementError;

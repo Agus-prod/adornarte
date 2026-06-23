@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 
-export async function getStockMovements() {
+export async function getLatestSales() {
   const profile =
     await getCurrentProfile();
 
@@ -15,36 +15,28 @@ export async function getStockMovements() {
     await createClient();
 
   const { data, error } =
-  await supabase
-    .from("stock_movements")
-    .select(`
-      *,
-      products (
-        name
-      ),
-      profiles!stock_movements_created_by_fkey (
-        full_name
-      )
-    `)
+    await supabase
+      .from("sales")
+      .select(`
+        id,
+        total,
+        created_at,
+        customers (
+          name
+        )
+      `)
       .eq(
         "organization_id",
         profile.organization_id
       )
       .order("created_at", {
         ascending: false,
-      });
+      })
+      .limit(5);
 
   if (error) {
     throw error;
   }
 
-  if (error) {
-  throw error;
-}
-
-console.log(
-  JSON.stringify(data, null, 2)
-);
-
-return data;
+  return data ?? [];
 }

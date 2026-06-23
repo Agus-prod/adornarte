@@ -57,9 +57,9 @@ export default async function DashboardPage() {
           via-fuchsia-500
           to-purple-500
           p-6
-          md:p-8
           text-white
           shadow-xl
+          md:p-8
         "
       >
         <div className="max-w-3xl">
@@ -125,6 +125,36 @@ export default async function DashboardPage() {
           value={`L ${stats.inventoryValue.toFixed(
             2
           )}`}
+        />
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          title="Stock Bajo"
+          value={String(
+            stats.lowStock
+          )}
+        />
+
+        <StatCard
+          title="Agotados"
+          value={String(
+            stats.outOfStock
+          )}
+        />
+
+        <StatCard
+          title="Productos"
+          value={String(
+            stats.totalProducts
+          )}
+        />
+
+        <StatCard
+          title="Clientes"
+          value={String(
+            stats.totalCustomers
+          )}
         />
       </div>
 
@@ -220,19 +250,12 @@ export default async function DashboardPage() {
                     </div>
 
                     <div
-                      className={`
-                        rounded-full
-                        px-3
-                        py-1
-                        text-sm
-                        font-semibold
-                        ${
-                          (product.stock ??
-                            0) === 0
-                            ? "bg-red-100 text-red-700"
-                            : "bg-yellow-100 text-yellow-700"
-                        }
-                      `}
+                      className={`rounded-full px-3 py-1 text-sm font-semibold ${
+                        (product.stock ??
+                          0) === 0
+                          ? "bg-red-100 text-red-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
                     >
                       Stock:{" "}
                       {product.stock ?? 0}

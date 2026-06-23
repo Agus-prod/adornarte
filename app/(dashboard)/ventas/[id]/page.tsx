@@ -1,10 +1,37 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { PrintButton } from "@/components/ventas/print-button";
 
 type PageProps = {
   params: Promise<{
     id: string;
   }>;
+};
+
+type Sale = {
+  id: string;
+  total: number;
+  created_at: string;
+
+  customers:
+    | {
+        name: string;
+      }
+    | null;
+};
+
+type SaleItem = {
+  id: string;
+  quantity: number;
+  price: number;
+  products:
+    | {
+        name: string;
+      }
+    | {
+        name: string;
+      }[]
+    | null;
 };
 
 export default async function SaleDetailPage({
@@ -15,20 +42,28 @@ export default async function SaleDetailPage({
   const supabase =
     await createClient();
 
-  const { data: sale } =
-    await supabase
-      .from("sales")
-      .select(`
-        id,
-        total,
-        created_at
-      `)
-      .eq("id", id)
-      .single();
+  const {
+    data: saleData,
+    error: saleError,
+  } = await supabase
+    .from("sales")
+    .select(`
+      id,
+      total,
+      created_at,
+      customers (
+        name
+      )
+    `)
+    .eq("id", id)
+    .single();
 
-  if (!sale) {
+  if (saleError || !saleData) {
     notFound();
   }
+
+  const sale =
+    saleData as unknown as Sale;
 
   const {
     data: items,
@@ -44,16 +79,30 @@ export default async function SaleDetailPage({
     `)
     .eq("sale_id", id);
 
+  const saleItems =
+    (items ?? []) as unknown as SaleItem[];
+
+  const totalUnits =
+    saleItems.reduce(
+      (acc, item) =>
+        acc + item.quantity,
+      0
+    );
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">
-          Detalle de Venta
-        </h1>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Detalle de Venta
+          </h1>
 
-        <p className="mt-2 text-gray-500">
-          Información completa de la venta.
-        </p>
+          <p className="mt-2 text-gray-500">
+            Información completa de la venta.
+          </p>
+        </div>
+
+        <PrintButton />
       </div>
 
       <div
@@ -87,6 +136,15 @@ export default async function SaleDetailPage({
           </div>
 
           <div className="flex justify-between">
+            <span>Cliente</span>
+
+            <span>
+              {sale.customers?.name ??
+                "Consumidor Final"}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
             <span>Total</span>
 
             <span className="text-xl font-bold text-pink-600">
@@ -114,47 +172,131 @@ export default async function SaleDetailPage({
           Productos Vendidos
         </h2>
 
-        {!items?.length ? (
+        {!saleItems.length ? (
           <p className="text-gray-500">
             No hay productos.
           </p>
         ) : (
-          <div className="space-y-3">
-            {items.map(
-              (item: any) => (
-                <div
-                  key={item.id}
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    rounded-2xl
-                    bg-gray-50
-                    p-4
-                  "
-                >
-                  <div>
-                    <p className="font-semibold">
-                      {item.products?.name ??
-                        "-"}
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-                      Cantidad:{" "}
-                      {item.quantity}
-                    </p>
-                  </div>
-
-                  <span className="font-bold">
-                    L{" "}
-                    {Number(
+          <>
+            <div className="space-y-3">
+              {saleItems.map(
+                (item) => {
+                  const subtotal =
+                    item.quantity *
+                    Number(
                       item.price
-                    ).toFixed(2)}
-                  </span>
-                </div>
-              )
-            )}
-          </div>
+                    );
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="
+                        rounded-2xl
+                        border
+                        bg-gray-50
+                        p-4
+                      "
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold">
+                            {Array.isArray(
+                              item.products
+                            )
+                              ? item
+                                  .products[0]
+                                  ?.name ??
+                                "-"
+                              : item
+                                  .products
+                                  ?.name ??
+                                "-"}
+                          </p>
+
+                          <p className="mt-1 text-sm text-gray-500">
+                            Cantidad:{" "}
+                            {
+                              item.quantity
+                            }
+                          </p>
+
+                          <p className="text-sm text-gray-500">
+                            Precio unitario:
+                            {" "}
+                            L{" "}
+                            {Number(
+                              item.price
+                            ).toFixed(
+                              2
+                            )}
+                          </p>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="text-xs uppercase tracking-wide text-gray-500">
+                            Subtotal
+                          </p>
+
+                          <p className="text-lg font-bold text-pink-600">
+                            L{" "}
+                            {subtotal.toFixed(
+                              2
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+              )}
+            </div>
+
+            <div className="mt-6 border-t pt-6">
+              <div className="mb-3 flex justify-between text-sm text-gray-500">
+                <span>
+                  Productos distintos
+                </span>
+
+                <span>
+                  {
+                    saleItems.length
+                  }
+                </span>
+              </div>
+
+              <div className="mb-6 flex justify-between text-sm text-gray-500">
+                <span>
+                  Unidades vendidas
+                </span>
+
+                <span>
+                  {totalUnits}
+                </span>
+              </div>
+
+              <div
+                className="
+                  rounded-2xl
+                  bg-gradient-to-r
+                  from-pink-500
+                  to-fuchsia-500
+                  p-5
+                  text-white
+                "
+              >
+                <p className="text-sm uppercase tracking-widest text-white/80">
+                  Total de la Venta
+                </p>
+
+                <p className="mt-2 text-4xl font-bold">
+                  L{" "}
+                  {Number(
+                    sale.total
+                  ).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

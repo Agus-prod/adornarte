@@ -8,7 +8,8 @@ type SaleItem = {
 };
 
 export async function createSale(
-  items: SaleItem[]
+  items: SaleItem[],
+  customerId?: string
 ) {
   const profile =
     await getCurrentProfile();
@@ -35,10 +36,14 @@ export async function createSale(
   } = await supabase
     .from("sales")
     .insert({
-      organization_id:
-        profile.organization_id,
-      total,
-    })
+  organization_id:
+    profile.organization_id,
+
+  customer_id:
+    customerId || null,
+
+  total,
+})
     .select()
     .single();
 

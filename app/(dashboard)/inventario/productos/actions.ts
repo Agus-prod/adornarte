@@ -82,8 +82,12 @@ export async function createProduct(
           ) || 0
         ),
 
+        is_featured:
+          formData.get(
+            "is_featured"
+          ) === "on",
+
         is_active: true,
-        is_featured: false,
       });
 
   if (error) {
@@ -173,6 +177,11 @@ export async function updateProduct(
             "min_stock"
           ) || 0
         ),
+
+        is_featured:
+          formData.get(
+            "is_featured"
+          ) === "on",
       })
       .eq("id", id)
       .eq(

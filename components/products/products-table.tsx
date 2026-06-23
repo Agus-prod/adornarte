@@ -8,6 +8,7 @@ type Product = {
   sale_price: number | null;
   stock: number | null;
   min_stock: number | null;
+  is_featured?: boolean | null;
 
   categories?: {
     name: string;
@@ -62,28 +63,32 @@ export function ProductsTable({
 
   return (
     <div
-  className="
-    overflow-hidden
-    rounded-3xl
-    border
-    bg-white
-    shadow-sm
-  "
->
+      className="
+        overflow-hidden
+        rounded-3xl
+        border
+        bg-white
+        shadow-sm
+      "
+    >
       <table className="w-full">
         <thead>
           <tr
-  className="
-    border-b
-    bg-gray-50
-    text-sm
-    uppercase
-    tracking-wide
-    text-gray-500
-  "
->
+            className="
+              border-b
+              bg-gray-50
+              text-sm
+              uppercase
+              tracking-wide
+              text-gray-500
+            "
+          >
             <th className="p-4 text-left">
               Nombre
+            </th>
+
+            <th className="p-4 text-center">
+              ⭐
             </th>
 
             <th className="p-4 text-left">
@@ -107,23 +112,38 @@ export function ProductsTable({
             </th>
 
             <th className="p-4 text-left">
-  Acciones
-</th>
+              Acciones
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {products.map((product) => (
-       <tr
-  key={product.id}
-  className="
-    border-b
-    transition-colors
-    hover:bg-pink-50/40
-  "
->
-            <td className="p-4 font-semibold">
+            <tr
+              key={product.id}
+              className="
+                border-b
+                transition-colors
+                hover:bg-pink-50/40
+              "
+            >
+              <td className="p-4 font-semibold">
                 {product.name}
+              </td>
+
+              <td className="p-4 text-center">
+                {product.is_featured ? (
+                  <span
+                    title="Producto destacado"
+                    className="text-lg"
+                  >
+                    ⭐
+                  </span>
+                ) : (
+                  <span className="text-gray-300">
+                    —
+                  </span>
+                )}
               </td>
 
               <td className="p-4">
@@ -136,9 +156,12 @@ export function ProductsTable({
                   "-"}
               </td>
 
-<td className="p-4 font-medium text-gray-900">
-  L {(product.sale_price ?? 0).toFixed(2)}
-</td>
+              <td className="p-4 font-medium text-gray-900">
+                L{" "}
+                {(
+                  product.sale_price ?? 0
+                ).toFixed(2)}
+              </td>
 
               <td className="p-4">
                 {product.stock ?? 0}
@@ -150,45 +173,48 @@ export function ProductsTable({
                   product.min_stock ?? 0
                 )}
               </td>
+
               <td className="p-4">
-  <div className="flex gap-3">
-    <Link
-      href={`/inventario/productos/${product.id}/editar`}
-      className="
-  rounded-lg
-  px-3 py-1
-  text-pink-600
-  transition-all
-  hover:bg-pink-100
-"
-    >
-      Editar
-    </Link>
+                <div className="flex gap-3">
+                  <Link
+                    href={`/inventario/productos/${product.id}/editar`}
+                    className="
+                      rounded-lg
+                      px-3
+                      py-1
+                      text-pink-600
+                      transition-all
+                      hover:bg-pink-100
+                    "
+                  >
+                    Editar
+                  </Link>
 
-    <form
-  action={async () => {
-    "use server";
+                  <form
+                    action={async () => {
+                      "use server";
 
-    await deleteProduct(
-      product.id
-    );
-  }}
->
-  <button
-    type="submit"
-    className="
-  rounded-lg
-  px-3 py-1
-  text-red-600
-  transition-all
-  hover:bg-red-100
-"
-  >
-    Eliminar
-  </button>
-</form>
-  </div>
-</td>
+                      await deleteProduct(
+                        product.id
+                      );
+                    }}
+                  >
+                    <button
+                      type="submit"
+                      className="
+                        rounded-lg
+                        px-3
+                        py-1
+                        text-red-600
+                        transition-all
+                        hover:bg-red-100
+                      "
+                    >
+                      Eliminar
+                    </button>
+                  </form>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>

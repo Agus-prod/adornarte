@@ -27,7 +27,8 @@ export async function getDashboardStats() {
       .eq(
         "organization_id",
         profile.organization_id
-      );
+      )
+      .eq("is_active", true);
 
   if (error) {
     throw error;
@@ -54,15 +55,32 @@ export async function getDashboardStats() {
     products
       .filter(
         (p) =>
-          (p.stock ?? 0) > 0 &&
           (p.stock ?? 0) <=
-            (p.min_stock ?? 0)
+          (p.min_stock ?? 0)
       )
-      .sort(
-        (a, b) =>
-          (a.stock ?? 0) -
-          (b.stock ?? 0)
-      )
+      .sort((a, b) => {
+        const aStock =
+          a.stock ?? 0;
+
+        const bStock =
+          b.stock ?? 0;
+
+        if (
+          aStock === 0 &&
+          bStock > 0
+        ) {
+          return -1;
+        }
+
+        if (
+          bStock === 0 &&
+          aStock > 0
+        ) {
+          return 1;
+        }
+
+        return aStock - bStock;
+      })
       .slice(0, 5);
 
   const inventoryValue =
@@ -128,6 +146,19 @@ export async function getDashboardStats() {
       profile.organization_id
     );
 
+  const {
+    count: totalCustomers,
+  } = await supabase
+    .from("customers")
+    .select("*", {
+      count: "exact",
+      head: true,
+    })
+    .eq(
+      "organization_id",
+      profile.organization_id
+    );
+
   const salesTodayAmount =
     salesToday?.reduce(
       (sum, sale) =>
@@ -155,6 +186,8 @@ export async function getDashboardStats() {
     salesTodayAmount,
     salesMonthAmount,
     totalSales,
+    totalCustomers:
+      totalCustomers ?? 0,
     criticalProducts,
   };
 }

@@ -222,6 +222,31 @@ export default async function EditarProductoPage({
           </div>
         </div>
 
+        <div className="rounded-2xl border p-4">
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              name="is_featured"
+              defaultChecked={
+                product.is_featured ??
+                false
+              }
+              className="h-5 w-5"
+            />
+
+            <span className="font-medium">
+              ⭐ Producto destacado
+            </span>
+          </label>
+
+          <p className="mt-2 text-sm text-gray-500">
+            Los productos destacados se
+            mostrarán primero en futuras
+            promociones y secciones
+            especiales.
+          </p>
+        </div>
+
         <button
           type="submit"
           className="rounded-xl bg-pink-500 px-6 py-3 text-white"

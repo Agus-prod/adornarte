@@ -5,6 +5,7 @@ import {
   ArrowLeftRight,
   ShoppingCart,
   BarChart3,
+  Users,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -60,9 +61,7 @@ export function Sidebar() {
 
             <SidebarLink
               href="/"
-              icon={
-                <LayoutDashboard size={18} />
-              }
+              icon={<LayoutDashboard size={18} />}
             >
               Dashboard
             </SidebarLink>
@@ -92,11 +91,32 @@ export function Sidebar() {
 
             <SidebarLink
               href="/inventario/movimientos"
-              icon={
-                <ArrowLeftRight size={18} />
-              }
+              icon={<ArrowLeftRight size={18} />}
             >
               Movimientos
+            </SidebarLink>
+          </div>
+
+          <div>
+            <p
+              className="
+                mb-2
+                px-3
+                text-xs
+                font-semibold
+                uppercase
+                tracking-wider
+                text-gray-400
+              "
+            >
+              Clientes
+            </p>
+
+            <SidebarLink
+              href="/clientes"
+              icon={<Users size={18} />}
+            >
+              Clientes
             </SidebarLink>
           </div>
 
@@ -117,18 +137,14 @@ export function Sidebar() {
 
             <SidebarLink
               href="/pos"
-              icon={
-                <ShoppingCart size={18} />
-              }
+              icon={<ShoppingCart size={18} />}
             >
               Punto de Venta
             </SidebarLink>
 
             <SidebarLink
               href="/ventas"
-              icon={
-                <BarChart3 size={18} />
-              }
+              icon={<BarChart3 size={18} />}
             >
               Ventas
             </SidebarLink>

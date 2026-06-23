@@ -1,9 +1,17 @@
 import { getProducts } from "@/lib/products/get-products";
 import { PosClient } from "@/components/pos/pos-client";
+import { getCustomers } from "@/lib/customers/get-customers";
 
 export default async function PosPage() {
   const products =
     await getProducts();
+
+  const customers =
+    await getCustomers();
+    console.log(
+  "CLIENTES:",
+  customers
+);
 
   return (
     <div className="space-y-6">
@@ -16,9 +24,11 @@ export default async function PosPage() {
           Crear una nueva venta.
         </p>
       </div>
+
       <PosClient
-        products={products ?? []}
-      />
-    </div>
+  products={products ?? []}
+  customers={customers ?? []}
+/>
+</div>
   );
 }

@@ -9,7 +9,11 @@ type Item = {
 };
 
 export async function createSaleAction(
-  items: Item[]
+  items: Item[],
+  customerId?: string
 ) {
-  return createSale(items);
+  return createSale(
+    items,
+    customerId
+  );
 }
