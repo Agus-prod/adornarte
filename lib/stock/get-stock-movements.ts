@@ -15,17 +15,17 @@ export async function getStockMovements() {
     await createClient();
 
   const { data, error } =
-  await supabase
-    .from("stock_movements")
-    .select(`
-      *,
-      products (
-        name
-      ),
-      profiles!stock_movements_created_by_fkey (
-        full_name
-      )
-    `)
+    await supabase
+      .from("stock_movements")
+      .select(`
+        *,
+        products (
+          name
+        ),
+        profiles!stock_movements_created_by_fkey (
+          full_name
+        )
+      `)
       .eq(
         "organization_id",
         profile.organization_id
@@ -38,13 +38,11 @@ export async function getStockMovements() {
     throw error;
   }
 
-  if (error) {
-  throw error;
-}
-
-console.log(
-  JSON.stringify(data, null, 2)
-);
-
-return data;
+  return (data ?? []).map(
+    (movement) => ({
+      ...movement,
+      created_at:
+        movement.created_at ?? "",
+    })
+  );
 }

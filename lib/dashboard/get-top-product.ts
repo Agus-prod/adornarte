@@ -1,8 +1,55 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+
+type SaleItemRow = {
+  quantity: number | null;
+  products:
+    | {
+        id: string;
+        name: string;
+      }
+    | {
+        id: string;
+        name: string;
+      }[]
+    | null;
+};
 
 export async function getTopProduct() {
+  const profile =
+    await getCurrentProfile();
+
+  if (!profile) {
+    throw new Error(
+      "Usuario no autenticado"
+    );
+  }
+
   const supabase =
     await createClient();
+
+  const {
+    data: sales,
+    error: salesError,
+  } = await supabase
+    .from("sales")
+    .select("id")
+    .eq(
+      "organization_id",
+      profile.organization_id
+    );
+
+  if (salesError) {
+    throw salesError;
+  }
+
+  if (!sales?.length) {
+    return null;
+  }
+
+  const saleIds = sales.map(
+    (sale) => sale.id
+  );
 
   const { data, error } =
     await supabase
@@ -13,7 +60,11 @@ export async function getTopProduct() {
           id,
           name
         )
-      `);
+      `)
+      .in(
+        "sale_id",
+        saleIds
+      );
 
   if (error) {
     throw error;
@@ -31,33 +82,48 @@ export async function getTopProduct() {
     }
   >();
 
-  data.forEach((item: any) => {
-    const product =
-      Array.isArray(item.products)
-        ? item.products[0]
-        : item.products;
+  (data as SaleItemRow[]).forEach(
+    (item) => {
+      const product =
+        Array.isArray(
+          item.products
+        )
+          ? item.products[0]
+          : item.products;
 
-    if (!product) return;
+      if (!product) {
+        return;
+      }
 
-    const current =
-      totals.get(product.id);
+      const quantity =
+        Number(
+          item.quantity ?? 0
+        );
 
-    if (current) {
-      current.quantity +=
-        item.quantity ?? 0;
-    } else {
-      totals.set(product.id, {
-        name: product.name,
-        quantity:
-          item.quantity ?? 0,
-      });
+      const current =
+        totals.get(product.id);
+
+      if (current) {
+        current.quantity +=
+          quantity;
+      } else {
+        totals.set(
+          product.id,
+          {
+            name:
+              product.name,
+            quantity,
+          }
+        );
+      }
     }
-  });
+  );
 
   const topProduct =
     [...totals.values()].sort(
       (a, b) =>
-        b.quantity - a.quantity
+        b.quantity -
+        a.quantity
     )[0];
 
   return topProduct ?? null;

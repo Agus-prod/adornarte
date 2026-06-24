@@ -1,6 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 
+type SaleItem = {
+  quantity: number | null;
+  price: number | null;
+
+  products:
+    | {
+        cost_price: number | null;
+      }
+    | {
+        cost_price: number | null;
+      }[]
+    | null;
+};
+
 export async function getDashboardStats() {
   const profile =
     await getCurrentProfile();
@@ -159,6 +173,70 @@ export async function getDashboardStats() {
       profile.organization_id
     );
 
+  const {
+    data: saleItemsData,
+  } = await supabase
+    .from("sale_items")
+    .select(`
+      quantity,
+      price,
+      products (
+        cost_price
+      )
+    `);
+
+  const saleItems =
+    (saleItemsData ??
+      []) as SaleItem[];
+
+  let totalCost = 0;
+  let totalRevenueAll = 0;
+
+  saleItems.forEach(
+    (item) => {
+      const product =
+        Array.isArray(
+          item.products
+        )
+          ? item.products[0]
+          : item.products;
+
+      const cost =
+        Number(
+          product?.cost_price ?? 0
+        );
+
+      const quantity =
+        Number(
+          item.quantity ?? 0
+        );
+
+      const price =
+        Number(
+          item.price ?? 0
+        );
+
+      totalCost +=
+        cost * quantity;
+
+      totalRevenueAll +=
+        price * quantity;
+    }
+  );
+
+  const grossProfit =
+    totalRevenueAll -
+    totalCost;
+
+  const profitMargin =
+    totalRevenueAll > 0
+      ? (
+          (grossProfit /
+            totalRevenueAll) *
+          100
+        ).toFixed(1)
+      : "0.0";
+
   const salesTodayAmount =
     salesToday?.reduce(
       (sum, sale) =>
@@ -189,5 +267,7 @@ export async function getDashboardStats() {
     totalCustomers:
       totalCustomers ?? 0,
     criticalProducts,
+    grossProfit,
+    profitMargin,
   };
 }

@@ -11,15 +11,30 @@ export async function getCurrentProfile() {
     return null;
   }
 
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const { data: profile, error } =
+    await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return profile;
+  if (!profile) {
+    return null;
+  }
+
+  if (!profile.organization_id) {
+    throw new Error(
+      "El usuario no tiene organización asignada"
+    );
+  }
+
+  return {
+    ...profile,
+    organization_id:
+      profile.organization_id,
+  };
 }

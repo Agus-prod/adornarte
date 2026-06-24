@@ -8,10 +8,10 @@ type Movement = {
   products?: {
     name: string;
   } | null;
-  
+
   profiles?: {
-  full_name: string;
-} | null;
+    full_name: string | null;
+  } | null;
 };
 
 function getMovementBadge(

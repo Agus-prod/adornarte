@@ -18,6 +18,12 @@ export default async function SalesPage() {
   const profile =
     await getCurrentProfile();
 
+  if (!profile) {
+    throw new Error(
+      "Usuario no autenticado"
+    );
+  }
+
   const supabase =
     await createClient();
 
@@ -34,7 +40,7 @@ export default async function SalesPage() {
       `)
       .eq(
         "organization_id",
-        profile?.organization_id
+        profile.organization_id
       )
       .order("created_at", {
         ascending: false,
@@ -44,7 +50,13 @@ export default async function SalesPage() {
     throw error;
   }
 
-const sales = (data ?? []) as unknown as Sale[];
+  const sales = (data ?? []).map(
+    (sale) => ({
+      ...sale,
+      created_at:
+        sale.created_at ?? "",
+    })
+  ) as Sale[];
 
   return (
     <div className="space-y-6">

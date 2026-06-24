@@ -7,6 +7,7 @@ import {
   BarChart3,
   Users,
   FileBarChart,
+  Wallet,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -171,6 +172,29 @@ export function Sidebar() {
               icon={<FileBarChart size={18} />}
             >
               Reportes
+            </SidebarLink>
+          </div>
+
+          <div>
+            <p
+              className="
+                mb-2
+                px-3
+                text-xs
+                font-semibold
+                uppercase
+                tracking-wider
+                text-gray-400
+              "
+            >
+              Caja
+            </p>
+
+            <SidebarLink
+              href="/caja"
+              icon={<Wallet size={18} />}
+            >
+              Caja
             </SidebarLink>
           </div>
         </div>

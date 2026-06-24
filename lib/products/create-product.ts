@@ -1,9 +1,20 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 
 export async function createProduct(
   formData: FormData
 ) {
-  const supabase = await createClient();
+  const profile =
+    await getCurrentProfile();
+
+  if (!profile) {
+    throw new Error(
+      "Usuario no autenticado"
+    );
+  }
+
+  const supabase =
+    await createClient();
 
   const name =
     formData.get("name")?.toString() ?? "";
@@ -22,6 +33,8 @@ export async function createProduct(
   const { error } = await supabase
     .from("products")
     .insert({
+      organization_id:
+        profile.organization_id,
       name,
       sku,
       sale_price,
