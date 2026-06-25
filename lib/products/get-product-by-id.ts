@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+import { ProductsRepository } from "@/lib/repositories/products.repository";
 
 export async function getProductById(
   id: string
@@ -13,23 +13,18 @@ export async function getProductById(
     );
   }
 
-  const supabase =
-    await createClient();
+  const product =
+    await ProductsRepository.findById(id);
 
-  const { data, error } =
-    await supabase
-      .from("products")
-      .select("*")
-      .eq("id", id)
-      .eq(
-        "organization_id",
-        profile.organization_id
-      )
-      .single();
-
-  if (error) {
-    throw error;
+  if (
+    !product ||
+    product.organization_id !==
+      profile.organization_id
+  ) {
+    throw new Error(
+      "Producto no encontrado."
+    );
   }
 
-  return data;
+  return product;
 }

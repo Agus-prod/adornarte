@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+import { ProductsRepository } from "@/lib/repositories/products.repository";
 
 export async function createProduct(
   formData: FormData
@@ -12,9 +12,6 @@ export async function createProduct(
       "Usuario no autenticado"
     );
   }
-
-  const supabase =
-    await createClient();
 
   const name =
     formData.get("name")?.toString() ?? "";
@@ -30,18 +27,16 @@ export async function createProduct(
     formData.get("stock")
   );
 
-  const { error } = await supabase
-    .from("products")
-    .insert({
-      organization_id:
-        profile.organization_id,
-      name,
-      sku,
-      sale_price,
-      stock,
-    });
+  await ProductsRepository.create({
+    organization_id:
+      profile.organization_id,
 
-  if (error) {
-    throw error;
-  }
+    name,
+
+    sku,
+
+    sale_price,
+
+    stock,
+  });
 }

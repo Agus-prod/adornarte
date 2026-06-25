@@ -70,7 +70,7 @@ export default async function DashboardPage() {
           md:p-8
         "
       >
-        <div className="max-w-3xl">
+        <div className="max-w-4xl">
           <p className="text-xs uppercase tracking-[0.25em] text-white/80 md:text-sm">
             AdornArte
           </p>
@@ -99,8 +99,17 @@ export default async function DashboardPage() {
             </div>
 
             <div className="rounded-2xl bg-white/15 px-4 py-2 backdrop-blur">
-              🧾 Ventas:{" "}
-              {stats.totalSales}
+              📈 7 días: L{" "}
+              {stats.sales7Days.toFixed(
+                2
+              )}
+            </div>
+
+            <div className="rounded-2xl bg-white/15 px-4 py-2 backdrop-blur">
+              🏦 Caja:{" "}
+              {stats.cashOpen
+                ? "Abierta"
+                : "Cerrada"}
             </div>
           </div>
         </div>
@@ -122,10 +131,38 @@ export default async function DashboardPage() {
         />
 
         <StatCard
-          title="Total Ventas"
-          value={String(
-            stats.totalSales
-          )}
+          title="Ventas 7 Días"
+          value={`L ${stats.sales7Days.toFixed(
+            2
+          )}`}
+        />
+
+        <StatCard
+          title="Ventas 30 Días"
+          value={`L ${stats.sales30Days.toFixed(
+            2
+          )}`}
+        />
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          title="Ticket Promedio"
+          value={`L ${stats.averageTicket.toFixed(
+            2
+          )}`}
+        />
+
+        <StatCard
+          title="Ganancia"
+          value={`L ${stats.grossProfit.toFixed(
+            2
+          )}`}
+        />
+
+        <StatCard
+          title="Margen"
+          value={`${stats.profitMargin}%`}
         />
 
         <StatCard
@@ -164,6 +201,45 @@ export default async function DashboardPage() {
             stats.totalCustomers
           )}
         />
+      </div>
+
+      <div className="rounded-3xl border bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">
+            🚨
+          </span>
+
+          <h3 className="text-xl font-bold">
+            Alertas del Negocio
+          </h3>
+        </div>
+
+        <div className="mt-6 space-y-3">
+          {stats.outOfStock >
+            0 && (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+              🔴 Hay{" "}
+              {stats.outOfStock} productos agotados
+            </div>
+          )}
+
+          {stats.lowStock >
+            0 && (
+            <div className="rounded-2xl border border-yellow-200 bg-yellow-50 p-4 text-yellow-700">
+              🟡 Hay{" "}
+              {stats.lowStock} productos con stock bajo
+            </div>
+          )}
+
+          {stats.outOfStock ===
+            0 &&
+            stats.lowStock ===
+              0 && (
+              <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-green-700">
+                🟢 Inventario saludable
+              </div>
+            )}
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
@@ -207,15 +283,7 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        <div
-          className="
-            rounded-3xl
-            border
-            bg-white
-            p-6
-            shadow-sm
-          "
-        >
+        <div className="rounded-3xl border bg-white p-6 shadow-sm">
           <div className="flex items-center gap-2">
             <span className="text-2xl">
               ⚠️
@@ -236,14 +304,7 @@ export default async function DashboardPage() {
                 (product) => (
                   <div
                     key={product.id}
-                    className="
-                      flex
-                      items-center
-                      justify-between
-                      rounded-2xl
-                      border
-                      p-4
-                    "
+                    className="flex items-center justify-between rounded-2xl border p-4"
                   >
                     <div>
                       <p className="font-semibold">
@@ -275,15 +336,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div
-        className="
-          rounded-3xl
-          border
-          bg-white
-          p-6
-          shadow-sm
-        "
-      >
+      <div className="rounded-3xl border bg-white p-6 shadow-sm">
         <h3 className="mb-6 text-xl font-bold">
           Últimas Ventas
         </h3>
@@ -299,16 +352,7 @@ export default async function DashboardPage() {
                 <Link
                   key={sale.id}
                   href={`/ventas/${sale.id}`}
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    rounded-2xl
-                    border
-                    p-4
-                    transition-colors
-                    hover:bg-pink-50
-                  "
+                  className="flex items-center justify-between rounded-2xl border p-4 transition-colors hover:bg-pink-50"
                 >
                   <div>
                     <p className="font-semibold">

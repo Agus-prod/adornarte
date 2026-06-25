@@ -1,0 +1,21 @@
+export const BusinessCodes = {
+
+  USER_NOT_FOUND:
+    "USER_NOT_FOUND",
+
+  PRODUCT_NOT_FOUND:
+    "PRODUCT_NOT_FOUND",
+
+  CUSTOMER_NOT_FOUND:
+    "CUSTOMER_NOT_FOUND",
+
+  SALE_NOT_FOUND:
+    "SALE_NOT_FOUND",
+
+  CASH_NOT_OPEN:
+    "CASH_NOT_OPEN",
+
+  INSUFFICIENT_STOCK:
+    "INSUFFICIENT_STOCK",
+
+} as const;
