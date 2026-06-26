@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -9,12 +9,17 @@ import {
   defaultPurchaseOrderValues,
 } from "@/lib/purchases/purchase-order-schema";
 
+import type { ActiveSupplier } from "@/lib/purchases/get-active-suppliers";
+
+import { SupplierSelector } from "@/components/selectors/supplier-selector";
+
 import { FormCard } from "@/components/forms/form-card";
 import { FormSection } from "@/components/forms/form-section";
 import { FormActions } from "@/components/forms/form-actions";
 import { Button } from "@/components/ui/button";
 
 type Props = {
+  suppliers: ActiveSupplier[];
   loading?: boolean;
   defaultValues?: PurchaseOrderFormValues;
   submitLabel?: string;
@@ -24,12 +29,14 @@ type Props = {
 };
 
 export function PurchaseOrderForm({
+  suppliers,
   loading = false,
   defaultValues = defaultPurchaseOrderValues,
   submitLabel = "Guardar Orden",
   onSubmit,
 }: Props) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -57,10 +64,16 @@ export function PurchaseOrderForm({
                 Proveedor
               </label>
 
-              <input
-                {...register("supplier_id")}
-                className="w-full rounded-xl border px-4 py-3"
-                placeholder="UUID del proveedor (temporal)"
+              <Controller
+                control={control}
+                name="supplier_id"
+                render={({ field }) => (
+                  <SupplierSelector
+                    suppliers={suppliers}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
 
               {errors.supplier_id && (
@@ -71,6 +84,7 @@ export function PurchaseOrderForm({
             </div>
 
             <div>
+
               <label className="mb-2 block text-sm font-medium">
                 Fecha
               </label>
@@ -90,17 +104,16 @@ export function PurchaseOrderForm({
 
           </div>
         </FormSection>
-
-        <FormSection title="Observaciones">
+                <FormSection title="Observaciones">
           <textarea
             rows={4}
             {...register("notes")}
             className="w-full rounded-xl border px-4 py-3"
+            placeholder="Notas internas de la orden..."
           />
         </FormSection>
 
         <FormActions>
-
           <Button
             type="button"
             variant="secondary"
@@ -114,9 +127,7 @@ export function PurchaseOrderForm({
           >
             {submitLabel}
           </Button>
-
         </FormActions>
-
       </FormCard>
     </form>
   );

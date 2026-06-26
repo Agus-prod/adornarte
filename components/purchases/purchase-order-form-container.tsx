@@ -6,11 +6,11 @@ import { toast } from "sonner";
 
 import { PurchaseOrderForm } from "./purchase-order-form";
 
-import {
+import type { ActiveSupplier } from "@/lib/purchases/get-active-suppliers";
+
+import type {
   PurchaseOrderFormValues,
 } from "@/lib/purchases/purchase-order-schema";
-
-import { ActiveSupplier } from "@/lib/purchases/get-active-suppliers";
 
 type ActionResult = {
   success: boolean;
@@ -39,7 +39,8 @@ export function PurchaseOrderFormContainer({
     values: PurchaseOrderFormValues
   ) {
     startTransition(async () => {
-      const result = await action(values);
+      const result =
+        await action(values);
 
       if (!result.success) {
         toast.error(result.message);
@@ -49,7 +50,9 @@ export function PurchaseOrderFormContainer({
       toast.success(result.message);
 
       if (result.id) {
-        router.push(`/compras/ordenes/${result.id}`);
+        router.push(
+          `/compras/ordenes/${result.id}`
+        );
       } else {
         router.push("/compras/ordenes");
       }
@@ -59,10 +62,10 @@ export function PurchaseOrderFormContainer({
   }
 
   return (
-   <PurchaseOrderForm
-  suppliers={suppliers}
-  loading={isPending}
-  onSubmit={handleSubmit}
-/>
+    <PurchaseOrderForm
+      suppliers={suppliers}
+      loading={isPending}
+      onSubmit={handleSubmit}
+    />
   );
 }
