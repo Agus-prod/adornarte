@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PurchaseOrderDetail } from "@/components/purchases/purchase-order-detail";
 
 import { getPurchaseOrder } from "@/lib/purchases/get-purchase-order";
+import { getActiveProducts } from "@/lib/inventory/get-active-products";
 
 type Props = {
   params: Promise<{
@@ -15,11 +16,13 @@ export default async function PurchaseOrderPage({
 }: Props) {
   const { id } = await params;
 
-  const order = await getPurchaseOrder(id);
+  const [order, products] = await Promise.all([
+    getPurchaseOrder(id),
+    getActiveProducts(),
+  ]);
 
   return (
     <div className="space-y-6">
-
       <PageHeader
         title={order.number ?? "Orden de compra"}
         description="Detalle de la orden de compra."
@@ -27,8 +30,8 @@ export default async function PurchaseOrderPage({
 
       <PurchaseOrderDetail
         order={order}
+        products={products}
       />
-
     </div>
   );
 }
