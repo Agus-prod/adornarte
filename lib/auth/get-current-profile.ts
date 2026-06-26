@@ -4,12 +4,14 @@ export async function getCurrentProfile() {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  data: { user },
+} = await supabase.auth.getUser();
 
-  if (!user) {
-    return null;
-  }
+console.log("SERVER USER:", user);
+
+if (!user) {
+  return null;
+}
 
   const { data: profile, error } =
     await supabase

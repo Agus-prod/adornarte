@@ -13,8 +13,21 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll() {
-          // middleware manejará esto
+
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(
+              ({ name, value, options }) =>
+                cookieStore.set(
+                  name,
+                  value,
+                  options
+                )
+            );
+          } catch {
+            // Cuando se llama desde un Server Component,
+            // el middleware será quien persista las cookies.
+          }
         },
       },
     }

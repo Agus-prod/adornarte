@@ -8,6 +8,8 @@ import {
   Users,
   FileBarChart,
   Wallet,
+  Truck,
+  Building2,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -46,18 +48,11 @@ export function Sidebar() {
         </h2>
 
         <div className="space-y-6">
+
+          {/* DASHBOARD */}
+
           <div>
-            <p
-              className="
-                mb-2
-                px-3
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-gray-400
-              "
-            >
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
               Inicio
             </p>
 
@@ -69,18 +64,10 @@ export function Sidebar() {
             </SidebarLink>
           </div>
 
+          {/* INVENTARIO */}
+
           <div>
-            <p
-              className="
-                mb-2
-                px-3
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-gray-400
-              "
-            >
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
               Inventario
             </p>
 
@@ -99,18 +86,32 @@ export function Sidebar() {
             </SidebarLink>
           </div>
 
+          {/* COMPRAS */}
+
           <div>
-            <p
-              className="
-                mb-2
-                px-3
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-gray-400
-              "
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Compras
+            </p>
+
+            <SidebarLink
+              href="/compras"
+              icon={<Truck size={18} />}
             >
+              Inicio
+            </SidebarLink>
+
+            <SidebarLink
+              href="/compras/proveedores"
+              icon={<Building2 size={18} />}
+            >
+              Proveedores
+            </SidebarLink>
+          </div>
+
+          {/* CLIENTES */}
+
+          <div>
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
               Clientes
             </p>
 
@@ -122,18 +123,10 @@ export function Sidebar() {
             </SidebarLink>
           </div>
 
+          {/* VENTAS */}
+
           <div>
-            <p
-              className="
-                mb-2
-                px-3
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-gray-400
-              "
-            >
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
               Ventas
             </p>
 
@@ -152,18 +145,25 @@ export function Sidebar() {
             </SidebarLink>
           </div>
 
+          {/* FINANZAS */}
+
           <div>
-            <p
-              className="
-                mb-2
-                px-3
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-gray-400
-              "
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Finanzas
+            </p>
+
+            <SidebarLink
+              href="/caja"
+              icon={<Wallet size={18} />}
             >
+              Caja
+            </SidebarLink>
+          </div>
+
+          {/* REPORTES */}
+
+          <div>
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
               Reportes
             </p>
 
@@ -175,28 +175,6 @@ export function Sidebar() {
             </SidebarLink>
           </div>
 
-          <div>
-            <p
-              className="
-                mb-2
-                px-3
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-gray-400
-              "
-            >
-              Caja
-            </p>
-
-            <SidebarLink
-              href="/caja"
-              icon={<Wallet size={18} />}
-            >
-              Caja
-            </SidebarLink>
-          </div>
         </div>
       </div>
     </aside>

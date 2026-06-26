@@ -1,0 +1,54 @@
+"use client";
+
+type Product = {
+  id: string;
+  name: string;
+  sku: string | null;
+  sale_price: number;
+};
+
+type Props = {
+  products: Product[];
+  value?: string;
+  onChange: (value: string) => void;
+};
+
+export function ProductSelector({
+  products,
+  value,
+  onChange,
+}: Props) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="
+        w-full
+        rounded-xl
+        border
+        border-gray-300
+        bg-white
+        px-4
+        py-3
+        shadow-sm
+        focus:border-pink-500
+        focus:ring-2
+        focus:ring-pink-200
+      "
+    >
+      <option value="">
+        Seleccione un producto
+      </option>
+
+      {products.map((product) => (
+        <option
+          key={product.id}
+          value={product.id}
+        >
+          {product.name}
+          {product.sku ? ` (${product.sku})` : ""}
+        </option>
+      ))}
+    </select>
+  );
+}

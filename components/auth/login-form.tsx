@@ -17,10 +17,9 @@ export function LoginForm() {
     e.preventDefault();
 
     setError("");
+    setLoading(true);
 
     try {
-      setLoading(true);
-
       const supabase = createClient();
 
       const { error } =
@@ -34,8 +33,7 @@ export function LoginForm() {
         return;
       }
 
-      alert("LOGIN EXITOSO");
-window.location.href = "/";
+      window.location.href = "/";
     } catch {
       setError(
         "Ocurrió un error inesperado. Intenta nuevamente."
@@ -44,7 +42,7 @@ window.location.href = "/";
       setLoading(false);
     }
   }
-  
+
   return (
     <form
       onSubmit={handleLogin}
@@ -58,6 +56,7 @@ window.location.href = "/";
         <input
           type="email"
           placeholder="correo@adornarte.com"
+          autoComplete="email"
           value={email}
           onChange={(e) =>
             setEmail(e.target.value)
@@ -72,7 +71,7 @@ window.location.href = "/";
           Contraseña
         </label>
 
-        <div className="relative">
+        <div className="flex items-center rounded-xl border border-gray-300 bg-white px-4 focus-within:border-pink-500 transition">
           <input
             type={
               showPassword
@@ -80,11 +79,12 @@ window.location.href = "/";
                 : "password"
             }
             placeholder="••••••••"
+            autoComplete="current-password"
             value={password}
             onChange={(e) =>
               setPassword(e.target.value)
             }
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 pr-16 outline-none transition focus:border-pink-500"
+            className="flex-1 bg-transparent py-3 outline-none"
             required
           />
 
@@ -92,10 +92,10 @@ window.location.href = "/";
             type="button"
             onClick={() =>
               setShowPassword(
-                !showPassword
+                (prev) => !prev
               )
             }
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-pink-500"
+            className="ml-3 shrink-0 text-sm font-medium text-pink-500 hover:text-pink-600"
           >
             {showPassword
               ? "Ocultar"
@@ -113,7 +113,7 @@ window.location.href = "/";
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-pink-500 py-3 font-semibold text-white transition hover:bg-pink-600 disabled:opacity-60"
+        className="w-full rounded-xl bg-pink-500 py-3 font-semibold text-white transition hover:bg-pink-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading
           ? "Ingresando..."
