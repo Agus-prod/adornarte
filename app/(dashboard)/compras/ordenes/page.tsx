@@ -5,6 +5,7 @@ import { getPurchaseOrders } from "@/lib/purchases/get-purchase-orders";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PurchaseOrdersTable } from "@/components/purchases/purchase-orders-table";
 
 export default async function PurchaseOrdersPage() {
   const orders = await getPurchaseOrders();
@@ -32,7 +33,9 @@ export default async function PurchaseOrdersPage() {
           description="Crea la primera orden."
         />
       ) : (
-        <div>Tabla próximamente...</div>
+        <PurchaseOrdersTable
+  orders={orders}
+/>
       )}
 
     </div>

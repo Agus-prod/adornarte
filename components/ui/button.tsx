@@ -4,8 +4,11 @@ import { ButtonHTMLAttributes } from "react";
 import { Loader2 } from "lucide-react";
 
 type Variant =
+  | "default"
   | "primary"
   | "secondary"
+  | "outline"
+  | "destructive"
   | "danger"
   | "ghost";
 
@@ -21,18 +24,27 @@ type ButtonProps =
     loading?: boolean;
   };
 
-const variants = {
+const variants: Record<Variant, string> = {
+  default:
+    "bg-pink-500 text-white hover:bg-pink-600",
+
   primary:
     "bg-pink-500 text-white hover:bg-pink-600",
 
   secondary:
-    "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100",
+    "bg-gray-100 text-gray-800 hover:bg-gray-200",
+
+  outline:
+    "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
+
+  destructive:
+    "bg-red-600 text-white hover:bg-red-700",
 
   danger:
-    "border border-red-700 bg-red-600 text-white hover:bg-red-700",
+    "bg-red-600 text-white hover:bg-red-700",
 
   ghost:
-    "border border-gray-200 bg-white text-gray-700 hover:bg-gray-100",
+    "bg-transparent text-gray-700 hover:bg-gray-100",
 };
 
 const sizes = {
@@ -45,7 +57,7 @@ const sizes = {
 
 export function Button({
   children,
-  variant = "primary",
+  variant = "default",
   size = "md",
   loading = false,
   disabled,
@@ -57,24 +69,25 @@ export function Button({
       {...props}
       disabled={disabled || loading}
       className={`
-  inline-flex
-  items-center
-  justify-center
-  rounded-xl
-  border
-  shadow-sm
-  transition-all
-  duration-200
-  hover:scale-105
-  focus:outline-none
-  focus:ring-2
-  focus:ring-pink-400
-  active:scale-95
+        inline-flex
+        items-center
+        justify-center
+        gap-2
+        rounded-xl
+        transition-all
+        duration-200
+        font-medium
+        disabled:opacity-50
+        disabled:pointer-events-none
+        focus:outline-none
+        focus:ring-2
+        focus:ring-pink-400
+        active:scale-95
 
-  ${variants[variant]}
-  ${sizes[size]}
-  ${className}
-`}
+        ${variants[variant]}
+        ${sizes[size]}
+        ${className}
+      `}
     >
       {loading && (
         <Loader2

@@ -40,24 +40,19 @@ export async function createPurchaseOrder(
         .padStart(6, "0")}`;
   }
 
-  const { data, error } =
-    await supabase
-      .from("purchase_orders")
-      .insert({
-        organization_id: organizationId,
-
-        supplier_id: values.supplier_id,
-
-        number: nextNumber,
-
-        order_date: values.order_date,
-
-        notes: values.notes || null,
-
-        created_by: userId,
-      })
-      .select()
-      .single();
+const { data, error } = await supabase
+  .from("purchase_orders")
+  .insert({
+    organization_id: organizationId,
+    supplier_id: values.supplier_id,
+    number: nextNumber,
+    order_date: values.order_date,
+    notes: values.notes || null,
+    created_by: userId,
+    status: "draft", // <-- agregar esto
+  })
+  .select()
+  .single();
 
   if (error) throw error;
 

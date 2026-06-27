@@ -6,14 +6,21 @@ import type { ActiveProduct } from "@/lib/inventory/get-active-products";
 
 import { ProductSelector } from "@/components/selectors/product-selector";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+
+import { addPurchaseItemAction } from "@/app/(dashboard)/compras/ordenes/actions";
 
 type Props = {
+  purchaseOrderId: string;
   products: ActiveProduct[];
 };
 
 export function PurchaseOrderItemsCard({
+  purchaseOrderId,
   products,
-}: Props) {
+}: Props){
   const [productId, setProductId] =
     useState("");
 
@@ -23,15 +30,47 @@ export function PurchaseOrderItemsCard({
   const [costPrice, setCostPrice] =
     useState("");
 
-  function handleAddProduct() {
-    // Próximo commit:
-    // Guardar en purchase_order_items
-    console.log({
-      productId,
-      quantity,
-      costPrice,
-    });
-  }
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+
+    function handleAddProduct() {
+      if (!productId) {
+        toast.error("Seleccione un producto.");
+        return;
+      }
+
+      if (!costPrice || Number(costPrice) <= 0) {
+        toast.error("Ingrese un costo mayor que cero.");
+        return;
+      }
+
+      if (quantity <= 0) {
+        toast.error("La cantidad debe ser mayor que cero.");
+        return;
+      }
+
+      startTransition(async () => {
+        const result = await addPurchaseItemAction({
+          purchase_order_id: purchaseOrderId,
+          product_id: productId,
+          quantity,
+          cost_price: Number(costPrice),
+        });
+
+        if (!result.success) {
+          toast.error(result.message);
+          return;
+        }
+
+        toast.success(result.message);
+
+        setProductId("");
+        setQuantity(1);
+        setCostPrice("");
+
+        router.refresh();
+      });
+    }
 
   return (
     <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -101,30 +140,18 @@ export function PurchaseOrderItemsCard({
         </div>
                 <div className="flex items-end">
 
-          <Button
-            className="w-full"
-            onClick={handleAddProduct}
-            type="button"
-          >
+         <Button
+  className="w-full"
+  loading={isPending}
+  onClick={handleAddProduct}
+  type="button"
+>
             + Agregar producto
           </Button>
 
         </div>
 
       </div>
-
-      <div className="mt-8 rounded-xl border border-dashed py-12 text-center">
-
-        <p className="text-lg font-medium text-gray-500">
-          No hay productos agregados.
-        </p>
-
-        <p className="mt-2 text-sm text-gray-400">
-          Los productos aparecerán aquí después de agregarlos.
-        </p>
-
-      </div>
-
     </div>
   );
 }

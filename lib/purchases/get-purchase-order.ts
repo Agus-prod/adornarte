@@ -20,6 +20,17 @@ export async function getPurchaseOrder(id: string) {
         contact_name,
         phone,
         email
+      ),
+      items:purchase_order_items (
+        id,
+        quantity,
+        cost_price,
+        subtotal,
+        product:products (
+          id,
+          name,
+          sku
+        )
       )
     `)
     .eq("id", id)

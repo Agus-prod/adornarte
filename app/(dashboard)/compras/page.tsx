@@ -14,7 +14,7 @@ export default function ComprasPage() {
           Compras
         </h1>
 
-        <p className="text-gray-500 mt-2">
+        <p className="mt-2 text-gray-500">
           Gestiona proveedores, órdenes de compra y recepción de mercancía.
         </p>
       </div>
@@ -23,51 +23,84 @@ export default function ComprasPage() {
 
         <Link
           href="/compras/proveedores"
-          className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+          className="
+            rounded-2xl
+            border
+            bg-white
+            p-6
+            shadow-sm
+            transition
+            hover:-translate-y-1
+            hover:shadow-md
+          "
         >
           <Building2
-            className="text-pink-500 mb-4"
+            className="mb-4 text-pink-500"
             size={34}
           />
 
-          <h2 className="font-semibold text-lg">
+          <h2 className="text-lg font-semibold">
             Proveedores
           </h2>
 
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="mt-2 text-sm text-gray-500">
             Administrar proveedores.
           </p>
         </Link>
 
-        <div className="rounded-2xl border bg-white p-6 opacity-60">
+        <Link
+          href="/compras/ordenes"
+          className="
+            rounded-2xl
+            border
+            bg-white
+            p-6
+            shadow-sm
+            transition
+            hover:-translate-y-1
+            hover:shadow-md
+          "
+        >
           <ClipboardList
-            className="text-pink-500 mb-4"
+            className="mb-4 text-pink-500"
             size={34}
           />
 
-          <h2 className="font-semibold text-lg">
+          <h2 className="text-lg font-semibold">
             Órdenes de compra
           </h2>
 
-          <p className="text-sm text-gray-500 mt-2">
-            Próximamente.
+          <p className="mt-2 text-sm text-gray-500">
+            Crear y administrar órdenes de compra.
           </p>
-        </div>
+        </Link>
 
-        <div className="rounded-2xl border bg-white p-6 opacity-60">
-          <Truck
-            className="text-pink-500 mb-4"
-            size={34}
-          />
+        <Link
+  href="/compras/recepcion"
+  className="
+    rounded-2xl
+    border
+    bg-white
+    p-6
+    shadow-sm
+    transition
+    hover:-translate-y-1
+    hover:shadow-md
+  "
+>
+  <Truck
+    className="mb-4 text-pink-500"
+    size={34}
+  />
 
-          <h2 className="font-semibold text-lg">
-            Recepción
-          </h2>
+  <h2 className="text-lg font-semibold">
+    Recepción
+  </h2>
 
-          <p className="text-sm text-gray-500 mt-2">
-            Próximamente.
-          </p>
-        </div>
+  <p className="mt-2 text-sm text-gray-500">
+    Recibir mercancía pendiente.
+  </p>
+</Link>
 
       </div>
 
