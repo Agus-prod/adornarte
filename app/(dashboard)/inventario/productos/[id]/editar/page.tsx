@@ -2,6 +2,8 @@ import { getProductById } from "@/lib/products/get-product-by-id";
 import { getCategories } from "@/lib/categories/get-categories";
 import { getBrands } from "@/lib/brands/get-brands";
 import { updateProduct } from "@/app/(dashboard)/inventario/productos/actions";
+import { getCompleteProduct } from "@/lib/catalog/services/product-service";
+import { ProductVariantsCard } from "@/components/products/variants-card";
 
 export default async function EditarProductoPage({
   params,
@@ -10,14 +12,17 @@ export default async function EditarProductoPage({
 }) {
   const { id } = await params;
 
-  const product =
-    await getProductById(id);
+ const product =
+  await getProductById(id);
 
-  const categories =
-    await getCategories();
+const catalogProduct =
+  await getCompleteProduct(id);
 
-  const brands =
-    await getBrands();
+const categories =
+  await getCategories();
+
+const brands =
+  await getBrands();
 
   async function updateAction(
     formData: FormData
@@ -25,6 +30,7 @@ export default async function EditarProductoPage({
     "use server";
 
     await updateProduct(
+
       id,
       formData
     );
@@ -254,6 +260,16 @@ export default async function EditarProductoPage({
           Guardar Cambios
         </button>
       </form>
-    </div>
+
+<div className="mt-8">
+
+  <ProductVariantsCard
+  productId={id}
+  variants={catalogProduct.variants}
+/>
+
+</div>
+
+</div>
   );
 }
