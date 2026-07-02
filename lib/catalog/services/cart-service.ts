@@ -14,6 +14,10 @@ import {
 import { getCatalogProductById } from "@/lib/catalog/repositories/product-repository";
 import { getVariant } from "@/lib/catalog/repositories/variant-repository";
 import { getPublicCatalogOrganizationId } from "@/lib/catalog/services/catalog-context-service";
+import {
+  getCouponDiscount,
+  getValidCouponByCode,
+} from "@/lib/catalog/services/coupon-service";
 import type {
   CatalogCartDetail,
   CatalogCartTotals,
@@ -69,7 +73,10 @@ function getOrganizationId() {
 }
 
 function getTotals(
-  items: CatalogCartItem[]
+  items: CatalogCartItem[],
+  discountTotal = 0,
+  shippingTotal = 0,
+  taxTotal = 0
 ): CatalogCartTotals {
   const subtotal = items.reduce(
     (total, item) =>
@@ -81,10 +88,14 @@ function getTotals(
 
   return {
     subtotal,
-    discountTotal: 0,
-    shippingTotal: 0,
-    taxTotal: 0,
-    total: subtotal,
+    discountTotal,
+    shippingTotal,
+    taxTotal,
+    total:
+      subtotal -
+      discountTotal +
+      shippingTotal +
+      taxTotal,
   };
 }
 
@@ -92,7 +103,28 @@ async function persistTotals(
   cart: CatalogCart,
   items: CatalogCartItem[]
 ) {
-  const totals = getTotals(items);
+  const subtotal = getTotals(items).subtotal;
+  const coupon = cart.coupon_code
+    ? await getValidCouponByCode(
+        cart.organization_id,
+        cart.coupon_code,
+        subtotal
+      )
+    : null;
+  const shippingTotal =
+    Number(cart.shipping_total) || 0;
+  const taxTotal =
+    Number(cart.tax_total) || 0;
+  const totals = getTotals(
+    items,
+    getCouponDiscount(
+      coupon,
+      subtotal,
+      shippingTotal
+    ),
+    shippingTotal,
+    taxTotal
+  );
 
   await updateCart(
     cart.id,
@@ -105,6 +137,8 @@ async function persistTotals(
         totals.shippingTotal,
       tax_total: totals.taxTotal,
       total: totals.total,
+      coupon_code:
+        coupon?.code ?? null,
       updated_at: new Date().toISOString(),
     }
   );
@@ -328,4 +362,69 @@ export async function removeCatalogCartItem(
   );
 
   await persistTotals(cart, items);
+}
+
+export async function applyCouponToCart(
+  formData: FormData
+) {
+  const cart =
+    await getOrCreateCart();
+  const code = readText(
+    formData,
+    "coupon_code"
+  );
+  const items = await getCartItems(
+    cart.id,
+    cart.organization_id
+  );
+  const subtotal =
+    getTotals(items).subtotal;
+  const coupon =
+    await getValidCouponByCode(
+      cart.organization_id,
+      code,
+      subtotal
+    );
+
+  if (!coupon) {
+    throw new Error(
+      "Cupon no valido."
+    );
+  }
+
+  const updatedCart = await updateCart(
+    cart.id,
+    cart.organization_id,
+    {
+      coupon_code: coupon.code,
+      updated_at: new Date().toISOString(),
+    }
+  );
+
+  await persistTotals(
+    updatedCart,
+    items
+  );
+}
+
+export async function removeCouponFromCart() {
+  const cart =
+    await getOrCreateCart();
+  const items = await getCartItems(
+    cart.id,
+    cart.organization_id
+  );
+  const updatedCart = await updateCart(
+    cart.id,
+    cart.organization_id,
+    {
+      coupon_code: null,
+      updated_at: new Date().toISOString(),
+    }
+  );
+
+  await persistTotals(
+    updatedCart,
+    items
+  );
 }
