@@ -1,36 +1,42 @@
+import { ProductForm } from "@/components/products/forms/product-form";
+import { updateProduct } from "@/app/(dashboard)/inventario/productos/actions";
+import { getBrands } from "@/lib/brands/get-brands";
+import { getCategories } from "@/lib/categories/get-categories";
+import { getProductById } from "@/lib/products/get-product-by-id";
+
 type Props = {
   productId: string;
 };
 
-export function ProductInfoCard({
+export async function ProductInfoCard({
   productId,
 }: Props) {
+  const product =
+    await getProductById(productId);
+
+  const categories =
+    await getCategories();
+
+  const brands =
+    await getBrands();
+
+  async function updateAction(
+    formData: FormData
+  ) {
+    "use server";
+
+    await updateProduct(
+      productId,
+      formData
+    );
+  }
+
   return (
-    <div className="rounded-2xl border bg-white p-6 shadow-sm">
-
-      <div className="mb-6">
-
-        <h2 className="text-xl font-semibold">
-          Información del producto
-        </h2>
-
-        <p className="mt-1 text-sm text-gray-500">
-          Aquí podrás editar toda la información
-          general del producto.
-        </p>
-
-      </div>
-
-      <div className="rounded-xl bg-pink-50 p-6 text-pink-700">
-
-        Product ID
-
-        <br />
-
-        <strong>{productId}</strong>
-
-      </div>
-
-    </div>
+    <ProductForm
+      product={product}
+      categories={categories}
+      brands={brands}
+      action={updateAction}
+    />
   );
 }
