@@ -1,5 +1,4 @@
-import { ProductInfoCard } from "@/components/products/cards/product-info-card";
-import { ProductVariantsCard } from "@/components/products/cards/product-variants-card";
+import { ProductEditor } from "@/components/products/product-editor";
 
 export default async function EditarProductoPage({
   params,
@@ -14,15 +13,9 @@ export default async function EditarProductoPage({
         Editar Producto
       </h1>
 
-      <ProductInfoCard
+      <ProductEditor
         productId={id}
       />
-
-      <div className="mt-8">
-        <ProductVariantsCard
-          productId={id}
-        />
-      </div>
     </div>
   );
 }
