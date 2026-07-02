@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ImageForm } from "@/components/products/forms/image-form";
 import {
   deleteProductImage,
@@ -46,9 +47,12 @@ export function ProductImagesTable({
             >
               <td className="p-4">
                 <div className="flex items-center gap-4">
-                  <img
+                  <Image
                     src={image.url}
                     alt={image.alt_text ?? ""}
+                    width={80}
+                    height={80}
+                    unoptimized
                     className="h-20 w-20 rounded-xl border object-cover"
                   />
 

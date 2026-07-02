@@ -8,7 +8,6 @@ import {
   Package,
 } from "lucide-react";
 import {
-  useMemo,
   useState,
   useTransition,
 } from "react";

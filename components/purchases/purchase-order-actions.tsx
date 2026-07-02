@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   savePurchaseOrderAction,
   sendPurchaseOrderAction,
-  receivePurchaseOrderAction,
   deletePurchaseOrderAction,
 } from "@/app/(dashboard)/compras/ordenes/actions";
 
@@ -103,34 +102,6 @@ export function PurchaseOrderActions({
 
   function handleReception() {
     router.push("/compras/recepcion");
-  }
-
-  function handleReceive() {
-    if (
-      !window.confirm(
-        "¿Confirma la recepción de esta orden?"
-      )
-    ) {
-      return;
-    }
-
-    startTransition(async () => {
-      const result =
-        await receivePurchaseOrderAction(
-          purchaseOrderId
-        );
-
-      if (!result.success) {
-        toast.error(result.message);
-        return;
-      }
-
-      toast.success(result.message);
-
-      router.push("/compras/recepcion");
-
-      router.refresh();
-    });
   }
 
   // -----------------------------

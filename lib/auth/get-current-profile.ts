@@ -7,8 +7,6 @@ export async function getCurrentProfile() {
   data: { user },
 } = await supabase.auth.getUser();
 
-console.log("SERVER USER:", user);
-
 if (!user) {
   return null;
 }

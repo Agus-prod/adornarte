@@ -8,10 +8,6 @@ export default async function PosPage() {
 
   const customers =
     await getCustomers();
-    console.log(
-  "CLIENTES:",
-  customers
-);
 
   return (
     <div className="space-y-6">
