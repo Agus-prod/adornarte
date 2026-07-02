@@ -496,6 +496,104 @@ export type Database = {
           },
         ]
       }
+      catalog_customer_addresses: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          customer_id: string
+          id: string
+          is_default: boolean
+          label: string
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          recipient_name: string
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          recipient_name: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          recipient_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_customer_addresses_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_customer_addresses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_customers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          organization_id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          organization_id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_customers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_order_items: {
         Row: {
           created_at: string

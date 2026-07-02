@@ -6,6 +6,10 @@ import type {
   CatalogCartItem,
 } from "@/lib/catalog/repositories/cart-repository";
 import type { Collection } from "@/lib/catalog/repositories/collection-repository";
+import type {
+  CatalogCustomer,
+  CatalogCustomerAddress,
+} from "@/lib/catalog/repositories/customer-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
 import type { CatalogPayment } from "@/lib/catalog/repositories/payment-repository";
 import type {
@@ -138,6 +142,12 @@ export type CatalogOrderDetail = {
   order: CatalogOrder;
   items: CatalogOrderItem[];
   payments: CatalogPayment[];
+};
+
+export type CatalogCustomerAccount = {
+  customer: CatalogCustomer;
+  addresses: CatalogCustomerAddress[];
+  orders: CatalogOrder[];
 };
 
 export type CatalogProductDetail =
