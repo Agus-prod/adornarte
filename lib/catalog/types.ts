@@ -7,6 +7,7 @@ import type {
 } from "@/lib/catalog/repositories/cart-repository";
 import type { Collection } from "@/lib/catalog/repositories/collection-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
+import type { CatalogPayment } from "@/lib/catalog/repositories/payment-repository";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
 import type { ProductVariant } from "@/lib/catalog/repositories/variant-repository";
 import type { Tables } from "@/lib/database.types";
@@ -112,6 +113,14 @@ export type CatalogCartDetail = {
   items: CatalogCartItem[];
   totals: CatalogCartTotals;
 };
+
+export type CatalogPaymentMethod =
+  | "stripe"
+  | "paypal"
+  | "transfer"
+  | "cash_on_delivery";
+
+export type { CatalogPayment };
 
 export type CatalogProductDetail =
   CatalogProductSummary & {

@@ -496,6 +496,69 @@ export type Database = {
           },
         ]
       }
+      catalog_payments: {
+        Row: {
+          amount: number
+          cart_id: string | null
+          created_at: string
+          id: string
+          method: string
+          notes: string | null
+          order_id: string | null
+          organization_id: string
+          paid_at: string | null
+          provider: string | null
+          reference: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          cart_id?: string | null
+          created_at?: string
+          id?: string
+          method: string
+          notes?: string | null
+          order_id?: string | null
+          organization_id: string
+          paid_at?: string | null
+          provider?: string | null
+          reference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          cart_id?: string | null
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          order_id?: string | null
+          organization_id?: string
+          paid_at?: string | null
+          provider?: string | null
+          reference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_payments_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collection_products: {
         Row: {
           collection_id: string
