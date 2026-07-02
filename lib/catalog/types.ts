@@ -66,6 +66,26 @@ export type CatalogSearchResult =
     matchedFields: string[];
   };
 
+export type CatalogProductFilters = {
+  brandId?: string;
+  categoryId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  color?: string;
+  tone?: string;
+  finish?: string;
+  inStock?: boolean;
+  onOffer?: boolean;
+};
+
+export type CatalogFilterOptions = {
+  brands: CatalogBrand[];
+  categories: CatalogCategory[];
+  colors: string[];
+  tones: string[];
+  finishes: string[];
+};
+
 export type CatalogProductDetail =
   CatalogProductSummary & {
     product: CatalogProduct;
