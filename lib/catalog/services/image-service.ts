@@ -22,6 +22,9 @@ const allowedImageTypes = [
   "image/webp",
 ];
 
+const maxImageBytes =
+  5 * 1024 * 1024;
+
 function readText(
   formData: FormData,
   key: string
@@ -109,6 +112,12 @@ function getFormFile(
   if (!allowedImageTypes.includes(file.type)) {
     throw new Error(
       "Formato de imagen no permitido."
+    );
+  }
+
+  if (file.size > maxImageBytes) {
+    throw new Error(
+      "La imagen supera el tamaño máximo permitido."
     );
   }
 
