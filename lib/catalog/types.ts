@@ -1,4 +1,5 @@
 import type { ProductAttribute } from "@/lib/catalog/repositories/attribute-repository";
+import type { CatalogCategory } from "@/lib/catalog/repositories/category-repository";
 import type { Collection } from "@/lib/catalog/repositories/collection-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
@@ -12,6 +13,18 @@ export type CatalogProductStatus =
 
 export type CatalogCollection =
   Collection;
+
+export type CatalogCategorySummary =
+  Pick<
+    CatalogCategory,
+    | "id"
+    | "name"
+    | "slug"
+    | "description"
+    | "image_url"
+    | "banner_url"
+    | "parent_id"
+  >;
 
 export type CatalogProduct =
   Tables<"products">;

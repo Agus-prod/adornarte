@@ -198,30 +198,61 @@ export type Database = {
       }
       categories: {
         Row: {
+          banner_url: string | null
           created_at: string | null
           description: string | null
           id: string
+          image_url: string | null
+          is_active: boolean
+          meta_description: string | null
+          meta_title: string | null
           name: string
           organization_id: string
+          parent_id: string | null
+          slug: string
+          sort_order: number
           updated_at: string | null
         }
         Insert: {
+          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
+          image_url?: string | null
+          is_active?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
           name: string
           organization_id: string
+          parent_id?: string | null
+          slug: string
+          sort_order?: number
           updated_at?: string | null
         }
         Update: {
+          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
+          image_url?: string | null
+          is_active?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
           name?: string
           organization_id?: string
+          parent_id?: string | null
+          slug?: string
+          sort_order?: number
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "categories_organization_id_fkey"
             columns: ["organization_id"]
