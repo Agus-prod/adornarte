@@ -1,0 +1,331 @@
+import { cookies } from "next/headers";
+import {
+  createCart,
+  createCartItem,
+  deleteCartItem,
+  getCart,
+  getCartItemByProduct,
+  getCartItems,
+  updateCart,
+  updateCartItem,
+  type CatalogCart,
+  type CatalogCartItem,
+} from "@/lib/catalog/repositories/cart-repository";
+import { getCatalogProductById } from "@/lib/catalog/repositories/product-repository";
+import { getVariant } from "@/lib/catalog/repositories/variant-repository";
+import { getPublicCatalogOrganizationId } from "@/lib/catalog/services/catalog-context-service";
+import type {
+  CatalogCartDetail,
+  CatalogCartTotals,
+} from "@/lib/catalog/types";
+
+const cartCookieName =
+  "adornarte_catalog_cart_id";
+
+function readText(
+  formData: FormData,
+  key: string
+) {
+  return formData
+    .get(key)
+    ?.toString()
+    .trim() ?? "";
+}
+
+function readOptionalText(
+  formData: FormData,
+  key: string
+) {
+  const value = readText(
+    formData,
+    key
+  );
+
+  return value || null;
+}
+
+function readQuantity(formData: FormData) {
+  const value = Number(
+    readText(formData, "quantity")
+  );
+
+  return Number.isInteger(value) &&
+    value > 0
+    ? value
+    : 1;
+}
+
+function getOrganizationId() {
+  const organizationId =
+    getPublicCatalogOrganizationId();
+
+  if (!organizationId) {
+    throw new Error(
+      "Catalogo no configurado."
+    );
+  }
+
+  return organizationId;
+}
+
+function getTotals(
+  items: CatalogCartItem[]
+): CatalogCartTotals {
+  const subtotal = items.reduce(
+    (total, item) =>
+      total +
+      Number(item.unit_price) *
+        item.quantity,
+    0
+  );
+
+  return {
+    subtotal,
+    discountTotal: 0,
+    shippingTotal: 0,
+    taxTotal: 0,
+    total: subtotal,
+  };
+}
+
+async function persistTotals(
+  cart: CatalogCart,
+  items: CatalogCartItem[]
+) {
+  const totals = getTotals(items);
+
+  await updateCart(
+    cart.id,
+    cart.organization_id,
+    {
+      subtotal: totals.subtotal,
+      discount_total:
+        totals.discountTotal,
+      shipping_total:
+        totals.shippingTotal,
+      tax_total: totals.taxTotal,
+      total: totals.total,
+      updated_at: new Date().toISOString(),
+    }
+  );
+
+  return totals;
+}
+
+export async function getCurrentCartId() {
+  const cookieStore = await cookies();
+
+  return (
+    cookieStore.get(cartCookieName)
+      ?.value ?? null
+  );
+}
+
+export async function setCurrentCartId(
+  cartId: string
+) {
+  const cookieStore = await cookies();
+
+  cookieStore.set(
+    cartCookieName,
+    cartId,
+    {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    }
+  );
+}
+
+export async function getOrCreateCart() {
+  const organizationId =
+    getOrganizationId();
+  const cartId =
+    await getCurrentCartId();
+
+  if (cartId) {
+    const cart = await getCart(
+      cartId,
+      organizationId
+    );
+
+    if (cart) {
+      return cart;
+    }
+  }
+
+  const cart = await createCart({
+    organization_id: organizationId,
+  });
+
+  await setCurrentCartId(cart.id);
+
+  return cart;
+}
+
+export async function getCartDetail(): Promise<CatalogCartDetail | null> {
+  const organizationId =
+    getOrganizationId();
+  const cartId =
+    await getCurrentCartId();
+
+  if (!cartId) {
+    return null;
+  }
+
+  const cart = await getCart(
+    cartId,
+    organizationId
+  );
+
+  if (!cart) {
+    return null;
+  }
+
+  const items = await getCartItems(
+    cart.id,
+    organizationId
+  );
+  const totals = await persistTotals(
+    cart,
+    items
+  );
+
+  return {
+    cart,
+    items,
+    totals,
+  };
+}
+
+export async function addCatalogCartItemFromForm(
+  formData: FormData
+) {
+  const organizationId =
+    getOrganizationId();
+  const cart =
+    await getOrCreateCart();
+  const productId = readText(
+    formData,
+    "product_id"
+  );
+  const variantId = readOptionalText(
+    formData,
+    "variant_id"
+  );
+  const quantity = readQuantity(formData);
+  const notes = readOptionalText(
+    formData,
+    "notes"
+  );
+  const product =
+    await getCatalogProductById(
+      productId,
+      organizationId
+    );
+  const variant = variantId
+    ? await getVariant(
+        variantId,
+        organizationId
+      )
+    : null;
+  const existing =
+    await getCartItemByProduct(
+      cart.id,
+      product.id,
+      variant?.id ?? null
+    );
+  const unitPrice =
+    variant?.sale_price ??
+    product.offer_price ??
+    product.sale_price ??
+    0;
+
+  if (existing) {
+    await updateCartItem(
+      existing.id,
+      organizationId,
+      {
+        quantity:
+          existing.quantity + quantity,
+        notes:
+          notes ?? existing.notes,
+        updated_at: new Date().toISOString(),
+      }
+    );
+  } else {
+    await createCartItem({
+      organization_id: organizationId,
+      cart_id: cart.id,
+      product_id: product.id,
+      variant_id: variant?.id ?? null,
+      name: variant
+        ? `${product.name} - ${variant.name}`
+        : product.name,
+      sku:
+        variant?.sku ?? product.sku,
+      image_url: product.image_url,
+      quantity,
+      unit_price: unitPrice,
+      notes,
+    });
+  }
+
+  const items = await getCartItems(
+    cart.id,
+    organizationId
+  );
+
+  await persistTotals(cart, items);
+}
+
+export async function updateCatalogCartItemFromForm(
+  itemId: string,
+  formData: FormData
+) {
+  const organizationId =
+    getOrganizationId();
+  const cart =
+    await getOrCreateCart();
+
+  await updateCartItem(
+    itemId,
+    organizationId,
+    {
+      quantity: readQuantity(formData),
+      notes: readOptionalText(
+        formData,
+        "notes"
+      ),
+      updated_at: new Date().toISOString(),
+    }
+  );
+
+  const items = await getCartItems(
+    cart.id,
+    organizationId
+  );
+
+  await persistTotals(cart, items);
+}
+
+export async function removeCatalogCartItem(
+  itemId: string
+) {
+  const organizationId =
+    getOrganizationId();
+  const cart =
+    await getOrCreateCart();
+
+  await deleteCartItem(
+    itemId,
+    organizationId
+  );
+
+  const items = await getCartItems(
+    cart.id,
+    organizationId
+  );
+
+  await persistTotals(cart, items);
+}

@@ -286,6 +286,139 @@ export type Database = {
           },
         ]
       }
+      catalog_cart_items: {
+        Row: {
+          cart_id: string
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          notes: string | null
+          organization_id: string
+          product_id: string
+          quantity: number
+          sku: string | null
+          unit_price: number
+          updated_at: string
+          variant_id: string | null
+        }
+        Insert: {
+          cart_id: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          notes?: string | null
+          organization_id: string
+          product_id: string
+          quantity?: number
+          sku?: string | null
+          unit_price?: number
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Update: {
+          cart_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          product_id?: string
+          quantity?: number
+          sku?: string | null
+          unit_price?: number
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_cart_items_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_cart_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_cart_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_carts: {
+        Row: {
+          coupon_code: string | null
+          created_at: string
+          customer_email: string | null
+          discount_total: number
+          id: string
+          notes: string | null
+          organization_id: string
+          shipping_total: number
+          status: string
+          subtotal: number
+          tax_total: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          coupon_code?: string | null
+          created_at?: string
+          customer_email?: string | null
+          discount_total?: number
+          id?: string
+          notes?: string | null
+          organization_id: string
+          shipping_total?: number
+          status?: string
+          subtotal?: number
+          tax_total?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          coupon_code?: string | null
+          created_at?: string
+          customer_email?: string | null
+          discount_total?: number
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          shipping_total?: number
+          status?: string
+          subtotal?: number
+          tax_total?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_carts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collection_products: {
         Row: {
           collection_id: string

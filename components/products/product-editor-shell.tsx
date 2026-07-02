@@ -5,46 +5,24 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useState } from "react";
 import type { ReactNode } from "react";
 
 import { ProductTabs } from "./tabs/product-tabs";
-import {
-  isProductEditorTab,
-  type ProductEditorTab,
-} from "./tabs/product-editor-tabs";
+import type { ProductEditorTab } from "./tabs/product-editor-tabs";
 
 type Props = {
-  info: ReactNode;
-  variants: ReactNode;
-  images: ReactNode;
-  attributes: ReactNode;
-  publication: ReactNode;
+  activeTab: ProductEditorTab;
+  children: ReactNode;
 };
 
 export function ProductEditorShell({
-  info,
-  variants,
-  images,
-  attributes,
-  publication,
+  activeTab,
+  children,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams =
     useSearchParams();
-
-  const [tab, setTab] =
-    useState<ProductEditorTab>(() => {
-      const value =
-        searchParams.get("tab");
-
-      if (isProductEditorTab(value)) {
-        return value;
-      }
-
-      return "info";
-    });
 
   function handleTabChange(
     nextTab: ProductEditorTab
@@ -62,8 +40,6 @@ export function ProductEditorShell({
 
     const query = params.toString();
 
-    setTab(nextTab);
-
     router.replace(
       query
         ? `${pathname}?${query}`
@@ -77,19 +53,11 @@ export function ProductEditorShell({
   return (
     <div className="space-y-6">
       <ProductTabs
-        value={tab}
+        value={activeTab}
         onChange={handleTabChange}
       />
 
-      {tab === "info" && info}
-
-      {tab === "variants" && variants}
-
-      {tab === "images" && images}
-
-      {tab === "attributes" && attributes}
-
-      {tab === "publication" && publication}
+      {children}
     </div>
   );
 }

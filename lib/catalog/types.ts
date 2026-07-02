@@ -1,6 +1,10 @@
 import type { ProductAttribute } from "@/lib/catalog/repositories/attribute-repository";
 import type { CatalogBrand } from "@/lib/catalog/repositories/brand-repository";
 import type { CatalogCategory } from "@/lib/catalog/repositories/category-repository";
+import type {
+  CatalogCart,
+  CatalogCartItem,
+} from "@/lib/catalog/repositories/cart-repository";
 import type { Collection } from "@/lib/catalog/repositories/collection-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
@@ -93,6 +97,20 @@ export type CatalogHomeData = {
   offerProducts: CatalogProductSummary[];
   collections: CatalogCollection[];
   brands: CatalogBrand[];
+};
+
+export type CatalogCartTotals = {
+  subtotal: number;
+  discountTotal: number;
+  shippingTotal: number;
+  taxTotal: number;
+  total: number;
+};
+
+export type CatalogCartDetail = {
+  cart: CatalogCart;
+  items: CatalogCartItem[];
+  totals: CatalogCartTotals;
 };
 
 export type CatalogProductDetail =

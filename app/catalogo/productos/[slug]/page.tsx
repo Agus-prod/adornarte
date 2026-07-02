@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AddToCartForm } from "@/components/catalog/add-to-cart-form";
 import { CatalogStructuredData } from "@/components/catalog/catalog-structured-data";
 import { ProductAttributeList } from "@/components/catalog/product-attribute-list";
 import { ProductGallery } from "@/components/catalog/product-gallery";
@@ -145,6 +146,10 @@ export default async function CatalogProductPage({
 
           <ProductVariantList
             variants={product.variants}
+          />
+
+          <AddToCartForm
+            product={product}
           />
         </div>
       </div>
