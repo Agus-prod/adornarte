@@ -794,6 +794,7 @@ export type Database = {
         Row: {
           canonical_url: string | null
           created_at: string
+          expires_at: string | null
           id: string
           is_featured: boolean
           is_visible: boolean
@@ -812,6 +813,7 @@ export type Database = {
         Insert: {
           canonical_url?: string | null
           created_at?: string
+          expires_at?: string | null
           id?: string
           is_featured?: boolean
           is_visible?: boolean
@@ -830,6 +832,7 @@ export type Database = {
         Update: {
           canonical_url?: string | null
           created_at?: string
+          expires_at?: string | null
           id?: string
           is_featured?: boolean
           is_visible?: boolean

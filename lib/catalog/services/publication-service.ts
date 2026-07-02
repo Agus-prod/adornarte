@@ -35,6 +35,20 @@ function readOptionalText(
   return value || null;
 }
 
+function readOptionalDate(
+  formData: FormData,
+  key: string
+) {
+  const value = readText(
+    formData,
+    key
+  );
+
+  return value
+    ? new Date(value).toISOString()
+    : null;
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -60,6 +74,17 @@ async function getOrganizationId() {
 function buildPublicationValues(
   formData: FormData
 ) {
+  const status =
+    readText(
+      formData,
+      "status"
+    ) || "draft";
+  const publishedAt =
+    readOptionalDate(
+      formData,
+      "published_at"
+    );
+
   return {
     slug: slugify(
       readText(
@@ -67,10 +92,7 @@ function buildPublicationValues(
         "slug"
       )
     ),
-    status: readText(
-      formData,
-      "status"
-    ) || "draft",
+    status,
     is_visible:
       formData.get("is_visible") === "on",
     is_featured:
@@ -100,12 +122,14 @@ function buildPublicationValues(
       "open_graph_image_url"
     ),
     published_at:
-      readText(
-        formData,
-        "status"
-      ) === "published"
+      publishedAt ??
+      (status === "published"
         ? new Date().toISOString()
-        : null,
+        : null),
+    expires_at: readOptionalDate(
+      formData,
+      "expires_at"
+    ),
     updated_at: new Date().toISOString(),
   };
 }
@@ -169,6 +193,15 @@ export async function updateProductPublicationForEditor(
   if (!values.slug) {
     throw new Error(
       "Slug requerido."
+    );
+  }
+
+  if (
+    values.status === "scheduled" &&
+    !values.published_at
+  ) {
+    throw new Error(
+      "Fecha de publicacion requerida."
     );
   }
 

@@ -15,6 +15,10 @@ function getStatusLabel(status: string) {
     return "Oculto";
   }
 
+  if (status === "scheduled") {
+    return "Programado";
+  }
+
   return "Borrador";
 }
 

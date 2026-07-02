@@ -10,7 +10,8 @@ import type { Tables } from "@/lib/database.types";
 export type CatalogProductStatus =
   | "draft"
   | "published"
-  | "hidden";
+  | "hidden"
+  | "scheduled";
 
 export type CatalogCollection =
   Collection;

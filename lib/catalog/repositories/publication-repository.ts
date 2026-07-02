@@ -30,6 +30,7 @@ export async function getPublishedPublications(
   organizationId: string
 ) {
   const supabase = await createClient();
+  const now = new Date().toISOString();
 
   const { data, error } = await supabase
     .from("product_publications")
@@ -37,6 +38,8 @@ export async function getPublishedPublications(
     .eq("organization_id", organizationId)
     .eq("status", "published")
     .eq("is_visible", true)
+    .or(`published_at.is.null,published_at.lte.${now}`)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order("is_featured", {
       ascending: false,
     })
@@ -54,6 +57,7 @@ export async function getPublishedPublicationBySlug(
   slug: string
 ) {
   const supabase = await createClient();
+  const now = new Date().toISOString();
 
   const { data, error } = await supabase
     .from("product_publications")
@@ -62,6 +66,8 @@ export async function getPublishedPublicationBySlug(
     .eq("slug", slug)
     .eq("status", "published")
     .eq("is_visible", true)
+    .or(`published_at.is.null,published_at.lte.${now}`)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .maybeSingle();
 
   if (error) throw error;

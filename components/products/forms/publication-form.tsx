@@ -5,6 +5,14 @@ type Props = {
   action: (formData: FormData) => Promise<void>;
 };
 
+function getDateTimeValue(
+  value: string | null
+) {
+  return value
+    ? value.slice(0, 16)
+    : "";
+}
+
 export function PublicationForm({
   publication,
   action,
@@ -35,6 +43,10 @@ export function PublicationForm({
 
             <option value="hidden">
               Oculto
+            </option>
+
+            <option value="scheduled">
+              Programado
             </option>
           </select>
         </div>
@@ -75,6 +87,38 @@ export function PublicationForm({
 
           Destacado
         </label>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="mb-2 block text-sm font-medium">
+            Fecha publicacion
+          </label>
+
+          <input
+            type="datetime-local"
+            name="published_at"
+            defaultValue={getDateTimeValue(
+              publication.published_at
+            )}
+            className="w-full rounded-xl border p-3"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium">
+            Fecha expiracion
+          </label>
+
+          <input
+            type="datetime-local"
+            name="expires_at"
+            defaultValue={getDateTimeValue(
+              publication.expires_at
+            )}
+            className="w-full rounded-xl border p-3"
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
