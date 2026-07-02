@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { CatalogProductSummary } from "@/lib/catalog/types";
 
 type Props = {
@@ -9,7 +10,7 @@ export function CatalogProductCard({
   product,
 }: Props) {
   return (
-    <article className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+    <article className="overflow-hidden rounded-lg border bg-white shadow-sm">
       {product.imageUrl ? (
         <Image
           src={product.imageUrl}
@@ -28,7 +29,12 @@ export function CatalogProductCard({
       <div className="space-y-2 p-4">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-semibold">
-            {product.name}
+            <Link
+              href={`/catalogo/productos/${product.slug}`}
+              className="hover:text-pink-600"
+            >
+              {product.name}
+            </Link>
           </h3>
 
           {product.isFeatured && (

@@ -130,3 +130,63 @@ export async function getCatalogProductDetailBySlug(
     seo: getSeo(publication),
   };
 }
+
+export async function getRelatedCatalogProducts(
+  organizationId: string,
+  productId: string,
+  limit = 4
+) {
+  const currentProduct =
+    await getCatalogProductById(
+      productId,
+      organizationId
+    );
+  const publications =
+    await getPublishedPublications(
+      organizationId
+    );
+  const relatedProducts =
+    await Promise.all(
+      publications.map(async (publication) => {
+        if (
+          publication.product_id === productId
+        ) {
+          return null;
+        }
+
+        const product =
+          await getCatalogProductById(
+            publication.product_id,
+            organizationId
+          );
+
+        const sameCategory =
+          currentProduct.category_id !==
+            null &&
+          currentProduct.category_id ===
+            product.category_id;
+        const sameBrand =
+          currentProduct.brand_id !== null &&
+          currentProduct.brand_id ===
+            product.brand_id;
+
+        if (!sameCategory && !sameBrand) {
+          return null;
+        }
+
+        return getSummary(
+          organizationId,
+          publication
+        );
+      })
+    );
+
+  return relatedProducts
+    .filter(
+      (
+        product
+      ): product is CatalogProductSummary =>
+        product !== null
+    )
+    .slice(0, limit);
+}

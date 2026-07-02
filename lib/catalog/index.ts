@@ -7,6 +7,7 @@ export * from "./repositories/product-repository";
 export * from "./repositories/publication-repository";
 export * from "./repositories/variant-repository";
 export * from "./services/catalog-service";
+export * from "./services/catalog-context-service";
 export * from "./services/brand-service";
 export * from "./services/category-service";
 export * from "./services/collection-service";
