@@ -150,6 +150,13 @@ export type CatalogCustomerAccount = {
   orders: CatalogOrder[];
 };
 
+export type CatalogRecommendations = {
+  related: CatalogProductSummary[];
+  crossSelling: CatalogProductSummary[];
+  upselling: CatalogProductSummary[];
+  lastViewed: CatalogProductSummary[];
+};
+
 export type CatalogProductDetail =
   CatalogProductSummary & {
     product: CatalogProduct;

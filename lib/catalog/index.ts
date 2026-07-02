@@ -26,6 +26,7 @@ export * from "./services/home-service";
 export * from "./services/payment-service";
 export * from "./services/order-service";
 export * from "./services/review-service";
+export * from "./services/recommendation-service";
 export * from "./services/search-service";
 export * from "./services/seo-service";
 export * from "./services/wishlist-service";

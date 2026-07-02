@@ -8,6 +8,7 @@ import { ProductVariantList } from "@/components/catalog/product-variant-list";
 import { RelatedProductsSection } from "@/components/catalog/related-products-section";
 import { WishlistButton } from "@/components/catalog/wishlist-button";
 import { ProductReviews } from "@/components/catalog/product-reviews";
+import { RecommendationsSection } from "@/components/catalog/recommendations-section";
 import {
   getCatalogProductDetailBySlug,
   getRelatedCatalogProducts,
@@ -18,6 +19,10 @@ import {
   buildProductSchema,
 } from "@/lib/catalog/services/seo-service";
 import { getProductReviews } from "@/lib/catalog/services/review-service";
+import {
+  getCatalogRecommendations,
+  rememberViewedProduct,
+} from "@/lib/catalog/services/recommendation-service";
 
 type PageProps = {
   params: Promise<{
@@ -96,6 +101,14 @@ export default async function CatalogProductPage({
     await getProductReviews(
       product.product.id
     );
+  const recommendations =
+    await getCatalogRecommendations(
+      organizationId,
+      product.product.id
+    );
+  await rememberViewedProduct(
+    product.product.id
+  );
   const primaryStock =
     product.variants.find(
       (variant) => variant.is_default
@@ -170,7 +183,15 @@ export default async function CatalogProductPage({
       />
 
       <RelatedProductsSection
-        products={relatedProducts}
+        products={
+          recommendations.related.length
+            ? recommendations.related
+            : relatedProducts
+        }
+      />
+
+      <RecommendationsSection
+        recommendations={recommendations}
       />
 
       <ProductReviews
