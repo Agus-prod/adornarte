@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import {
   applyCatalogCoupon,
   removeCatalogCartItemAction,
@@ -176,6 +177,13 @@ export function CartSummary({
             </form>
           )}
         </div>
+
+        <Link
+          href="/catalogo/checkout"
+          className="mt-5 flex min-h-11 items-center justify-center rounded-lg bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700"
+        >
+          Continuar al checkout
+        </Link>
       </aside>
     </div>
   );

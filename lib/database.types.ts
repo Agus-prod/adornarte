@@ -368,10 +368,16 @@ export type Database = {
           coupon_code: string | null
           created_at: string
           customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
           discount_total: number
           id: string
           notes: string | null
           organization_id: string
+          payment_method: string | null
+          shipping_address: string | null
+          shipping_city: string | null
+          shipping_notes: string | null
           shipping_total: number
           status: string
           subtotal: number
@@ -383,10 +389,16 @@ export type Database = {
           coupon_code?: string | null
           created_at?: string
           customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           discount_total?: number
           id?: string
           notes?: string | null
           organization_id: string
+          payment_method?: string | null
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_notes?: string | null
           shipping_total?: number
           status?: string
           subtotal?: number
@@ -398,10 +410,16 @@ export type Database = {
           coupon_code?: string | null
           created_at?: string
           customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           discount_total?: number
           id?: string
           notes?: string | null
           organization_id?: string
+          payment_method?: string | null
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_notes?: string | null
           shipping_total?: number
           status?: string
           subtotal?: number

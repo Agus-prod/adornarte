@@ -428,3 +428,56 @@ export async function removeCouponFromCart() {
     items
   );
 }
+
+export async function updateCheckoutFromForm(
+  formData: FormData
+) {
+  const cart =
+    await getOrCreateCart();
+
+  const updatedCart = await updateCart(
+    cart.id,
+    cart.organization_id,
+    {
+      customer_name: readText(
+        formData,
+        "customer_name"
+      ),
+      customer_email: readText(
+        formData,
+        "customer_email"
+      ),
+      customer_phone: readText(
+        formData,
+        "customer_phone"
+      ),
+      shipping_address: readText(
+        formData,
+        "shipping_address"
+      ),
+      shipping_city: readText(
+        formData,
+        "shipping_city"
+      ),
+      shipping_notes: readOptionalText(
+        formData,
+        "shipping_notes"
+      ),
+      payment_method: readText(
+        formData,
+        "payment_method"
+      ),
+      updated_at: new Date().toISOString(),
+    }
+  );
+
+  const items = await getCartItems(
+    cart.id,
+    cart.organization_id
+  );
+
+  await persistTotals(
+    updatedCart,
+    items
+  );
+}
