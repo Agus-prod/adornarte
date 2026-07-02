@@ -1,42 +1,16 @@
 "use client";
 
-type Tab =
-  | "info"
-  | "variants"
-  | "images"
-  | "attributes"
-  | "publication";
+import {
+  productEditorTabs,
+  type ProductEditorTab,
+} from "./product-editor-tabs";
 
 type Props = {
-  value: Tab;
-  onChange: (tab: Tab) => void;
+  value: ProductEditorTab;
+  onChange: (
+    tab: ProductEditorTab
+  ) => void;
 };
-
-const tabs: {
-  value: Tab;
-  label: string;
-}[] = [
-  {
-    value: "info",
-    label: "Información",
-  },
-  {
-    value: "variants",
-    label: "Variantes",
-  },
-  {
-    value: "images",
-    label: "Imágenes",
-  },
-  {
-    value: "attributes",
-    label: "Atributos",
-  },
-  {
-    value: "publication",
-    label: "Publicación",
-  },
-];
 
 export function ProductTabs({
   value,
@@ -44,8 +18,9 @@ export function ProductTabs({
 }: Props) {
   return (
     <div className="mb-6 flex flex-wrap gap-2 border-b pb-3">
-      {tabs.map((tab) => (
+      {productEditorTabs.map((tab) => (
         <button
+          type="button"
           key={tab.value}
           onClick={() => onChange(tab.value)}
           className={`rounded-xl px-4 py-2 text-sm font-medium transition

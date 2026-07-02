@@ -1,16 +1,18 @@
 "use client";
 
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useState } from "react";
 import type { ReactNode } from "react";
 
 import { ProductTabs } from "./tabs/product-tabs";
-
-type Tab =
-  | "info"
-  | "variants"
-  | "images"
-  | "attributes"
-  | "publication";
+import {
+  isProductEditorTab,
+  type ProductEditorTab,
+} from "./tabs/product-editor-tabs";
 
 type Props = {
   info: ReactNode;
@@ -27,14 +29,56 @@ export function ProductEditorShell({
   attributes,
   publication,
 }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams =
+    useSearchParams();
+
   const [tab, setTab] =
-    useState<Tab>("info");
+    useState<ProductEditorTab>(() => {
+      const value =
+        searchParams.get("tab");
+
+      if (isProductEditorTab(value)) {
+        return value;
+      }
+
+      return "info";
+    });
+
+  function handleTabChange(
+    nextTab: ProductEditorTab
+  ) {
+    const params =
+      new URLSearchParams(
+        searchParams.toString()
+      );
+
+    if (nextTab === "info") {
+      params.delete("tab");
+    } else {
+      params.set("tab", nextTab);
+    }
+
+    const query = params.toString();
+
+    setTab(nextTab);
+
+    router.replace(
+      query
+        ? `${pathname}?${query}`
+        : pathname,
+      {
+        scroll: false,
+      }
+    );
+  }
 
   return (
     <div className="space-y-6">
       <ProductTabs
         value={tab}
-        onChange={setTab}
+        onChange={handleTabChange}
       />
 
       {tab === "info" && info}
