@@ -15,6 +15,10 @@ const labels: Record<string, string> = {
   tone: "Tono",
   finish: "Acabado",
   coverage: "Cobertura",
+  spf: "SPF",
+  size: "Tamaño",
+  weight: "Peso",
+  content: "Contenido",
   custom: "Dinámico",
 };
 

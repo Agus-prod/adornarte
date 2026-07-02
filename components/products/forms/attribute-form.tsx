@@ -24,6 +24,22 @@ const attributeTypes = [
     label: "Cobertura",
   },
   {
+    value: "spf",
+    label: "SPF",
+  },
+  {
+    value: "size",
+    label: "Tamaño",
+  },
+  {
+    value: "weight",
+    label: "Peso",
+  },
+  {
+    value: "content",
+    label: "Contenido",
+  },
+  {
     value: "custom",
     label: "Dinámico",
   },

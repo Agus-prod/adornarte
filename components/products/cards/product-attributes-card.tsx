@@ -25,7 +25,7 @@ export async function ProductAttributesCard({
           </h2>
 
           <p className="mt-1 text-sm text-gray-500">
-            Administra color, tono, acabado, cobertura y atributos dinámicos.
+            Administra color, tono, acabado, cobertura, SPF, tamaño, peso, contenido y atributos dinámicos.
           </p>
         </div>
 
