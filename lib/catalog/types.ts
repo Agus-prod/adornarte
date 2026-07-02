@@ -8,6 +8,10 @@ import type {
 import type { Collection } from "@/lib/catalog/repositories/collection-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
 import type { CatalogPayment } from "@/lib/catalog/repositories/payment-repository";
+import type {
+  CatalogOrder,
+  CatalogOrderItem,
+} from "@/lib/catalog/repositories/order-repository";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
 import type { ProductVariant } from "@/lib/catalog/repositories/variant-repository";
 import type { Tables } from "@/lib/database.types";
@@ -121,6 +125,20 @@ export type CatalogPaymentMethod =
   | "cash_on_delivery";
 
 export type { CatalogPayment };
+
+export type CatalogOrderStatus =
+  | "pending"
+  | "paid"
+  | "preparing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
+export type CatalogOrderDetail = {
+  order: CatalogOrder;
+  items: CatalogOrderItem[];
+  payments: CatalogPayment[];
+};
 
 export type CatalogProductDetail =
   CatalogProductSummary & {

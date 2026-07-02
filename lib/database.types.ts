@@ -496,6 +496,164 @@ export type Database = {
           },
         ]
       }
+      catalog_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          notes: string | null
+          order_id: string
+          organization_id: string
+          product_id: string | null
+          quantity: number
+          sku: string | null
+          total: number
+          unit_price: number
+          variant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          notes?: string | null
+          order_id: string
+          organization_id: string
+          product_id?: string | null
+          quantity: number
+          sku?: string | null
+          total?: number
+          unit_price?: number
+          variant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          notes?: string | null
+          order_id?: string
+          organization_id?: string
+          product_id?: string | null
+          quantity?: number
+          sku?: string | null
+          total?: number
+          unit_price?: number
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_order_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_orders: {
+        Row: {
+          cart_id: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          discount_total: number
+          id: string
+          order_number: string
+          organization_id: string
+          payment_method: string | null
+          shipping_address: string
+          shipping_city: string
+          shipping_notes: string | null
+          shipping_total: number
+          status: string
+          subtotal: number
+          tax_total: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          cart_id?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          discount_total?: number
+          id?: string
+          order_number: string
+          organization_id: string
+          payment_method?: string | null
+          shipping_address: string
+          shipping_city: string
+          shipping_notes?: string | null
+          shipping_total?: number
+          status?: string
+          subtotal?: number
+          tax_total?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          cart_id?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          discount_total?: number
+          id?: string
+          order_number?: string
+          organization_id?: string
+          payment_method?: string | null
+          shipping_address?: string
+          shipping_city?: string
+          shipping_notes?: string | null
+          shipping_total?: number
+          status?: string
+          subtotal?: number
+          tax_total?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_orders_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_payments: {
         Row: {
           amount: number
@@ -555,6 +713,13 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_orders"
             referencedColumns: ["id"]
           },
         ]
