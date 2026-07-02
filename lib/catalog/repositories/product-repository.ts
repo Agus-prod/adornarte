@@ -26,3 +26,21 @@ export async function getCatalogProductById(
 
   return data;
 }
+
+export async function updateCatalogProductFeatured(
+  productId: string,
+  organizationId: string,
+  isFeatured: boolean
+) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("products")
+    .update({
+      is_featured: isFeatured,
+    })
+    .eq("id", productId)
+    .eq("organization_id", organizationId);
+
+  if (error) throw error;
+}
