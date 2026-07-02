@@ -1,6 +1,5 @@
 import { ProductInfoCard } from "@/components/products/cards/product-info-card";
-import { ProductVariantsCard } from "@/components/products/variants-card";
-import { getCompleteProduct } from "@/lib/catalog/services/product-service";
+import { ProductVariantsCard } from "@/components/products/cards/product-variants-card";
 
 export default async function EditarProductoPage({
   params,
@@ -8,9 +7,6 @@ export default async function EditarProductoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
-  const catalogProduct =
-    await getCompleteProduct(id);
 
   return (
     <div className="max-w-4xl">
@@ -25,7 +21,6 @@ export default async function EditarProductoPage({
       <div className="mt-8">
         <ProductVariantsCard
           productId={id}
-          variants={catalogProduct.variants}
         />
       </div>
     </div>

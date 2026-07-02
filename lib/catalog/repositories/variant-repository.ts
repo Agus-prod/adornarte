@@ -9,11 +9,12 @@ export type ProductVariant =
   Tables<"product_variants">;
 
 export async function getVariants(
-  productId: string
+  productId: string,
+  organizationId?: string
 ) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("product_variants")
     .select("*")
     .eq("product_id", productId)
@@ -22,21 +23,40 @@ export async function getVariants(
     })
     .order("name");
 
+  if (organizationId) {
+    query = query.eq(
+      "organization_id",
+      organizationId
+    );
+  }
+
+  const { data, error } =
+    await query;
+
   if (error) throw error;
 
   return data satisfies ProductVariant[];
 }
 
 export async function getVariant(
-  id: string
+  id: string,
+  organizationId?: string
 ) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("product_variants")
     .select("*")
-    .eq("id", id)
-    .single();
+    .eq("id", id);
+
+  if (organizationId) {
+    query = query.eq(
+      "organization_id",
+      organizationId
+    );
+  }
+
+  const { data, error } = await query.single();
 
   if (error) throw error;
 
