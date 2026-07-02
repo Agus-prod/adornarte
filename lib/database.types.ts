@@ -57,24 +57,48 @@ export type Database = {
       }
       brands: {
         Row: {
+          banner_url: string | null
           created_at: string | null
+          description: string | null
           id: string
+          is_active: boolean
+          logo_url: string | null
+          meta_description: string | null
+          meta_title: string | null
           name: string
           organization_id: string
+          slug: string
+          sort_order: number
           updated_at: string | null
         }
         Insert: {
+          banner_url?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           name: string
           organization_id: string
+          slug: string
+          sort_order?: number
           updated_at?: string | null
         }
         Update: {
+          banner_url?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           name?: string
           organization_id?: string
+          slug?: string
+          sort_order?: number
           updated_at?: string | null
         }
         Relationships: [

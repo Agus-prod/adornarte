@@ -1,4 +1,5 @@
 export * from "./repositories/attribute-repository";
+export * from "./repositories/brand-repository";
 export * from "./repositories/category-repository";
 export * from "./repositories/collection-repository";
 export * from "./repositories/image-repository";
@@ -6,6 +7,7 @@ export * from "./repositories/product-repository";
 export * from "./repositories/publication-repository";
 export * from "./repositories/variant-repository";
 export * from "./services/catalog-service";
+export * from "./services/brand-service";
 export * from "./services/category-service";
 export * from "./services/collection-service";
 export * from "./types";

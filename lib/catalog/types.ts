@@ -1,4 +1,5 @@
 import type { ProductAttribute } from "@/lib/catalog/repositories/attribute-repository";
+import type { CatalogBrand } from "@/lib/catalog/repositories/brand-repository";
 import type { CatalogCategory } from "@/lib/catalog/repositories/category-repository";
 import type { Collection } from "@/lib/catalog/repositories/collection-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
@@ -24,6 +25,17 @@ export type CatalogCategorySummary =
     | "image_url"
     | "banner_url"
     | "parent_id"
+  >;
+
+export type CatalogBrandSummary =
+  Pick<
+    CatalogBrand,
+    | "id"
+    | "name"
+    | "slug"
+    | "description"
+    | "logo_url"
+    | "banner_url"
   >;
 
 export type CatalogProduct =
