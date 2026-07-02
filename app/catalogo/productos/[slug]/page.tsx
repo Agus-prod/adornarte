@@ -6,6 +6,7 @@ import { ProductAttributeList } from "@/components/catalog/product-attribute-lis
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductVariantList } from "@/components/catalog/product-variant-list";
 import { RelatedProductsSection } from "@/components/catalog/related-products-section";
+import { WishlistButton } from "@/components/catalog/wishlist-button";
 import {
   getCatalogProductDetailBySlug,
   getRelatedCatalogProducts,
@@ -150,6 +151,10 @@ export default async function CatalogProductPage({
 
           <AddToCartForm
             product={product}
+          />
+
+          <WishlistButton
+            productId={product.product.id}
           />
         </div>
       </div>
