@@ -1,4 +1,5 @@
 import type { ProductAttribute } from "@/lib/catalog/repositories/attribute-repository";
+import type { Collection } from "@/lib/catalog/repositories/collection-repository";
 import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
 import type { ProductVariant } from "@/lib/catalog/repositories/variant-repository";
@@ -8,6 +9,9 @@ export type CatalogProductStatus =
   | "draft"
   | "published"
   | "hidden";
+
+export type CatalogCollection =
+  Collection;
 
 export type CatalogProduct =
   Tables<"products">;
