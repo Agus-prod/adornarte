@@ -7,6 +7,7 @@ import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductVariantList } from "@/components/catalog/product-variant-list";
 import { RelatedProductsSection } from "@/components/catalog/related-products-section";
 import { WishlistButton } from "@/components/catalog/wishlist-button";
+import { ProductReviews } from "@/components/catalog/product-reviews";
 import {
   getCatalogProductDetailBySlug,
   getRelatedCatalogProducts,
@@ -16,6 +17,7 @@ import {
   buildCatalogMetadata,
   buildProductSchema,
 } from "@/lib/catalog/services/seo-service";
+import { getProductReviews } from "@/lib/catalog/services/review-service";
 
 type PageProps = {
   params: Promise<{
@@ -88,6 +90,10 @@ export default async function CatalogProductPage({
   const relatedProducts =
     await getRelatedCatalogProducts(
       organizationId,
+      product.product.id
+    );
+  const reviews =
+    await getProductReviews(
       product.product.id
     );
   const primaryStock =
@@ -165,6 +171,12 @@ export default async function CatalogProductPage({
 
       <RelatedProductsSection
         products={relatedProducts}
+      />
+
+      <ProductReviews
+        productId={product.product.id}
+        productSlug={product.slug}
+        reviews={reviews}
       />
     </main>
   );

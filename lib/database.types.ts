@@ -822,6 +822,63 @@ export type Database = {
           },
         ]
       }
+      catalog_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          id: string
+          organization_id: string
+          photo_url: string | null
+          product_id: string
+          rating: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          id?: string
+          organization_id: string
+          photo_url?: string | null
+          product_id: string
+          rating: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          id?: string
+          organization_id?: string
+          photo_url?: string | null
+          product_id?: string
+          rating?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_reviews_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_wishlist_items: {
         Row: {
           created_at: string
