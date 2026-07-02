@@ -61,6 +61,11 @@ export type CatalogProductSummary = {
   isFeatured: boolean;
 };
 
+export type CatalogSearchResult =
+  CatalogProductSummary & {
+    matchedFields: string[];
+  };
+
 export type CatalogProductDetail =
   CatalogProductSummary & {
     product: CatalogProduct;

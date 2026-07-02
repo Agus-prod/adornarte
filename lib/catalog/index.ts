@@ -10,5 +10,6 @@ export * from "./services/catalog-service";
 export * from "./services/brand-service";
 export * from "./services/category-service";
 export * from "./services/collection-service";
+export * from "./services/search-service";
 export * from "./services/seo-service";
 export * from "./types";
