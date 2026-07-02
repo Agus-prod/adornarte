@@ -86,6 +86,15 @@ export type CatalogFilterOptions = {
   finishes: string[];
 };
 
+export type CatalogHomeData = {
+  heroProduct: CatalogProductSummary | null;
+  featuredProducts: CatalogProductSummary[];
+  newProducts: CatalogProductSummary[];
+  offerProducts: CatalogProductSummary[];
+  collections: CatalogCollection[];
+  brands: CatalogBrand[];
+};
+
 export type CatalogProductDetail =
   CatalogProductSummary & {
     product: CatalogProduct;
