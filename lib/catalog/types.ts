@@ -171,6 +171,23 @@ export type CatalogPromotionDiscount = {
   discount: number;
 };
 
+export type CatalogMarketplaceChannel =
+  | "facebook"
+  | "instagram"
+  | "google_shopping"
+  | "tiktok_shop";
+
+export type CatalogMarketplaceFeedItem = {
+  channel: CatalogMarketplaceChannel;
+  id: string;
+  title: string;
+  description: string;
+  link: string;
+  imageLink: string;
+  price: number;
+  availability: string;
+};
+
 export type CatalogProductDetail =
   CatalogProductSummary & {
     product: CatalogProduct;

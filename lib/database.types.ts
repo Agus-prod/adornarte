@@ -888,6 +888,47 @@ export type Database = {
           },
         ]
       }
+      catalog_marketplace_feeds: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          is_active: boolean
+          last_generated_at: string | null
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_generated_at?: string | null
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_generated_at?: string | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_marketplace_feeds_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_order_items: {
         Row: {
           created_at: string
