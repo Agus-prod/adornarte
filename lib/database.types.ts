@@ -835,6 +835,56 @@ export type Database = {
           },
         ]
       }
+      catalog_gift_cards: {
+        Row: {
+          code: string
+          created_at: string
+          current_balance: number
+          expires_at: string | null
+          id: string
+          initial_balance: number
+          organization_id: string
+          purchaser_email: string | null
+          recipient_email: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          current_balance?: number
+          expires_at?: string | null
+          id?: string
+          initial_balance?: number
+          organization_id: string
+          purchaser_email?: string | null
+          recipient_email?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          current_balance?: number
+          expires_at?: string | null
+          id?: string
+          initial_balance?: number
+          organization_id?: string
+          purchaser_email?: string | null
+          recipient_email?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_gift_cards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_notifications: {
         Row: {
           body: string
