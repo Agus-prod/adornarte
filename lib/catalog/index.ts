@@ -1,5 +1,6 @@
 export * from "./repositories/attribute-repository";
 export * from "./repositories/analytics-repository";
+export * from "./repositories/ai-search-repository";
 export * from "./repositories/brand-repository";
 export * from "./repositories/branch-inventory-repository";
 export * from "./repositories/category-repository";
@@ -23,6 +24,7 @@ export * from "./repositories/variant-repository";
 export * from "./repositories/wishlist-repository";
 export * from "./services/catalog-service";
 export * from "./services/analytics-service";
+export * from "./services/ai-search-service";
 export * from "./services/catalog-context-service";
 export * from "./services/brand-service";
 export * from "./services/branch-inventory-service";

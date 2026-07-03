@@ -1330,6 +1330,48 @@ export type Database = {
           },
         ]
       }
+      catalog_search_documents: {
+        Row: {
+          embedding: Json | null
+          id: string
+          organization_id: string
+          product_id: string
+          search_text: string
+          updated_at: string
+        }
+        Insert: {
+          embedding?: Json | null
+          id?: string
+          organization_id: string
+          product_id: string
+          search_text: string
+          updated_at?: string
+        }
+        Update: {
+          embedding?: Json | null
+          id?: string
+          organization_id?: string
+          product_id?: string
+          search_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_search_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_search_documents_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_shipments: {
         Row: {
           cost: number
