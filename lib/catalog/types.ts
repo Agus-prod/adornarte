@@ -158,6 +158,14 @@ export type CatalogRecommendations = {
   lastViewed: CatalogProductSummary[];
 };
 
+export type CatalogAnalyticsSummary = {
+  views: number;
+  cartAdds: number;
+  orders: number;
+  revenue: number;
+  conversionRate: number;
+};
+
 export type CatalogPromotionDiscount = {
   promotion: CatalogPromotion;
   discount: number;

@@ -363,6 +363,74 @@ export type Database = {
           },
         ]
       }
+      catalog_analytics_events: {
+        Row: {
+          cart_id: string | null
+          created_at: string
+          customer_email: string | null
+          event_type: string
+          id: string
+          metadata: Json
+          order_id: string | null
+          organization_id: string
+          product_id: string | null
+          value: number | null
+        }
+        Insert: {
+          cart_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json
+          order_id?: string | null
+          organization_id: string
+          product_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          cart_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json
+          order_id?: string | null
+          organization_id?: string
+          product_id?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_analytics_events_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_analytics_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_analytics_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_analytics_events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_branch_inventory: {
         Row: {
           available_stock: number
