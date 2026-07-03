@@ -939,6 +939,72 @@ export type Database = {
           },
         ]
       }
+      catalog_promotions: {
+        Row: {
+          buy_quantity: number | null
+          created_at: string
+          expires_at: string | null
+          get_quantity: number | null
+          id: string
+          is_active: boolean
+          minimum_quantity: number | null
+          name: string
+          organization_id: string
+          product_id: string | null
+          starts_at: string | null
+          type: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          buy_quantity?: number | null
+          created_at?: string
+          expires_at?: string | null
+          get_quantity?: number | null
+          id?: string
+          is_active?: boolean
+          minimum_quantity?: number | null
+          name: string
+          organization_id: string
+          product_id?: string | null
+          starts_at?: string | null
+          type: string
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          buy_quantity?: number | null
+          created_at?: string
+          expires_at?: string | null
+          get_quantity?: number | null
+          id?: string
+          is_active?: boolean
+          minimum_quantity?: number | null
+          name?: string
+          organization_id?: string
+          product_id?: string | null
+          starts_at?: string | null
+          type?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_promotions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_promotions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_reviews: {
         Row: {
           comment: string | null

@@ -17,6 +17,7 @@ import type {
   CatalogOrderItem,
 } from "@/lib/catalog/repositories/order-repository";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
+import type { CatalogPromotion } from "@/lib/catalog/repositories/promotion-repository";
 import type { ProductVariant } from "@/lib/catalog/repositories/variant-repository";
 import type { Tables } from "@/lib/database.types";
 
@@ -155,6 +156,11 @@ export type CatalogRecommendations = {
   crossSelling: CatalogProductSummary[];
   upselling: CatalogProductSummary[];
   lastViewed: CatalogProductSummary[];
+};
+
+export type CatalogPromotionDiscount = {
+  promotion: CatalogPromotion;
+  discount: number;
 };
 
 export type CatalogProductDetail =
