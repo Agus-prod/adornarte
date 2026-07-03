@@ -363,6 +363,68 @@ export type Database = {
           },
         ]
       }
+      catalog_branch_inventory: {
+        Row: {
+          available_stock: number
+          branch_id: string
+          id: string
+          organization_id: string
+          product_id: string
+          reserved_stock: number
+          updated_at: string
+          variant_id: string | null
+        }
+        Insert: {
+          available_stock?: number
+          branch_id: string
+          id?: string
+          organization_id: string
+          product_id: string
+          reserved_stock?: number
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Update: {
+          available_stock?: number
+          branch_id?: string
+          id?: string
+          organization_id?: string
+          product_id?: string
+          reserved_stock?: number
+          updated_at?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_branch_inventory_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_branch_inventory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_branch_inventory_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_branch_inventory_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_carts: {
         Row: {
           coupon_code: string | null

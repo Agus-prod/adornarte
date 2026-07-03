@@ -9,6 +9,7 @@ import { RelatedProductsSection } from "@/components/catalog/related-products-se
 import { WishlistButton } from "@/components/catalog/wishlist-button";
 import { ProductReviews } from "@/components/catalog/product-reviews";
 import { RecommendationsSection } from "@/components/catalog/recommendations-section";
+import { BranchAvailability } from "@/components/catalog/branch-availability";
 import {
   getCatalogProductDetailBySlug,
   getRelatedCatalogProducts,
@@ -23,6 +24,7 @@ import {
   getCatalogRecommendations,
   rememberViewedProduct,
 } from "@/lib/catalog/services/recommendation-service";
+import { getCatalogBranchAvailability } from "@/lib/catalog/services/branch-inventory-service";
 
 type PageProps = {
   params: Promise<{
@@ -106,6 +108,11 @@ export default async function CatalogProductPage({
       organizationId,
       product.product.id
     );
+  const branchInventory =
+    await getCatalogBranchAvailability(
+      product.product.id,
+      organizationId
+    );
   await rememberViewedProduct(
     product.product.id
   );
@@ -180,6 +187,10 @@ export default async function CatalogProductPage({
 
       <ProductAttributeList
         attributes={product.attributes}
+      />
+
+      <BranchAvailability
+        inventory={branchInventory}
       />
 
       <RelatedProductsSection
