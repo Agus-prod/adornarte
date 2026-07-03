@@ -567,6 +567,62 @@ export type Database = {
           },
         ]
       }
+      catalog_cms_pages: {
+        Row: {
+          banner_url: string | null
+          content: string | null
+          created_at: string
+          id: string
+          is_published: boolean
+          meta_description: string | null
+          meta_title: string | null
+          organization_id: string
+          published_at: string | null
+          slug: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          organization_id: string
+          published_at?: string | null
+          slug: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          organization_id?: string
+          published_at?: string | null
+          slug?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_cms_pages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_coupons: {
         Row: {
           code: string
