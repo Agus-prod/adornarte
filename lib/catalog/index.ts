@@ -42,6 +42,7 @@ export * from "./services/notification-service";
 export * from "./services/promotion-service";
 export * from "./services/review-service";
 export * from "./services/recommendation-service";
+export * from "./services/readiness-service";
 export * from "./services/shipping-service";
 export * from "./services/search-service";
 export * from "./services/seo-service";

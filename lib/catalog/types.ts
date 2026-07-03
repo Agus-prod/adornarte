@@ -188,6 +188,11 @@ export type CatalogMarketplaceFeedItem = {
   availability: string;
 };
 
+export type CatalogReadinessItem = {
+  label: string;
+  ready: boolean;
+};
+
 export type CatalogProductDetail =
   CatalogProductSummary & {
     product: CatalogProduct;
