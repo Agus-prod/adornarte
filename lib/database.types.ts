@@ -929,6 +929,95 @@ export type Database = {
           },
         ]
       }
+      catalog_loyalty_accounts: {
+        Row: {
+          created_at: string
+          customer_email: string
+          id: string
+          organization_id: string
+          points_balance: number
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          id?: string
+          organization_id: string
+          points_balance?: number
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          id?: string
+          organization_id?: string
+          points_balance?: number
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_loyalty_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_loyalty_movements: {
+        Row: {
+          created_at: string
+          id: string
+          loyalty_account_id: string
+          notes: string | null
+          organization_id: string
+          points: number
+          reference_id: string | null
+          reference_type: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          loyalty_account_id: string
+          notes?: string | null
+          organization_id: string
+          points: number
+          reference_id?: string | null
+          reference_type?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          loyalty_account_id?: string
+          notes?: string | null
+          organization_id?: string
+          points?: number
+          reference_id?: string | null
+          reference_type?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_loyalty_movements_loyalty_account_id_fkey"
+            columns: ["loyalty_account_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_loyalty_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_loyalty_movements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_order_items: {
         Row: {
           created_at: string
