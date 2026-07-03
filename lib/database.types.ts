@@ -1062,6 +1062,117 @@ export type Database = {
           },
         ]
       }
+      catalog_shipping_zones: {
+        Row: {
+          base_rate: number
+          city: string | null
+          courier: string | null
+          created_at: string
+          free_shipping_minimum: number | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          rate_per_kg: number
+          updated_at: string
+        }
+        Insert: {
+          base_rate?: number
+          city?: string | null
+          courier?: string | null
+          created_at?: string
+          free_shipping_minimum?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          rate_per_kg?: number
+          updated_at?: string
+        }
+        Update: {
+          base_rate?: number
+          city?: string | null
+          courier?: string | null
+          created_at?: string
+          free_shipping_minimum?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          rate_per_kg?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_shipping_zones_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_shipments: {
+        Row: {
+          cost: number
+          courier: string | null
+          created_at: string
+          id: string
+          order_id: string
+          organization_id: string
+          status: string
+          tracking_number: string | null
+          updated_at: string
+          zone_id: string | null
+        }
+        Insert: {
+          cost?: number
+          courier?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          organization_id: string
+          status?: string
+          tracking_number?: string | null
+          updated_at?: string
+          zone_id?: string | null
+        }
+        Update: {
+          cost?: number
+          courier?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          organization_id?: string
+          status?: string
+          tracking_number?: string | null
+          updated_at?: string
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_shipments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_shipments_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_shipping_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_wishlist_items: {
         Row: {
           created_at: string
