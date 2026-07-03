@@ -594,6 +594,61 @@ export type Database = {
           },
         ]
       }
+      catalog_inventory_sync_events: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          product_id: string
+          source: string
+          stock: number
+          synced_at: string
+          variant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          product_id: string
+          source: string
+          stock?: number
+          synced_at?: string
+          variant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          product_id?: string
+          source?: string
+          stock?: number
+          synced_at?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_inventory_sync_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_inventory_sync_events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_inventory_sync_events_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_order_items: {
         Row: {
           created_at: string
