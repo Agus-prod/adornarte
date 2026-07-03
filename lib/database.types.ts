@@ -711,6 +711,59 @@ export type Database = {
           },
         ]
       }
+      catalog_notifications: {
+        Row: {
+          body: string
+          channel: string
+          created_at: string
+          id: string
+          organization_id: string
+          recipient: string
+          reference_id: string | null
+          reference_type: string | null
+          sent_at: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          channel: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          recipient: string
+          reference_id?: string | null
+          reference_type?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          recipient?: string
+          reference_id?: string | null
+          reference_type?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_order_items: {
         Row: {
           created_at: string
