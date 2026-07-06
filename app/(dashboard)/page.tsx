@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 import Link from "next/link";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { getDashboardStats } from "@/lib/dashboard/get-dashboard-stats";
@@ -8,7 +10,12 @@ import {
 } from "@/lib/dashboard/get-latest-sales";
 
 export default async function DashboardPage() {
-  const stats =
+  const profile = await getCurrentProfile();
+
+if (!profile) {
+  redirect("/login");
+}
+const stats =
     await getDashboardStats();
 
   const topProduct =
