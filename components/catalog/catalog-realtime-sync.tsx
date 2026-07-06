@@ -40,17 +40,8 @@ export function CatalogRealtimeSync({
         {
           event: "*",
           schema: "public",
-          table: "catalog_carts",
-          filter: `id=eq.${cartId}`,
-        },
-        scheduleRefresh
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "catalog_cart_items",
+          table:
+            "catalog_cart_realtime_events",
           filter: `cart_id=eq.${cartId}`,
         },
         scheduleRefresh

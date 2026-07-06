@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import {
   createCart,
   createCartItem,
+  createCartRealtimeEvent,
   deleteCartItem,
   getCart,
   getCartItemByProduct,
@@ -147,6 +148,10 @@ async function persistTotals(
         coupon?.code ?? null,
       updated_at: new Date().toISOString(),
     }
+  );
+  await createCartRealtimeEvent(
+    cart.id,
+    "cart_updated"
   );
 
   return totals;

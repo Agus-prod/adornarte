@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRef } from "react";
 import {
   ArrowLeftRight,
   BarChart3,
@@ -103,9 +104,20 @@ const groups = [
 
 export function MobileNavigation() {
   const pathname = usePathname();
+  const menuRef =
+    useRef<HTMLDetailsElement>(null);
+
+  function closeMenu() {
+    if (menuRef.current) {
+      menuRef.current.open = false;
+    }
+  }
 
   return (
-    <details className="group relative lg:hidden">
+    <details
+      ref={menuRef}
+      className="group relative lg:hidden"
+    >
       <summary
         aria-label="Abrir navegacion"
         className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-2xl border border-pink-100 bg-white px-3 text-sm font-semibold text-zinc-800 shadow-sm"
@@ -115,7 +127,7 @@ export function MobileNavigation() {
         Menu
       </summary>
 
-      <div className="fixed inset-x-3 bottom-4 top-[4.75rem] z-50 overflow-y-auto rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70">
+      <div className="fixed inset-x-3 top-[4.75rem] z-50 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70">
         <p className="text-xs font-semibold uppercase tracking-wide text-pink-600">
           Navegacion
         </p>
@@ -140,6 +152,7 @@ export function MobileNavigation() {
                     <Link
                       key={link.href}
                       href={link.href}
+                      onClick={closeMenu}
                       className={
                         isActive
                           ? "flex min-h-12 items-center gap-2 rounded-2xl bg-pink-100 px-3 text-sm font-semibold text-pink-700"
