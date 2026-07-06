@@ -1,5 +1,6 @@
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { StaffUserForm } from "@/components/users/staff-user-form";
 
 const roleScopes = {
   admin:
@@ -42,12 +43,14 @@ export default async function PerfilesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Perfiles y roles
+          Usuarios y roles
         </h1>
         <p className="mt-2 text-gray-500">
-          Base para administrar visibilidad y accesos por rol.
+          Crea accesos al sistema y asigna el rol de cada persona.
         </p>
       </div>
+
+      <StaffUserForm />
 
       <div className="grid gap-4 md:grid-cols-4">
         {Object.entries(roleScopes).map(
@@ -67,7 +70,42 @@ export default async function PerfilesPage() {
         )}
       </div>
 
-      <div className="overflow-hidden rounded-3xl border bg-white shadow-sm">
+      <div className="grid gap-3 md:hidden">
+        {(data ?? []).map((item) => (
+          <article
+            key={item.id}
+            className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm"
+          >
+            <div className="min-w-0">
+              <h2 className="truncate text-lg font-bold">
+                {item.full_name ?? item.email}
+              </h2>
+              <p className="mt-1 break-all text-sm text-zinc-500">
+                {item.email}
+              </p>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-pink-50 px-3 py-1 text-sm font-semibold capitalize text-pink-700">
+                {item.role}
+              </span>
+              <span
+                className={
+                  item.is_active === false
+                    ? "rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-700"
+                    : "rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700"
+                }
+              >
+                {item.is_active === false
+                  ? "Inactivo"
+                  : "Activo"}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-3xl border bg-white shadow-sm md:block">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
             <tr>
