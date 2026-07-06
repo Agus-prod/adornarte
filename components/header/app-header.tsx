@@ -1,5 +1,6 @@
 import { dismissAllAppNotifications, dismissAppNotification } from "@/app/(dashboard)/notificaciones/actions";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { MobileNavigation } from "@/components/sidebar/mobile-navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { getAppNotifications } from "@/lib/notifications/get-app-notifications";
 import {
@@ -32,15 +33,21 @@ export async function AppHeader() {
           flex
           items-center
           justify-between
-          px-4
+          px-3
+          sm:px-4
           md:px-8
-          py-4
+          py-3
+          md:py-4
         "
       >
-        <div>
+        <div className="flex min-w-0 items-center gap-2">
+          <MobileNavigation />
+          <div className="min-w-0">
           <h1
             className="
-              text-xl
+              truncate
+              text-lg
+              sm:text-xl
               md:text-2xl
               font-bold
               bg-gradient-to-r
@@ -56,9 +63,10 @@ export async function AppHeader() {
           <p className="text-xs md:text-sm text-gray-500">
             Sistema de Gestión
           </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex shrink-0 items-center gap-1.5 md:gap-4">
           <details className="group relative">
             <summary
               className="
@@ -71,7 +79,8 @@ export async function AppHeader() {
                 border
                 border-gray-100
                 bg-white
-                p-3
+                p-2.5
+                sm:p-3
                 text-gray-500
                 transition-all
                 hover:-translate-y-0.5
@@ -87,7 +96,7 @@ export async function AppHeader() {
               )}
             </summary>
 
-            <div className="absolute right-0 z-50 mt-3 w-96 max-w-[calc(100vw-2rem)] rounded-3xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70">
+            <div className="fixed inset-x-3 top-[4.75rem] z-50 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70 sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-96 sm:max-w-[calc(100vw-2rem)] sm:rounded-3xl">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase text-pink-600">

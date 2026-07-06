@@ -4,6 +4,7 @@ import { CatalogFilterPanel } from "@/components/catalog/catalog-filter-panel";
 import { CatalogDropdownCoordinator } from "@/components/catalog/catalog-dropdown-coordinator";
 import { CatalogProductGrid } from "@/components/catalog/catalog-product-grid";
 import { CatalogSearchForm } from "@/components/catalog/catalog-search-form";
+import { CatalogRealtimeSync } from "@/components/catalog/catalog-realtime-sync";
 import { MarketplaceCartPanel } from "@/components/catalog/marketplace-cart-panel";
 import { CustomerAccessMenu } from "@/components/catalog/customer-access-menu";
 import type { CatalogCustomer } from "@/lib/catalog/repositories/customer-repository";
@@ -104,6 +105,7 @@ function CartMenu({
     <details
       className="group relative"
       data-catalog-menu
+      data-catalog-cart-menu
     >
       <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-full bg-white px-3 py-2 text-pink-700 shadow-sm sm:px-4">
         <ShoppingBag
@@ -121,6 +123,12 @@ function CartMenu({
         data-dropdown-panel
         className="fixed inset-x-3 top-16 z-30 max-w-none sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
       >
+        <div
+          data-cart-live-status
+          hidden
+          aria-live="polite"
+          className="mb-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700 shadow-sm"
+        />
         <MarketplaceCartPanel
           cart={cart}
           variant="dropdown"
@@ -160,6 +168,9 @@ export function CommerceHome({
   return (
     <main className="min-h-screen bg-[#fbfaf8] text-zinc-950">
       <CatalogDropdownCoordinator />
+      <CatalogRealtimeSync
+        cartId={cart?.cart.id ?? null}
+      />
       <section className="overflow-visible border-b border-pink-100 bg-[radial-gradient(circle_at_20%_10%,#fce7f3,transparent_30%),radial-gradient(circle_at_90%_20%,#ede9fe,transparent_28%),linear-gradient(135deg,#fff_0%,#fff7fb_45%,#f8f5ff_100%)] pt-20 sm:pt-16">
         <div className="fixed inset-x-0 top-0 z-50 border-b border-pink-100/70 bg-white/85 shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4">

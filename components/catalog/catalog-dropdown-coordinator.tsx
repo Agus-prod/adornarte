@@ -55,6 +55,72 @@ export function CatalogDropdownCoordinator() {
       }
     }
 
+    function showCartStatus(
+      productName: string,
+      done = false
+    ) {
+      const cartMenu =
+        document.querySelector<HTMLDetailsElement>(
+          "[data-catalog-cart-menu]"
+        );
+
+      if (!cartMenu) {
+        return;
+      }
+
+      closeOthers(cartMenu);
+      cartMenu.open = true;
+
+      const status =
+        cartMenu.querySelector<HTMLElement>(
+          "[data-cart-live-status]"
+        );
+
+      if (!status) {
+        return;
+      }
+
+      status.hidden = false;
+      status.textContent = done
+        ? "Carrito actualizado."
+        : `Agregando ${productName} al carrito...`;
+
+      if (done) {
+        window.setTimeout(() => {
+          status.hidden = true;
+          status.textContent = "";
+        }, 1800);
+      }
+    }
+
+    function handleCartAddStart(
+      event: Event
+    ) {
+      const productName =
+        event instanceof CustomEvent
+          ? String(
+              event.detail?.productName ??
+                "producto"
+            )
+          : "producto";
+
+      showCartStatus(productName);
+    }
+
+    function handleCartAddDone(
+      event: Event
+    ) {
+      const productName =
+        event instanceof CustomEvent
+          ? String(
+              event.detail?.productName ??
+                "producto"
+            )
+          : "producto";
+
+      showCartStatus(productName, true);
+    }
+
     const menus =
       document.querySelectorAll<HTMLDetailsElement>(
         selector
@@ -71,6 +137,14 @@ export function CatalogDropdownCoordinator() {
       "pointerdown",
       handlePointerDown
     );
+    window.addEventListener(
+      "catalog-cart:add-start",
+      handleCartAddStart
+    );
+    window.addEventListener(
+      "catalog-cart:add-done",
+      handleCartAddDone
+    );
 
     return () => {
       for (const menu of menus) {
@@ -83,6 +157,14 @@ export function CatalogDropdownCoordinator() {
       document.removeEventListener(
         "pointerdown",
         handlePointerDown
+      );
+      window.removeEventListener(
+        "catalog-cart:add-start",
+        handleCartAddStart
+      );
+      window.removeEventListener(
+        "catalog-cart:add-done",
+        handleCartAddDone
       );
     };
   }, []);

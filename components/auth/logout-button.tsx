@@ -21,7 +21,8 @@ export function LogoutButton() {
         flex items-center gap-2
         rounded-xl
         border
-        px-4 py-2
+        p-2.5
+        sm:px-4 sm:py-2
         text-sm font-medium
         text-gray-700
         transition-all
@@ -31,7 +32,9 @@ export function LogoutButton() {
       "
     >
       <LogOut size={16} />
-      Salir
+      <span className="hidden sm:inline">
+        Salir
+      </span>
     </button>
   );
 }

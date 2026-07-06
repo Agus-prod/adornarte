@@ -25,9 +25,11 @@ const idleState: CatalogAccountActionState = {
 function SubmitButton({
   children,
   className,
+  pendingLabel = "Procesando...",
 }: {
   children: React.ReactNode;
   className: string;
+  pendingLabel?: string;
 }) {
   const { pending } = useFormStatus();
 
@@ -37,7 +39,7 @@ function SubmitButton({
       disabled={pending}
       className={className}
     >
-      {pending ? "Procesando..." : children}
+      {pending ? pendingLabel : children}
     </button>
   );
 }
@@ -177,7 +179,10 @@ export function CustomerAccessMenu({
                   placeholder="Contrasena"
                   className="min-h-10 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
                 />
-                <SubmitButton className="rounded-2xl bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-70">
+                <SubmitButton
+                  className="rounded-2xl bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-80"
+                  pendingLabel="Entrando..."
+                >
                   Iniciar
                 </SubmitButton>
               </form>
@@ -219,7 +224,10 @@ export function CustomerAccessMenu({
                 placeholder="Contrasena"
                 className="min-h-10 w-full rounded-2xl border border-zinc-200 px-3 text-sm"
               />
-              <SubmitButton className="min-h-10 w-full rounded-2xl bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-70">
+              <SubmitButton
+                className="min-h-10 w-full rounded-2xl bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700 disabled:cursor-wait disabled:opacity-80"
+                pendingLabel="Creando..."
+              >
                 Crear cuenta
               </SubmitButton>
             </form>

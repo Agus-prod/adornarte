@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { addCatalogCartItem } from "@/app/catalogo/carrito/actions";
+import { AddToCartSubmitButton } from "@/components/catalog/add-to-cart-submit-button";
 import type { CatalogProductSummary } from "@/lib/catalog/types";
 
 type Props = {
@@ -86,12 +87,9 @@ export function CatalogProductCard({
               name="quantity"
               value="1"
             />
-            <button
-              type="submit"
-              className="min-h-11 w-full rounded-xl bg-pink-600 px-3 text-sm font-semibold leading-tight text-white transition hover:bg-pink-700 sm:rounded-2xl"
-            >
-              Agregar
-            </button>
+            <AddToCartSubmitButton
+              productName={product.name}
+            />
           </form>
 
           <Link
