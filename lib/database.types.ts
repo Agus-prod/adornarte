@@ -627,6 +627,7 @@ export type Database = {
         Row: {
           code: string
           created_at: string
+          customer_id: string | null
           expires_at: string | null
           id: string
           is_active: boolean
@@ -643,6 +644,7 @@ export type Database = {
         Insert: {
           code: string
           created_at?: string
+          customer_id?: string | null
           expires_at?: string | null
           id?: string
           is_active?: boolean
@@ -659,6 +661,7 @@ export type Database = {
         Update: {
           code?: string
           created_at?: string
+          customer_id?: string | null
           expires_at?: string | null
           id?: string
           is_active?: boolean
@@ -673,6 +676,13 @@ export type Database = {
           value?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "catalog_coupons_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "catalog_coupons_organization_id_fkey"
             columns: ["organization_id"]
@@ -744,6 +754,7 @@ export type Database = {
       }
       catalog_customers: {
         Row: {
+          auth_user_id: string | null
           created_at: string
           email: string
           id: string
@@ -753,6 +764,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string
           email: string
           id?: string
@@ -762,6 +774,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string
           email?: string
           id?: string
@@ -1157,6 +1170,7 @@ export type Database = {
           order_number: string
           organization_id: string
           payment_method: string | null
+          sale_id: string | null
           shipping_address: string
           shipping_city: string
           shipping_notes: string | null
@@ -1178,6 +1192,7 @@ export type Database = {
           order_number: string
           organization_id: string
           payment_method?: string | null
+          sale_id?: string | null
           shipping_address: string
           shipping_city: string
           shipping_notes?: string | null
@@ -1199,6 +1214,7 @@ export type Database = {
           order_number?: string
           organization_id?: string
           payment_method?: string | null
+          sale_id?: string | null
           shipping_address?: string
           shipping_city?: string
           shipping_notes?: string | null
@@ -1224,6 +1240,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "catalog_orders_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
         ]
       }
       catalog_payments: {
@@ -1239,6 +1262,7 @@ export type Database = {
           paid_at: string | null
           provider: string | null
           reference: string | null
+          receipt_image_path: string | null
           status: string
           updated_at: string
         }
@@ -1254,6 +1278,7 @@ export type Database = {
           paid_at?: string | null
           provider?: string | null
           reference?: string | null
+          receipt_image_path?: string | null
           status?: string
           updated_at?: string
         }
@@ -1269,6 +1294,7 @@ export type Database = {
           paid_at?: string | null
           provider?: string | null
           reference?: string | null
+          receipt_image_path?: string | null
           status?: string
           updated_at?: string
         }
@@ -1292,6 +1318,77 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "catalog_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalog_settings: {
+        Row: {
+          bank_accounts: Json
+          billing_address: string | null
+          billing_email: string | null
+          billing_name: string | null
+          billing_phone: string | null
+          billing_rtn: string | null
+          checkout_notes: string | null
+          created_at: string
+          id: string
+          order_whatsapp_recipient: string | null
+          organization_id: string
+          privacy_policy_url: string | null
+          shop_description: string | null
+          shop_name: string
+          shop_tagline: string | null
+          terms_url: string | null
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          bank_accounts?: Json
+          billing_address?: string | null
+          billing_email?: string | null
+          billing_name?: string | null
+          billing_phone?: string | null
+          billing_rtn?: string | null
+          checkout_notes?: string | null
+          created_at?: string
+          id?: string
+          order_whatsapp_recipient?: string | null
+          organization_id: string
+          privacy_policy_url?: string | null
+          shop_description?: string | null
+          shop_name?: string
+          shop_tagline?: string | null
+          terms_url?: string | null
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          bank_accounts?: Json
+          billing_address?: string | null
+          billing_email?: string | null
+          billing_name?: string | null
+          billing_phone?: string | null
+          billing_rtn?: string | null
+          checkout_notes?: string | null
+          created_at?: string
+          id?: string
+          order_whatsapp_recipient?: string | null
+          organization_id?: string
+          privacy_policy_url?: string | null
+          shop_description?: string | null
+          shop_name?: string
+          shop_tagline?: string | null
+          terms_url?: string | null
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1799,6 +1896,7 @@ export type Database = {
           current_balance: number | null
           email: string | null
           id: string
+          is_active: boolean
           last_payment_at: string | null
           last_purchase_at: string | null
           name: string
@@ -1813,6 +1911,7 @@ export type Database = {
           current_balance?: number | null
           email?: string | null
           id?: string
+          is_active?: boolean
           last_payment_at?: string | null
           last_purchase_at?: string | null
           name: string
@@ -1827,6 +1926,7 @@ export type Database = {
           current_balance?: number | null
           email?: string | null
           id?: string
+          is_active?: boolean
           last_payment_at?: string | null
           last_purchase_at?: string | null
           name?: string
@@ -2492,6 +2592,7 @@ export type Database = {
           created_at: string | null
           customer_id: string | null
           id: string
+          invoice_number: string | null
           organization_id: string
           paid_amount: number | null
           payment_method: string | null
@@ -2505,6 +2606,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: string | null
           id?: string
+          invoice_number?: string | null
           organization_id: string
           paid_amount?: number | null
           payment_method?: string | null
@@ -2518,6 +2620,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: string | null
           id?: string
+          invoice_number?: string | null
           organization_id?: string
           paid_amount?: number | null
           payment_method?: string | null

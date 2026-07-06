@@ -121,83 +121,91 @@ export function PublicationForm({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="mb-2 block text-sm font-medium">
-            Meta title
-          </label>
+      <details className="rounded-xl border bg-gray-50">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-semibold">
+          SEO avanzado
+        </summary>
 
-          <input
-            name="meta_title"
-            defaultValue={publication.meta_title ?? ""}
-            className="w-full rounded-xl border p-3"
-          />
+        <div className="space-y-4 border-t p-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Meta title
+              </label>
+
+              <input
+                name="meta_title"
+                defaultValue={publication.meta_title ?? ""}
+                className="w-full rounded-xl border bg-white p-3"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Canonical
+              </label>
+
+              <input
+                name="canonical_url"
+                defaultValue={publication.canonical_url ?? ""}
+                className="w-full rounded-xl border bg-white p-3"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium">
+              Meta description
+            </label>
+
+            <textarea
+              name="meta_description"
+              rows={3}
+              defaultValue={publication.meta_description ?? ""}
+              className="w-full rounded-xl border bg-white p-3"
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Open Graph title
+              </label>
+
+              <input
+                name="open_graph_title"
+                defaultValue={publication.open_graph_title ?? ""}
+                className="w-full rounded-xl border bg-white p-3"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Open Graph image URL
+              </label>
+
+              <input
+                name="open_graph_image_url"
+                defaultValue={publication.open_graph_image_url ?? ""}
+                className="w-full rounded-xl border bg-white p-3"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium">
+              Open Graph description
+            </label>
+
+            <textarea
+              name="open_graph_description"
+              rows={3}
+              defaultValue={publication.open_graph_description ?? ""}
+              className="w-full rounded-xl border bg-white p-3"
+            />
+          </div>
         </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium">
-            Canonical
-          </label>
-
-          <input
-            name="canonical_url"
-            defaultValue={publication.canonical_url ?? ""}
-            className="w-full rounded-xl border p-3"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="mb-2 block text-sm font-medium">
-          Meta description
-        </label>
-
-        <textarea
-          name="meta_description"
-          rows={3}
-          defaultValue={publication.meta_description ?? ""}
-          className="w-full rounded-xl border p-3"
-        />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="mb-2 block text-sm font-medium">
-            Open Graph title
-          </label>
-
-          <input
-            name="open_graph_title"
-            defaultValue={publication.open_graph_title ?? ""}
-            className="w-full rounded-xl border p-3"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium">
-            Open Graph image URL
-          </label>
-
-          <input
-            name="open_graph_image_url"
-            defaultValue={publication.open_graph_image_url ?? ""}
-            className="w-full rounded-xl border p-3"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="mb-2 block text-sm font-medium">
-          Open Graph description
-        </label>
-
-        <textarea
-          name="open_graph_description"
-          rows={3}
-          defaultValue={publication.open_graph_description ?? ""}
-          className="w-full rounded-xl border p-3"
-        />
-      </div>
+      </details>
 
       <button
         type="submit"

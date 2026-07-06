@@ -8,12 +8,24 @@ type Item = {
   price: number;
 };
 
+type PaymentMethod =
+  | "CASH"
+  | "CARD"
+  | "TRANSFER"
+  | "CREDIT";
+
 export async function createSaleAction(
   items: Item[],
-  customerId?: string
+  customerId?: string,
+  paymentMethod: PaymentMethod = "CASH",
+  paidAmount?: number,
+  reference?: string
 ) {
   return createSale(
     items,
-    customerId
+    customerId,
+    paymentMethod,
+    paidAmount,
+    reference
   );
 }

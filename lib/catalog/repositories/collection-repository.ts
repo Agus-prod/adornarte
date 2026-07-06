@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -14,7 +14,7 @@ export type CollectionProduct =
 export async function getCollections(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collections")
@@ -31,7 +31,7 @@ export async function getCollections(
 export async function getFeaturedCollections(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collections")
@@ -51,7 +51,7 @@ export async function getCollectionById(
   collectionId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collections")
@@ -69,7 +69,7 @@ export async function getCollectionBySlug(
   organizationId: string,
   slug: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collections")
@@ -87,7 +87,7 @@ export async function getCollectionBySlug(
 export async function createCollection(
   values: TablesInsert<"collections">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collections")
@@ -105,7 +105,7 @@ export async function updateCollection(
   organizationId: string,
   values: TablesUpdate<"collections">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collections")
@@ -124,7 +124,7 @@ export async function deleteCollection(
   collectionId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("collections")
@@ -139,7 +139,7 @@ export async function getCollectionProducts(
   collectionId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collection_products")
@@ -156,7 +156,7 @@ export async function getCollectionProducts(
 export async function addCollectionProduct(
   values: TablesInsert<"collection_products">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collection_products")
@@ -174,7 +174,7 @@ export async function updateCollectionProduct(
   organizationId: string,
   values: TablesUpdate<"collection_products">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("collection_products")
@@ -193,7 +193,7 @@ export async function removeCollectionProduct(
   collectionProductId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("collection_products")

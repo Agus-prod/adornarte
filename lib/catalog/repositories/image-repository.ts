@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -14,7 +14,7 @@ export async function getImages(
   productId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_images")
@@ -33,7 +33,7 @@ export async function getImage(
   imageId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_images")
@@ -50,7 +50,7 @@ export async function getImage(
 export async function createImage(
   values: TablesInsert<"product_images">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_images")
@@ -67,7 +67,7 @@ export async function updateImage(
   imageId: string,
   values: TablesUpdate<"product_images">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_images")
@@ -84,7 +84,7 @@ export async function updateImage(
 export async function deleteImage(
   imageId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("product_images")
@@ -98,7 +98,7 @@ export async function clearPrimaryImages(
   productId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("product_images")
@@ -115,7 +115,7 @@ export async function uploadProductImage(
   path: string,
   file: File
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } =
     await supabase.storage
@@ -132,7 +132,7 @@ export async function uploadProductImage(
 export async function removeProductImageFile(
   path: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } =
     await supabase.storage
@@ -145,7 +145,7 @@ export async function removeProductImageFile(
 export async function getProductImagePublicUrl(
   path: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data } =
     supabase.storage
@@ -160,7 +160,7 @@ export async function updateProductPrimaryImage(
   organizationId: string,
   imageUrl: string | null
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("products")

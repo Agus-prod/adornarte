@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -12,7 +12,7 @@ export async function getAttributes(
   productId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_attributes")
@@ -31,7 +31,7 @@ export async function getAttribute(
   attributeId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_attributes")
@@ -48,7 +48,7 @@ export async function getAttribute(
 export async function createAttribute(
   values: TablesInsert<"product_attributes">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_attributes")
@@ -65,7 +65,7 @@ export async function updateAttribute(
   attributeId: string,
   values: TablesUpdate<"product_attributes">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_attributes")
@@ -82,7 +82,7 @@ export async function updateAttribute(
 export async function deleteAttribute(
   attributeId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("product_attributes")

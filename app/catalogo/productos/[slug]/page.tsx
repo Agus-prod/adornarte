@@ -10,6 +10,7 @@ import { WishlistButton } from "@/components/catalog/wishlist-button";
 import { ProductReviews } from "@/components/catalog/product-reviews";
 import { RecommendationsSection } from "@/components/catalog/recommendations-section";
 import { BranchAvailability } from "@/components/catalog/branch-availability";
+import { CatalogStorefrontHeader } from "@/components/catalog/catalog-storefront-header";
 import {
   getCatalogProductDetailBySlug,
   getRelatedCatalogProducts,
@@ -22,9 +23,10 @@ import {
 import { getProductReviews } from "@/lib/catalog/services/review-service";
 import {
   getCatalogRecommendations,
-  rememberViewedProduct,
 } from "@/lib/catalog/services/recommendation-service";
 import { getCatalogBranchAvailability } from "@/lib/catalog/services/branch-inventory-service";
+import { getCartDetail } from "@/lib/catalog/services/cart-service";
+import { getCurrentCatalogCustomer } from "@/lib/catalog/services/customer-service";
 
 type PageProps = {
   params: Promise<{
@@ -94,40 +96,48 @@ export default async function CatalogProductPage({
     notFound();
   }
 
-  const relatedProducts =
-    await getRelatedCatalogProducts(
+  const [
+    relatedProducts,
+    reviews,
+    recommendations,
+    branchInventory,
+    cart,
+    customer,
+  ] = await Promise.all([
+    getRelatedCatalogProducts(
       organizationId,
       product.product.id
-    );
-  const reviews =
-    await getProductReviews(
-      product.product.id
-    );
-  const recommendations =
-    await getCatalogRecommendations(
+    ),
+    getProductReviews(product.product.id),
+    getCatalogRecommendations(
       organizationId,
       product.product.id
-    );
-  const branchInventory =
-    await getCatalogBranchAvailability(
+    ),
+    getCatalogBranchAvailability(
       product.product.id,
       organizationId
-    );
-  await rememberViewedProduct(
-    product.product.id
-  );
+    ),
+    getCartDetail(),
+    getCurrentCatalogCustomer(),
+  ]);
   const primaryStock =
     product.variants.find(
       (variant) => variant.is_default
     )?.stock ?? product.product.stock ?? 0;
 
   return (
-    <main className="mx-auto max-w-6xl space-y-10 px-4 py-8">
+    <main className="min-h-screen bg-[#fbfaf8]">
+      <CatalogStorefrontHeader
+        cart={cart}
+        customer={customer}
+        showBack
+      />
+      <div className="mx-auto max-w-6xl space-y-10 px-4 py-8">
       <CatalogStructuredData
         data={buildProductSchema(product)}
       />
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem]">
+      <div className="grid gap-8 rounded-[2rem] bg-white p-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_26rem]">
         <ProductGallery
           productName={product.name}
           fallbackImageUrl={
@@ -136,8 +146,11 @@ export default async function CatalogProductPage({
           images={product.images}
         />
 
-        <div className="space-y-6">
+        <div className="space-y-6 rounded-[2rem] bg-pink-50/50 p-5">
           <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-600">
+              Producto destacado
+            </p>
             <h1 className="text-3xl font-bold tracking-tight">
               {product.name}
             </h1>
@@ -149,7 +162,7 @@ export default async function CatalogProductPage({
             </div>
           </div>
 
-          <div className="rounded-lg border p-4">
+          <div className="rounded-2xl border border-pink-100 bg-white p-4">
             <div className="text-sm text-gray-500">
               Disponibilidad
             </div>
@@ -210,6 +223,7 @@ export default async function CatalogProductPage({
         productSlug={product.slug}
         reviews={reviews}
       />
+      </div>
     </main>
   );
 }

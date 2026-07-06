@@ -1,17 +1,21 @@
 import { cookies } from "next/headers";
+import { createClient } from "@/lib/supabase/server";
 import {
   createCustomer,
   createCustomerAddress,
   getCustomerAddresses,
+  getCustomerByAuthUserId,
   getCustomerByEmail,
   updateCustomer,
 } from "@/lib/catalog/repositories/customer-repository";
 import { getPublicCatalogOrganizationId } from "@/lib/catalog/services/catalog-context-service";
+import { syncCatalogCustomerToErp } from "@/lib/customers/sync-catalog-customer";
 import type { CatalogCustomerAccount } from "@/lib/catalog/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const customerEmailCookie =
   "adornarte_catalog_customer_email";
+const minimumPasswordLength = 8;
 
 function readText(
   formData: FormData,
@@ -30,6 +34,36 @@ function readOptionalText(
   const value = readText(
     formData,
     key
+  );
+
+  return value || null;
+}
+
+function readFirstText(
+  formData: FormData,
+  keys: string[]
+) {
+  for (const key of keys) {
+    const value = readText(
+      formData,
+      key
+    );
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return "";
+}
+
+function readFirstOptionalText(
+  formData: FormData,
+  keys: string[]
+) {
+  const value = readFirstText(
+    formData,
+    keys
   );
 
   return value || null;
@@ -64,16 +98,155 @@ async function setCustomerEmail(
   );
 }
 
-export async function getCurrentCustomerEmail() {
+async function clearCustomerEmail() {
   const cookieStore = await cookies();
 
+  cookieStore.delete(
+    customerEmailCookie
+  );
+}
+
+function normalizeEmail(email: string) {
+  return email.toLowerCase();
+}
+
+function getPassword(formData: FormData) {
+  return readText(
+    formData,
+    "password"
+  );
+}
+
+function assertPassword(password: string) {
+  if (
+    password.length <
+    minimumPasswordLength
+  ) {
+    throw new Error(
+      "La contraseña debe tener al menos 8 caracteres."
+    );
+  }
+}
+
+function isMissingColumnError(error: unknown) {
+  if (
+    typeof error !== "object" ||
+    error === null ||
+    !("code" in error)
+  ) {
+    return false;
+  }
+
+  const code = error.code;
+  const message =
+    "message" in error
+      ? String(error.message)
+      : "";
+
+  return (
+    code === "42703" ||
+    (code === "PGRST204" &&
+      message.includes("auth_user_id"))
+  );
+}
+
+async function getCurrentAuthUser() {
+  const supabase =
+    await createClient();
+  const { data, error } =
+    await supabase.auth.getUser();
+
+  if (error) {
+    return null;
+  }
+
+  return data.user;
+}
+
+async function linkAuthUserToCustomer(
+  customerId: string,
+  organizationId: string,
+  authUserId: string
+) {
+  try {
+    return await updateCustomer(
+      customerId,
+      organizationId,
+      {
+        auth_user_id: authUserId,
+        updated_at:
+          new Date().toISOString(),
+      }
+    );
+  } catch (error) {
+    if (isMissingColumnError(error)) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function getCurrentCustomerEmail() {
+  const user =
+    await getCurrentAuthUser();
+
+  if (user?.email) {
+    return normalizeEmail(user.email);
+  }
+
+  const cookieStore = await cookies();
   return (
     cookieStore.get(customerEmailCookie)
       ?.value ?? null
   );
 }
 
-export async function saveCustomerProfile(
+export async function getCurrentCatalogCustomer() {
+  const organizationId =
+    getOrganizationId();
+  const user =
+    await getCurrentAuthUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const customerByAuth =
+    await getCustomerByAuthUserId(
+      organizationId,
+      user.id
+    );
+
+  if (customerByAuth) {
+    return customerByAuth;
+  }
+
+  if (!user.email) {
+    return null;
+  }
+
+  const customerByEmail =
+    await getCustomerByEmail(
+      organizationId,
+      normalizeEmail(user.email)
+    );
+
+  if (!customerByEmail) {
+    return null;
+  }
+
+  const linkedCustomer =
+    await linkAuthUserToCustomer(
+      customerByEmail.id,
+      organizationId,
+      user.id
+    );
+
+  return linkedCustomer ?? customerByEmail;
+}
+
+export async function loginCustomerFromForm(
   formData: FormData
 ) {
   const organizationId =
@@ -82,6 +255,73 @@ export async function saveCustomerProfile(
     formData,
     "email"
   ).toLowerCase();
+  const password = getPassword(formData);
+
+  if (!email || !password) {
+    throw new Error(
+      "Email y contraseña requeridos."
+    );
+  }
+
+  const supabase =
+    await createClient();
+  const { data, error } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+  if (error || !data.user) {
+    throw new Error(
+      "No encontramos una cuenta con esas credenciales."
+    );
+  }
+
+  const customer =
+    (await getCustomerByAuthUserId(
+      organizationId,
+      data.user.id
+    )) ??
+    await getCustomerByEmail(
+      organizationId,
+      email
+    );
+
+  if (!customer) {
+    throw new Error(
+        "No encontramos una cuenta con ese email."
+    );
+  }
+
+  if (
+    customer.auth_user_id !==
+    data.user.id
+  ) {
+    await linkAuthUserToCustomer(
+      customer.id,
+      organizationId,
+      data.user.id
+    );
+  }
+
+  await clearCustomerEmail();
+}
+
+export async function logoutCustomer() {
+  const supabase =
+    await createClient();
+  await supabase.auth.signOut();
+  await clearCustomerEmail();
+}
+
+export async function createCustomerAccount(
+  formData: FormData
+) {
+  const organizationId =
+    getOrganizationId();
+  const email = normalizeEmail(
+    readText(formData, "email")
+  );
   const name = readText(
     formData,
     "name"
@@ -90,6 +330,183 @@ export async function saveCustomerProfile(
     formData,
     "phone"
   );
+  const password = getPassword(formData);
+
+  if (!email || !name || !password) {
+    throw new Error(
+      "Nombre, email y contraseña requeridos."
+    );
+  }
+
+  assertPassword(password);
+
+  const existingCustomer =
+    await getCustomerByEmail(
+      organizationId,
+      email
+    );
+
+  if (existingCustomer?.auth_user_id) {
+    throw new Error(
+      "Ya existe una cuenta con ese email."
+    );
+  }
+
+  const admin = createAdminClient();
+  const { data, error } =
+    await admin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        name,
+        organization_id: organizationId,
+        source: "online_store",
+      },
+    });
+
+  let authUserId = data.user?.id ?? null;
+
+  if (error || !authUserId) {
+    const supabase =
+      await createClient();
+    const signInResult =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+    if (
+      signInResult.error ||
+      !signInResult.data.user
+    ) {
+      throw new Error(
+        "Ya existe una cuenta con ese email o no se pudo crear la cuenta."
+      );
+    }
+
+    authUserId =
+      signInResult.data.user.id;
+  }
+
+  let catalogCustomer =
+    existingCustomer;
+
+  if (catalogCustomer) {
+    try {
+      catalogCustomer =
+        await updateCustomer(
+          catalogCustomer.id,
+          organizationId,
+          {
+            auth_user_id: authUserId,
+            name,
+            phone,
+            updated_at:
+              new Date().toISOString(),
+          }
+        );
+    } catch (error) {
+      if (!isMissingColumnError(error)) {
+        throw error;
+      }
+
+      catalogCustomer =
+        await updateCustomer(
+          catalogCustomer.id,
+          organizationId,
+          {
+            name,
+            phone,
+            updated_at:
+              new Date().toISOString(),
+          }
+        );
+    }
+  } else {
+    try {
+      catalogCustomer =
+        await createCustomer({
+          organization_id: organizationId,
+          auth_user_id: authUserId,
+          email,
+          name,
+          phone,
+        });
+    } catch (error) {
+      if (!isMissingColumnError(error)) {
+        throw error;
+      }
+
+      catalogCustomer =
+        await createCustomer({
+          organization_id: organizationId,
+          email,
+          name,
+          phone,
+        });
+    }
+  }
+
+  if (
+    catalogCustomer.auth_user_id !==
+    authUserId
+  ) {
+    await linkAuthUserToCustomer(
+        catalogCustomer.id,
+        organizationId,
+        authUserId
+      );
+  }
+
+  await syncCatalogCustomerToErp({
+    organizationId,
+    name: catalogCustomer.name,
+    email: catalogCustomer.email,
+    phone: catalogCustomer.phone,
+  });
+
+  const supabase =
+    await createClient();
+  const signInResult =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+  if (signInResult.error) {
+    throw signInResult.error;
+  }
+
+  await clearCustomerEmail();
+}
+
+export async function saveCustomerProfile(
+  formData: FormData
+) {
+  const organizationId =
+    getOrganizationId();
+  const email = readFirstText(
+    formData,
+    [
+      "email",
+      "customer_email",
+    ]
+  ).toLowerCase();
+  const name = readFirstText(
+    formData,
+    [
+      "name",
+      "customer_name",
+    ]
+  );
+  const phone = readFirstOptionalText(
+    formData,
+    [
+      "phone",
+      "customer_phone",
+    ]
+  );
 
   if (!email || !name) {
     throw new Error(
@@ -97,22 +514,47 @@ export async function saveCustomerProfile(
     );
   }
 
+  const user =
+    await getCurrentAuthUser();
   const customer =
-    await getCustomerByEmail(
-      organizationId,
-      email
-    );
+    user
+      ? await getCurrentCatalogCustomer()
+      : await getCustomerByEmail(
+          organizationId,
+          email
+        );
 
   if (customer) {
-    await updateCustomer(
-      customer.id,
-      organizationId,
-      {
-        name,
-        phone,
-        updated_at: new Date().toISOString(),
+    try {
+      await updateCustomer(
+        customer.id,
+        organizationId,
+        {
+          auth_user_id:
+            user?.id ??
+            customer.auth_user_id,
+          name,
+          phone,
+          updated_at:
+            new Date().toISOString(),
+        }
+      );
+    } catch (error) {
+      if (!isMissingColumnError(error)) {
+        throw error;
       }
-    );
+
+      await updateCustomer(
+        customer.id,
+        organizationId,
+        {
+          name,
+          phone,
+          updated_at:
+            new Date().toISOString(),
+        }
+      );
+    }
   } else {
     await createCustomer({
       organization_id: organizationId,
@@ -122,7 +564,16 @@ export async function saveCustomerProfile(
     });
   }
 
-  await setCustomerEmail(email);
+  await syncCatalogCustomerToErp({
+    organizationId,
+    name,
+    email,
+    phone,
+  });
+
+  if (!user) {
+    await setCustomerEmail(email);
+  }
 }
 
 export async function createCustomerAddressFromForm(
@@ -130,24 +581,12 @@ export async function createCustomerAddressFromForm(
 ) {
   const organizationId =
     getOrganizationId();
-  const email =
-    await getCurrentCustomerEmail();
-
-  if (!email) {
-    throw new Error(
-      "Cliente requerido."
-    );
-  }
-
   const customer =
-    await getCustomerByEmail(
-      organizationId,
-      email
-    );
+    await getCurrentCatalogCustomer();
 
   if (!customer) {
     throw new Error(
-      "Cliente no encontrado."
+      "Cliente requerido."
     );
   }
 
@@ -182,18 +621,8 @@ export async function createCustomerAddressFromForm(
 export async function getCustomerAccount(): Promise<CatalogCustomerAccount | null> {
   const organizationId =
     getOrganizationId();
-  const email =
-    await getCurrentCustomerEmail();
-
-  if (!email) {
-    return null;
-  }
-
   const customer =
-    await getCustomerByEmail(
-      organizationId,
-      email
-    );
+    await getCurrentCatalogCustomer();
 
   if (!customer) {
     return null;

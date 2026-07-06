@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -12,7 +12,7 @@ export async function getPublication(
   productId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_publications")
@@ -29,7 +29,7 @@ export async function getPublication(
 export async function getPublishedPublications(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const now = new Date().toISOString();
 
   const { data, error } = await supabase
@@ -56,7 +56,7 @@ export async function getPublishedPublicationBySlug(
   organizationId: string,
   slug: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const now = new Date().toISOString();
 
   const { data, error } = await supabase
@@ -78,7 +78,7 @@ export async function getPublishedPublicationBySlug(
 export async function createPublication(
   values: TablesInsert<"product_publications">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_publications")
@@ -95,7 +95,7 @@ export async function updatePublication(
   publicationId: string,
   values: TablesUpdate<"product_publications">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_publications")

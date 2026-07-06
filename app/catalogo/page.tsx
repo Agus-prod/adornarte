@@ -6,10 +6,13 @@ import {
   getFilteredCatalogProducts,
 } from "@/lib/catalog/services/filter-service";
 import { getCatalogHomeData } from "@/lib/catalog/services/home-service";
+import { getCatalogSettingsView } from "@/lib/catalog/services/settings-service";
 import {
   getCatalogAutocompleteSuggestions,
   searchCatalogProducts,
 } from "@/lib/catalog/services/search-service";
+import { getCartDetail } from "@/lib/catalog/services/cart-service";
+import { getCurrentCatalogCustomer } from "@/lib/catalog/services/customer-service";
 import { buildCatalogMetadata } from "@/lib/catalog/services/seo-service";
 import type { CatalogProductFilters } from "@/lib/catalog/types";
 
@@ -123,6 +126,11 @@ export default async function CatalogPage({
       resolvedSearchParams,
       "q"
     ) ?? "";
+  const orderReceived =
+    getParam(
+      resolvedSearchParams,
+      "pedido"
+    ) === "recibido";
   const filters = cleanFilters(
     getFilters(resolvedSearchParams)
   );
@@ -143,6 +151,9 @@ export default async function CatalogPage({
     filteredProducts,
     searchResults,
     suggestions,
+    settings,
+    cart,
+    customer,
   ] = await Promise.all([
     getCatalogHomeData(organizationId),
     getCatalogFilterOptions(
@@ -164,6 +175,11 @@ export default async function CatalogPage({
           query
         )
       : Promise.resolve([]),
+    getCatalogSettingsView(
+      organizationId
+    ),
+    getCartDetail(),
+    getCurrentCatalogCustomer(),
   ]);
 
   return (
@@ -178,6 +194,10 @@ export default async function CatalogPage({
       }
       suggestions={suggestions}
       query={query}
+      orderReceived={orderReceived}
+      settings={settings}
+      cart={cart}
+      customer={customer}
     />
   );
 }

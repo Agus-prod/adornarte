@@ -2,6 +2,7 @@ import {
   getCouponByCode,
   type CatalogCoupon,
 } from "@/lib/catalog/repositories/coupon-repository";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export function normalizeCouponCode(
   code: string
@@ -11,7 +12,8 @@ export function normalizeCouponCode(
 
 export function validateCoupon(
   coupon: CatalogCoupon | null,
-  subtotal: number
+  subtotal: number,
+  customerId?: string | null
 ) {
   if (!coupon || !coupon.is_active) {
     return null;
@@ -41,6 +43,14 @@ export function validateCoupon(
   }
 
   if (subtotal < coupon.minimum_subtotal) {
+    return null;
+  }
+
+  if (
+    coupon.customer_id &&
+    customerId !== undefined &&
+    coupon.customer_id !== customerId
+  ) {
     return null;
   }
 
@@ -88,7 +98,8 @@ export function getCouponDiscount(
 export async function getValidCouponByCode(
   organizationId: string,
   code: string,
-  subtotal: number
+  subtotal: number,
+  customerEmail?: string | null
 ) {
   const normalizedCode =
     normalizeCouponCode(code);
@@ -102,9 +113,36 @@ export async function getValidCouponByCode(
       organizationId,
       normalizedCode
     );
+  const customerId =
+    customerEmail && coupon?.customer_id
+      ? await getCustomerIdByEmail(
+          organizationId,
+          customerEmail
+        )
+      : null;
 
   return validateCoupon(
     coupon,
-    subtotal
+    subtotal,
+    customerId
   );
+}
+
+async function getCustomerIdByEmail(
+  organizationId: string,
+  email: string
+) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("customers")
+    .select("id")
+    .eq("organization_id", organizationId)
+    .eq("email", email.toLowerCase())
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.id ?? null;
 }

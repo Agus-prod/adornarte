@@ -1,11 +1,14 @@
 import Link from "next/link";
-import { deleteCustomer } from "@/app/(dashboard)/clientes/actions";
+import { deleteCustomerFromForm } from "@/app/(dashboard)/clientes/actions";
 
 type Customer = {
   id: string;
   name: string;
   phone: string | null;
   email: string | null;
+  credit_enabled: boolean | null;
+  credit_limit: number | null;
+  current_balance: number | null;
 };
 
 export function CustomersTable({
@@ -56,6 +59,10 @@ export function CustomersTable({
             </th>
 
             <th className="p-4 text-left">
+              Crédito
+            </th>
+
+            <th className="p-4 text-left">
               Acciones
             </th>
           </tr>
@@ -85,7 +92,43 @@ export function CustomersTable({
                 </td>
 
                 <td className="p-4">
+                  <div className="text-sm">
+                    <div
+                      className={
+                        customer.credit_enabled
+                          ? "font-semibold text-pink-600"
+                          : "text-gray-500"
+                      }
+                    >
+                      {customer.credit_enabled
+                        ? "Activo"
+                        : "Inactivo"}
+                    </div>
+                    <div className="text-gray-500">
+                      Saldo L{" "}
+                      {Number(
+                        customer.current_balance ??
+                          0
+                      ).toFixed(2)}
+                    </div>
+                  </div>
+                </td>
+
+                <td className="p-4">
                   <div className="flex gap-3">
+                    <Link
+                      href={`/clientes/${customer.id}`}
+                      className="
+                        rounded-lg
+                        px-3 py-1
+                        text-pink-600
+                        transition-all
+                        hover:bg-pink-100
+                      "
+                    >
+                      Estado
+                    </Link>
+
                     <Link
                       href={`/clientes/${customer.id}/editar`}
                       className="
@@ -100,14 +143,14 @@ export function CustomersTable({
                     </Link>
 
                     <form
-                      action={async () => {
-                        "use server";
-
-                        await deleteCustomer(
-                          customer.id
-                        );
-                      }}
+                      action={deleteCustomerFromForm}
                     >
+                      <input
+                        type="hidden"
+                        name="customer_id"
+                        value={customer.id}
+                      />
+
                       <button
                         type="submit"
                         className="

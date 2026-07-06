@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { PaymentForm } from "@/components/catalog/payment-form";
 import { getCartDetail } from "@/lib/catalog/services/cart-service";
 import { getPublicCatalogOrganizationId } from "@/lib/catalog/services/catalog-context-service";
+import { getConfiguredCatalogBankAccounts } from "@/lib/catalog/services/bank-account-service";
 import { getCurrentCartPayments } from "@/lib/catalog/services/payment-service";
 
 export default async function CheckoutPaymentPage() {
@@ -26,6 +27,10 @@ export default async function CheckoutPaymentPage() {
 
   const payments =
     await getCurrentCartPayments();
+  const bankAccounts =
+    await getConfiguredCatalogBankAccounts(
+      organizationId
+    );
 
   return (
     <main className="mx-auto max-w-6xl space-y-6 px-4 py-8">
@@ -36,6 +41,7 @@ export default async function CheckoutPaymentPage() {
       <PaymentForm
         cart={cart}
         payments={payments}
+        bankAccounts={bankAccounts}
       />
     </main>
   );

@@ -5,7 +5,9 @@ import {
 } from "@/lib/catalog/repositories/order-repository";
 import { updatePayment } from "@/lib/catalog/repositories/payment-repository";
 import { getCartDetail } from "@/lib/catalog/services/cart-service";
+import { queueCatalogNotification } from "@/lib/catalog/services/notification-service";
 import { getCurrentCartPayments } from "@/lib/catalog/services/payment-service";
+import { getCatalogSettingsView } from "@/lib/catalog/services/settings-service";
 
 function getOrderNumber() {
   return `WEB-${Date.now()}`;
@@ -20,6 +22,37 @@ function assertCheckoutValue(
   }
 
   return value;
+}
+
+async function queueOrderNotifications(
+  orderId: string,
+  organizationId: string,
+  orderNumber: string,
+  customerName: string,
+  total: number
+) {
+  const settings =
+    await getCatalogSettingsView(
+      organizationId
+    );
+  const recipient =
+    settings.orderWhatsappRecipient ??
+    process.env.CATALOG_ORDER_WHATSAPP_RECIPIENT;
+  const body = `Nuevo pedido ${orderNumber} de ${customerName} por L ${total.toFixed(2)}.`;
+
+  if (!recipient) {
+    return;
+  }
+
+  await queueCatalogNotification(
+    organizationId,
+    "whatsapp",
+    recipient,
+    body,
+    "Nuevo pedido Commerce",
+    "catalog_order",
+    orderId
+  );
 }
 
 export async function createOrderFromCurrentCart() {
@@ -122,6 +155,14 @@ export async function createOrderFromCurrentCart() {
       status: "converted",
       updated_at: new Date().toISOString(),
     }
+  );
+
+  await queueOrderNotifications(
+    order.id,
+    order.organization_id,
+    order.order_number,
+    order.customer_name,
+    Number(order.total)
   );
 
   return order;

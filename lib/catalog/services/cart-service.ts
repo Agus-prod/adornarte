@@ -18,6 +18,10 @@ import {
   getCouponDiscount,
   getValidCouponByCode,
 } from "@/lib/catalog/services/coupon-service";
+import {
+  getCurrentCustomerEmail,
+  saveCustomerProfile,
+} from "@/lib/catalog/services/customer-service";
 import type {
   CatalogCartDetail,
   CatalogCartTotals,
@@ -108,7 +112,9 @@ async function persistTotals(
     ? await getValidCouponByCode(
         cart.organization_id,
         cart.coupon_code,
-        subtotal
+        subtotal,
+        cart.customer_email ??
+          (await getCurrentCustomerEmail())
       )
     : null;
   const shippingTotal =
@@ -383,7 +389,9 @@ export async function applyCouponToCart(
     await getValidCouponByCode(
       cart.organization_id,
       code,
-      subtotal
+      subtotal,
+      cart.customer_email ??
+        (await getCurrentCustomerEmail())
     );
 
   if (!coupon) {
@@ -435,6 +443,8 @@ export async function updateCheckoutFromForm(
   const cart =
     await getOrCreateCart();
 
+  await saveCustomerProfile(formData);
+
   const updatedCart = await updateCart(
     cart.id,
     cart.organization_id,
@@ -466,6 +476,9 @@ export async function updateCheckoutFromForm(
       payment_method: readText(
         formData,
         "payment_method"
+      ) || readText(
+        formData,
+        "method"
       ),
       updated_at: new Date().toISOString(),
     }

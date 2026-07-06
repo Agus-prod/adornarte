@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -11,7 +11,7 @@ export type CatalogBrand =
 export async function getCatalogBrands(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("brands")
@@ -28,7 +28,7 @@ export async function getCatalogBrands(
 export async function getActiveCatalogBrands(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("brands")
@@ -47,7 +47,7 @@ export async function getCatalogBrandById(
   brandId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("brands")
@@ -65,7 +65,7 @@ export async function getCatalogBrandBySlug(
   organizationId: string,
   slug: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("brands")
@@ -83,7 +83,7 @@ export async function getCatalogBrandBySlug(
 export async function createCatalogBrand(
   values: TablesInsert<"brands">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("brands")
@@ -101,7 +101,7 @@ export async function updateCatalogBrand(
   organizationId: string,
   values: TablesUpdate<"brands">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("brands")
@@ -120,7 +120,7 @@ export async function deleteCatalogBrand(
   brandId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("brands")
@@ -135,7 +135,7 @@ export async function getCatalogProductsByBrand(
   brandId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("products")

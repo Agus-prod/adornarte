@@ -18,12 +18,13 @@ export function AdminLayout({
     >
       <AppHeader />
 
-      <div className="flex">
+      <div className="flex h-[calc(100vh-5rem)] overflow-hidden">
         <Sidebar />
 
         <main
           className="
             flex-1
+            overflow-y-auto
             p-4
             md:p-6
             xl:p-8

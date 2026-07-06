@@ -13,14 +13,24 @@ export function CatalogFilterPanel({
   options,
 }: Props) {
   return (
+    <details
+      className="group rounded-2xl border border-pink-100 bg-white shadow-sm sm:rounded-3xl"
+      data-animated-disclosure
+    >
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between px-4 text-sm font-semibold text-zinc-800 sm:px-5">
+        <span>Encuentra tu producto</span>
+        <span className="text-pink-600 transition group-open:rotate-180">
+          v
+        </span>
+      </summary>
     <form
       action="/catalogo"
-      className="grid gap-3 border-y bg-white py-4 md:grid-cols-4"
+      className="grid gap-3 border-t border-pink-50 bg-pink-50/30 p-3 sm:p-4 md:grid-cols-4"
     >
       <select
         name="brandId"
         defaultValue={filters.brandId ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       >
         <option value="">Marca</option>
         {options.brands.map((brand) => (
@@ -36,7 +46,7 @@ export function CatalogFilterPanel({
       <select
         name="categoryId"
         defaultValue={filters.categoryId ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       >
         <option value="">Categoria</option>
         {options.categories.map((category) => (
@@ -52,7 +62,7 @@ export function CatalogFilterPanel({
       <select
         name="color"
         defaultValue={filters.color ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       >
         <option value="">Color</option>
         {options.colors.map((color) => (
@@ -68,7 +78,7 @@ export function CatalogFilterPanel({
       <select
         name="tone"
         defaultValue={filters.tone ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       >
         <option value="">Tono</option>
         {options.tones.map((tone) => (
@@ -84,7 +94,7 @@ export function CatalogFilterPanel({
       <select
         name="finish"
         defaultValue={filters.finish ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       >
         <option value="">Acabado</option>
         {options.finishes.map((finish) => (
@@ -104,7 +114,7 @@ export function CatalogFilterPanel({
         step="0.01"
         placeholder="Precio minimo"
         defaultValue={filters.minPrice ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       />
 
       <input
@@ -114,10 +124,10 @@ export function CatalogFilterPanel({
         step="0.01"
         placeholder="Precio maximo"
         defaultValue={filters.maxPrice ?? ""}
-        className="min-h-11 rounded-lg border px-3 text-sm"
+        className="min-h-11 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
       />
 
-      <div className="flex min-h-11 items-center gap-4 rounded-lg border px-3 text-sm">
+      <div className="flex min-h-11 min-w-0 flex-wrap items-center gap-4 rounded-2xl border border-zinc-200 bg-white px-3 text-sm">
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -143,10 +153,11 @@ export function CatalogFilterPanel({
 
       <button
         type="submit"
-        className="min-h-11 rounded-lg bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700"
+        className="min-h-11 rounded-2xl bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700"
       >
         Filtrar
       </button>
     </form>
+    </details>
   );
 }

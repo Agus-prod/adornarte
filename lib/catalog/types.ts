@@ -129,6 +129,32 @@ export type CatalogPaymentMethod =
   | "transfer"
   | "cash_on_delivery";
 
+export type CatalogBankAccount = {
+  id: string;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  accountType: string | null;
+  currency: string;
+};
+
+export type CatalogSettingsView = {
+  shopName: string;
+  shopTagline: string | null;
+  shopDescription: string | null;
+  billingName: string | null;
+  billingRtn: string | null;
+  billingAddress: string | null;
+  billingEmail: string | null;
+  billingPhone: string | null;
+  whatsappNumber: string | null;
+  orderWhatsappRecipient: string | null;
+  bankAccounts: CatalogBankAccount[];
+  checkoutNotes: string | null;
+  privacyPolicyUrl: string | null;
+  termsUrl: string | null;
+};
+
 export type { CatalogPayment };
 
 export type CatalogOrderStatus =

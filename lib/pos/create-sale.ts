@@ -8,11 +8,20 @@ type SaleItem = {
 
 export async function createSale(
   items: SaleItem[],
-  customerId?: string
+  customerId?: string,
+  paymentMethod:
+    | "CASH"
+    | "CARD"
+    | "TRANSFER"
+    | "CREDIT" = "CASH",
+  paidAmount?: number,
+  reference?: string
 ) {
   return await finalizeSale({
     items,
     customerId,
-    paymentMethod: "CASH",
+    paymentMethod,
+    paidAmount,
+    reference,
   });
 }

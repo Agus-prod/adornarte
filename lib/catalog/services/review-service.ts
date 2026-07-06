@@ -83,9 +83,7 @@ export async function createProductReviewFromForm(
     comment:
       readText(formData, "comment") ||
       null,
-    photo_url:
-      readText(formData, "photo_url") ||
-      null,
-    status: "pending",
+    photo_url: null,
+    status: "approved",
   });
 }

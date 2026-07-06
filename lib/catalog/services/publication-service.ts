@@ -84,6 +84,13 @@ function buildPublicationValues(
       formData,
       "published_at"
     );
+  const now = new Date().toISOString();
+  const normalizedPublishedAt =
+    status === "scheduled"
+      ? publishedAt
+      : status === "published"
+        ? now
+        : null;
 
   return {
     slug: slugify(
@@ -121,15 +128,14 @@ function buildPublicationValues(
       formData,
       "open_graph_image_url"
     ),
-    published_at:
-      publishedAt ??
-      (status === "published"
-        ? new Date().toISOString()
-        : null),
-    expires_at: readOptionalDate(
-      formData,
-      "expires_at"
-    ),
+    published_at: normalizedPublishedAt,
+    expires_at:
+      status === "draft"
+        ? null
+        : readOptionalDate(
+            formData,
+            "expires_at"
+          ),
     updated_at: new Date().toISOString(),
   };
 }

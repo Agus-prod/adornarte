@@ -11,6 +11,21 @@ export type CatalogCustomer =
 export type CatalogCustomerAddress =
   Tables<"catalog_customer_addresses">;
 
+function isMissingColumnError(
+  error: {
+    code?: string;
+    message?: string;
+  } | null
+) {
+  return (
+    error?.code === "42703" ||
+    (error?.code === "PGRST204" &&
+      error.message?.includes(
+        "auth_user_id"
+      ))
+  );
+}
+
 export async function getCustomerByEmail(
   organizationId: string,
   email: string
@@ -23,6 +38,32 @@ export async function getCustomerByEmail(
     .eq("organization_id", organizationId)
     .eq("email", email.toLowerCase())
     .maybeSingle();
+
+  if (isMissingColumnError(error)) {
+    return null;
+  }
+
+  if (error) throw error;
+
+  return data satisfies CatalogCustomer | null;
+}
+
+export async function getCustomerByAuthUserId(
+  organizationId: string,
+  authUserId: string
+) {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("catalog_customers")
+    .select("*")
+    .eq("organization_id", organizationId)
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
+
+  if (isMissingColumnError(error)) {
+    return null;
+  }
 
   if (error) throw error;
 

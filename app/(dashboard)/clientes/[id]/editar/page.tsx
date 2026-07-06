@@ -74,6 +74,43 @@ export default async function EditarClientePage({
           />
         </div>
 
+        <div className="rounded-3xl border border-pink-100 bg-pink-50/50 p-5">
+          <label className="flex items-center gap-3 font-semibold">
+            <input
+              type="checkbox"
+              name="credit_enabled"
+              defaultChecked={
+                customer.credit_enabled ??
+                false
+              }
+            />
+            Crédito activo
+          </label>
+
+          <label className="mt-4 block">
+            <span className="mb-2 block">
+              Límite de crédito
+            </span>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              name="credit_limit"
+              defaultValue={
+                customer.credit_limit ?? 0
+              }
+              className="w-full rounded-xl border p-3"
+            />
+          </label>
+
+          <p className="mt-3 text-sm text-gray-500">
+            Saldo actual: L{" "}
+            {Number(
+              customer.current_balance ?? 0
+            ).toFixed(2)}
+          </p>
+        </div>
+
         <button
           type="submit"
           className="rounded-xl bg-pink-500 px-6 py-3 text-white"

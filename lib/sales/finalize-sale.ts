@@ -5,6 +5,7 @@ import { updateStock } from "./update-stock";
 
 import { registerPayment } from "@/lib/payments/register-payment";
 import { getOpenCash } from "@/lib/cash/get-open-cash";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 import type {
   CreateSaleInput,
@@ -20,9 +21,33 @@ export async function finalizeSale(
       (sum, item) =>
         sum +
         item.price *
-          item.quantity,
+        item.quantity,
       0
     );
+  const receivedAmount =
+    input.paidAmount;
+
+  if (
+    input.paymentMethod !== "CREDIT" &&
+    (typeof receivedAmount !==
+      "number" ||
+      !Number.isFinite(
+        receivedAmount
+      ) ||
+      receivedAmount < total)
+  ) {
+    throw new Error(
+      "El monto recibido debe ser igual o mayor al total."
+    );
+  }
+
+  const paidAmount =
+    input.paymentMethod === "CREDIT"
+      ? 0
+      : Math.min(
+          total,
+          input.paidAmount ?? total
+        );
 
   const {
     sale,
@@ -30,7 +55,9 @@ export async function finalizeSale(
   } =
     await createSaleRecord(
       total,
-      input.customerId
+      input.customerId,
+      paidAmount,
+      input.paymentMethod
     );
 
   await createSaleItems(
@@ -45,28 +72,77 @@ export async function finalizeSale(
   const cash =
     await getOpenCash();
 
-  await registerPayment({
-    organizationId:
-      profile.organization_id,
+  if (paidAmount > 0) {
+    await registerPayment({
+      organizationId:
+        profile.organization_id,
 
-    saleId:
-      sale.id,
+      saleId:
+        sale.id,
 
-    amount:
-      total,
+      amount:
+        paidAmount,
 
-    method:
-      input.paymentMethod,
+      method:
+        input.paymentMethod,
 
-    createdBy:
-      profile.id,
+      createdBy:
+        profile.id,
 
-    cashClosingId:
-      cash?.id ?? null,
+      cashClosingId:
+        cash?.id ?? null,
 
-    reference:
-      input.reference,
-  });
+      reference:
+        input.reference,
+    });
+  }
+
+  if (
+    input.paymentMethod === "CREDIT" &&
+    input.customerId
+  ) {
+    const supabase = createAdminClient();
+    const {
+      data: customer,
+      error: customerError,
+    } = await supabase
+      .from("customers")
+      .select("current_balance")
+      .eq("id", input.customerId)
+      .eq(
+        "organization_id",
+        profile.organization_id
+      )
+      .single();
+
+    if (customerError) {
+      throw customerError;
+    }
+
+    const { error: balanceError } =
+      await supabase
+        .from("customers")
+        .update({
+          current_balance:
+            Number(
+              customer.current_balance ??
+                0
+            ) + total,
+          last_purchase_at:
+            new Date().toISOString(),
+          updated_at:
+            new Date().toISOString(),
+        })
+        .eq("id", input.customerId)
+        .eq(
+          "organization_id",
+          profile.organization_id
+        );
+
+    if (balanceError) {
+      throw balanceError;
+    }
+  }
 
   return sale;
 }

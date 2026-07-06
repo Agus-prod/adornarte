@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -11,7 +11,7 @@ export type CatalogCategory =
 export async function getCatalogCategories(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("categories")
@@ -28,7 +28,7 @@ export async function getCatalogCategories(
 export async function getActiveCatalogCategories(
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("categories")
@@ -47,7 +47,7 @@ export async function getCatalogCategoryById(
   categoryId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("categories")
@@ -65,7 +65,7 @@ export async function getCatalogCategoryBySlug(
   organizationId: string,
   slug: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("categories")
@@ -83,7 +83,7 @@ export async function getCatalogCategoryBySlug(
 export async function createCatalogCategory(
   values: TablesInsert<"categories">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("categories")
@@ -101,7 +101,7 @@ export async function updateCatalogCategory(
   organizationId: string,
   values: TablesUpdate<"categories">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("categories")
@@ -120,7 +120,7 @@ export async function deleteCatalogCategory(
   categoryId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("categories")
@@ -135,7 +135,7 @@ export async function getCatalogProductsByCategory(
   categoryId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("products")

@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function getCatalogProducts() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   return supabase
     .from("products")
@@ -13,7 +13,7 @@ export async function getCatalogProductById(
   productId: string,
   organizationId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("products")
@@ -32,7 +32,7 @@ export async function updateCatalogProductFeatured(
   organizationId: string,
   isFeatured: boolean
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("products")

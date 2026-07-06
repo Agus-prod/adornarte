@@ -24,7 +24,9 @@ export default async function CatalogCartPage() {
         Carrito
       </h1>
 
-      <CartSummary cart={cart} />
+      <CartSummary
+        cart={cart}
+      />
     </main>
   );
 }

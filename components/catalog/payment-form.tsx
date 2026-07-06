@@ -1,21 +1,31 @@
 import { registerPayment } from "@/app/catalogo/checkout/pago/actions";
+import { PaymentMethodFields } from "@/components/catalog/payment-method-fields";
 import type {
+  CatalogBankAccount,
   CatalogCartDetail,
+  CatalogPaymentMethod,
   CatalogPayment,
 } from "@/lib/catalog/types";
 
 type Props = {
   cart: CatalogCartDetail;
   payments: CatalogPayment[];
+  bankAccounts: CatalogBankAccount[];
 };
 
 export function PaymentForm({
   cart,
   payments,
+  bankAccounts,
 }: Props) {
+  const paymentMethod =
+    (cart.cart.payment_method ??
+      "cash_on_delivery") as CatalogPaymentMethod;
+
   return (
     <form
       action={registerPayment}
+      encType="multipart/form-data"
       className="grid gap-6 lg:grid-cols-[1fr_22rem]"
     >
       <section className="space-y-4 rounded-lg border bg-white p-5">
@@ -23,27 +33,10 @@ export function PaymentForm({
           Metodo de pago
         </h2>
 
-        <select
-          name="method"
-          defaultValue={
-            cart.cart.payment_method ??
-            "cash_on_delivery"
-          }
-          className="min-h-11 w-full rounded-lg border px-3 text-sm"
-        >
-          <option value="cash_on_delivery">
-            Contra entrega
-          </option>
-          <option value="transfer">
-            Transferencia
-          </option>
-          <option value="stripe">
-            Stripe
-          </option>
-          <option value="paypal">
-            PayPal
-          </option>
-        </select>
+        <PaymentMethodFields
+          defaultMethod={paymentMethod}
+          bankAccounts={bankAccounts}
+        />
 
         <input
           name="reference"

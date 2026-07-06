@@ -281,3 +281,17 @@ export async function deleteProduct(
     "/inventario/productos"
   );
 }
+
+export async function deleteProductFromForm(
+  formData: FormData
+) {
+  const id =
+    formData.get("product_id")?.toString() ??
+    "";
+
+  if (!id) {
+    throw new Error("Producto inválido");
+  }
+
+  await deleteProduct(id);
+}

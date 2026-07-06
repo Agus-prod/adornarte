@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import {
   addCatalogCartItemFromForm,
   applyCouponToCart,
@@ -10,6 +9,11 @@ import {
   updateCatalogCartItemFromForm,
 } from "@/lib/catalog/services/cart-service";
 
+export type CatalogCouponActionState = {
+  status: "idle" | "success" | "error";
+  message: string | null;
+};
+
 export async function addCatalogCartItem(
   formData: FormData
 ) {
@@ -17,8 +21,8 @@ export async function addCatalogCartItem(
     formData
   );
 
+  revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
-  redirect("/catalogo/carrito");
 }
 
 export async function updateCatalogCartItem(
@@ -30,6 +34,7 @@ export async function updateCatalogCartItem(
     formData
   );
 
+  revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
 }
 
@@ -38,19 +43,48 @@ export async function removeCatalogCartItemAction(
 ) {
   await removeCatalogCartItem(itemId);
 
+  revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
 }
 
 export async function applyCatalogCoupon(
+  _state: CatalogCouponActionState,
   formData: FormData
-) {
-  await applyCouponToCart(formData);
+): Promise<CatalogCouponActionState> {
+  try {
+    await applyCouponToCart(formData);
+  } catch (error) {
+    return {
+      status: "error",
+      message: getCouponErrorMessage(error),
+    };
+  }
 
+  revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+
+  return {
+    status: "success",
+    message: "Cupon aplicado.",
+  };
 }
 
 export async function removeCatalogCoupon() {
   await removeCouponFromCart();
 
+  revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+}
+
+function getCouponErrorMessage(
+  error: unknown
+) {
+  if (
+    error instanceof Error &&
+    error.message === "Cupon no valido."
+  ) {
+    return "Cupon no valido. Revisa el codigo e intenta de nuevo.";
+  }
+
+  return "No se pudo aplicar el cupon. Intenta de nuevo.";
 }

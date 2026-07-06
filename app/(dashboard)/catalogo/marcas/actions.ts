@@ -9,6 +9,8 @@ import {
 
 const brandsPath =
   "/catalogo/marcas";
+const catalogPath =
+  "/catalogo";
 
 export async function createCatalogBrandAction(
   formData: FormData
@@ -18,6 +20,7 @@ export async function createCatalogBrandAction(
   );
 
   revalidatePath(brandsPath);
+  revalidatePath(catalogPath);
 }
 
 export async function updateCatalogBrandAction(
@@ -30,6 +33,7 @@ export async function updateCatalogBrandAction(
   );
 
   revalidatePath(brandsPath);
+  revalidatePath(catalogPath);
 }
 
 export async function deleteCatalogBrandAction(
@@ -40,4 +44,5 @@ export async function deleteCatalogBrandAction(
   );
 
   revalidatePath(brandsPath);
+  revalidatePath(catalogPath);
 }

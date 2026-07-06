@@ -10,23 +10,27 @@ import {
   Wallet,
   Truck,
   Building2,
+  Settings,
 } from "lucide-react";
 
 export function Sidebar() {
   return (
     <aside
+      data-app-chrome
       className="
         hidden
         lg:block
         w-72
         px-5
         py-6
+        overflow-hidden
       "
     >
       <div
         className="
-          sticky
-          top-24
+          h-full
+          max-h-full
+          overflow-hidden
           rounded-3xl
           border
           border-white/60
@@ -47,7 +51,7 @@ export function Sidebar() {
           Navegación
         </h2>
 
-        <div className="space-y-6">
+        <div className="h-[calc(100%-3.5rem)] space-y-6 overflow-y-auto pr-1">
 
           {/* DASHBOARD */}
 
@@ -172,6 +176,19 @@ export function Sidebar() {
               icon={<FileBarChart size={18} />}
             >
               Reportes
+            </SidebarLink>
+          </div>
+
+          <div>
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Configuracion
+            </p>
+
+            <SidebarLink
+              href="/configuracion"
+              icon={<Settings size={18} />}
+            >
+              General
             </SidebarLink>
           </div>
 

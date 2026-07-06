@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { deleteProduct } from "@/app/(dashboard)/inventario/productos/actions";
+import { deleteProductFromForm } from "@/app/(dashboard)/inventario/productos/actions";
 
 type Product = {
   id: string;
@@ -191,14 +191,14 @@ export function ProductsTable({
                   </Link>
 
                   <form
-                    action={async () => {
-                      "use server";
-
-                      await deleteProduct(
-                        product.id
-                      );
-                    }}
+                    action={deleteProductFromForm}
                   >
+                    <input
+                      type="hidden"
+                      name="product_id"
+                      value={product.id}
+                    />
+
                     <button
                       type="submit"
                       className="

@@ -3,7 +3,9 @@ import { SalesRepository } from "@/lib/repositories/sales.repository";
 
 export async function createSaleRecord(
   total: number,
-  customerId?: string
+  customerId?: string,
+  paidAmount = total,
+  paymentMethod = "CASH"
 ) {
   const profile =
     await getCurrentProfile();
@@ -24,8 +26,20 @@ export async function createSaleRecord(
 
       total,
 
+      paid_amount: paidAmount,
+
+      pending_amount:
+        total - paidAmount,
+
+      payment_method:
+        paymentMethod,
+
       payment_status:
-        "PENDING",
+        paidAmount >= total
+          ? "PAID"
+          : paidAmount > 0
+            ? "PARTIAL"
+            : "PENDING",
     });
 
   return {

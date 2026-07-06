@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  applyCatalogCoupon,
   removeCatalogCartItemAction,
   removeCatalogCoupon,
   updateCatalogCartItem,
 } from "@/app/catalogo/carrito/actions";
+import { CouponForm } from "@/components/catalog/coupon-form";
 import type { CatalogCartDetail } from "@/lib/catalog/types";
 
 type Props = {
@@ -146,25 +146,12 @@ export function CartSummary({
         </dl>
 
         <div className="mt-5 space-y-3 border-t pt-4">
-          <form
-            action={applyCatalogCoupon}
-            className="flex gap-2"
-          >
-            <input
-              name="coupon_code"
-              defaultValue={
-                cart.cart.coupon_code ?? ""
-              }
-              placeholder="Cupon"
-              className="min-h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm"
-            />
-            <button
-              type="submit"
-              className="rounded-lg bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700"
-            >
-              Aplicar
-            </button>
-          </form>
+          <CouponForm
+            defaultValue={cart.cart.coupon_code}
+            inputClassName="min-h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm"
+            buttonClassName="rounded-lg bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-70"
+            messageClassName="rounded-lg border border-pink-100 bg-pink-50 p-3 text-sm font-semibold text-pink-700"
+          />
 
           {cart.cart.coupon_code && (
             <form action={removeCatalogCoupon}>

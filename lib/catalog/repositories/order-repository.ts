@@ -60,6 +60,24 @@ export async function getOrder(
   return data satisfies CatalogOrder;
 }
 
+export async function getOrderItems(
+  orderId: string,
+  organizationId: string
+) {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("catalog_order_items")
+    .select("*")
+    .eq("order_id", orderId)
+    .eq("organization_id", organizationId)
+    .order("created_at");
+
+  if (error) throw error;
+
+  return data satisfies CatalogOrderItem[];
+}
+
 export async function updateOrder(
   orderId: string,
   organizationId: string,

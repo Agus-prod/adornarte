@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Tables,
   TablesInsert,
@@ -12,7 +12,7 @@ export async function getVariants(
   productId: string,
   organizationId?: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   let query = supabase
     .from("product_variants")
@@ -42,7 +42,7 @@ export async function getVariant(
   id: string,
   organizationId?: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   let query = supabase
     .from("product_variants")
@@ -66,7 +66,7 @@ export async function getVariant(
 export async function createVariant(
   values: TablesInsert<"product_variants">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_variants")
@@ -83,7 +83,7 @@ export async function updateVariant(
   id: string,
   values: TablesUpdate<"product_variants">
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data, error } = await supabase
     .from("product_variants")
@@ -100,7 +100,7 @@ export async function updateVariant(
 export async function deleteVariant(
   id: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from("product_variants")
@@ -114,7 +114,7 @@ export async function setDefaultVariant(
   productId: string,
   variantId: string
 ) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { error: resetError } =
     await supabase
