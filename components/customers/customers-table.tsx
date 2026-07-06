@@ -25,16 +25,92 @@ export function CustomersTable({
   }
 
   return (
-    <div
-      className="
-        overflow-hidden
-        rounded-3xl
-        border
-        bg-white
-        shadow-sm
-      "
-    >
-      <table className="w-full">
+    <>
+      <div className="grid gap-3 md:hidden">
+        {customers.map((customer) => (
+          <article
+            key={customer.id}
+            className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm"
+          >
+            <div className="min-w-0">
+              <h2 className="truncate text-lg font-bold">
+                {customer.name}
+              </h2>
+              <p className="mt-1 break-all text-sm text-zinc-500">
+                {customer.email ?? "Sin email"}
+              </p>
+              <p className="mt-1 text-sm text-zinc-500">
+                {customer.phone ?? "Sin telefono"}
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-2xl bg-zinc-50 p-3 text-sm">
+              <div
+                className={
+                  customer.credit_enabled
+                    ? "font-semibold text-pink-600"
+                    : "text-zinc-500"
+                }
+              >
+                Credito{" "}
+                {customer.credit_enabled
+                  ? "activo"
+                  : "inactivo"}
+              </div>
+              <div className="mt-1 text-zinc-500">
+                Saldo L{" "}
+                {Number(
+                  customer.current_balance ?? 0
+                ).toFixed(2)}
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-2 text-sm font-semibold">
+              <Link
+                href={`/clientes/${customer.id}`}
+                className="flex min-h-10 items-center justify-center rounded-xl bg-pink-50 text-pink-700"
+              >
+                Estado
+              </Link>
+              <Link
+                href={`/clientes/${customer.id}/editar`}
+                className="flex min-h-10 items-center justify-center rounded-xl bg-zinc-50 text-zinc-700"
+              >
+                Editar
+              </Link>
+              <form
+                action={deleteCustomerFromForm}
+                className="min-w-0"
+              >
+                <input
+                  type="hidden"
+                  name="customer_id"
+                  value={customer.id}
+                />
+                <button
+                  type="submit"
+                  className="min-h-10 w-full rounded-xl bg-red-50 text-red-600"
+                >
+                  Eliminar
+                </button>
+              </form>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div
+        className="
+          hidden
+          overflow-hidden
+          rounded-3xl
+          border
+          bg-white
+          shadow-sm
+          md:block
+        "
+      >
+        <table className="w-full">
         <thead>
           <tr
             className="
@@ -170,7 +246,8 @@ export function CustomersTable({
             )
           )}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }

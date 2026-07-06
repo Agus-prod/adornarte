@@ -62,16 +62,95 @@ export function ProductsTable({
   }
 
   return (
-    <div
-      className="
-        overflow-hidden
-        rounded-3xl
-        border
-        bg-white
-        shadow-sm
-      "
-    >
-      <table className="w-full">
+    <>
+      <div className="grid gap-3 md:hidden">
+        {products.map((product) => (
+          <article
+            key={product.id}
+            className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="truncate text-lg font-bold">
+                  {product.name}
+                </h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                  {product.categories?.name ?? "Sin categoria"} /{" "}
+                  {product.brands?.name ?? "Sin marca"}
+                </p>
+              </div>
+              {product.is_featured ? (
+                <span
+                  title="Producto destacado"
+                  className="shrink-0 text-xl"
+                >
+                  *
+                </span>
+              ) : null}
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-2xl bg-zinc-50 p-3">
+                <p className="text-xs font-semibold uppercase text-zinc-400">
+                  Precio
+                </p>
+                <p className="mt-1 font-bold">
+                  L {(product.sale_price ?? 0).toFixed(2)}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-zinc-50 p-3">
+                <p className="text-xs font-semibold uppercase text-zinc-400">
+                  Stock
+                </p>
+                <p className="mt-1 font-bold">
+                  {product.stock ?? 0}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between gap-3">
+              {getStockStatus(
+                product.stock ?? 0,
+                product.min_stock ?? 0
+              )}
+              <div className="flex gap-2">
+                <Link
+                  href={`/inventario/productos/${product.id}/editar`}
+                  className="rounded-xl bg-pink-50 px-3 py-2 text-sm font-semibold text-pink-700"
+                >
+                  Editar
+                </Link>
+                <form action={deleteProductFromForm}>
+                  <input
+                    type="hidden"
+                    name="product_id"
+                    value={product.id}
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600"
+                  >
+                    Eliminar
+                  </button>
+                </form>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div
+        className="
+          hidden
+          overflow-hidden
+          rounded-3xl
+          border
+          bg-white
+          shadow-sm
+          md:block
+        "
+      >
+        <table className="w-full">
         <thead>
           <tr
             className="
@@ -218,7 +297,8 @@ export function ProductsTable({
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }

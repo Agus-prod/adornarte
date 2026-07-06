@@ -11,8 +11,53 @@ type Props = {
 
 export function SuppliersTable({ suppliers }: Props) {
   return (
-    <div className="overflow-x-auto rounded-2xl border bg-white shadow-sm">
-      <table className="w-full">
+    <>
+      <div className="grid gap-3 md:hidden">
+        {suppliers.map((supplier) => (
+          <article
+            key={supplier.id}
+            className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="truncate text-lg font-bold">
+                  {supplier.name}
+                </h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                  {supplier.contact_name || "Sin contacto"}
+                </p>
+                <p className="mt-1 text-sm text-zinc-500">
+                  {supplier.phone || "Sin telefono"}
+                </p>
+              </div>
+              <StatusBadge
+                variant={supplier.is_active ? "success" : "danger"}
+              >
+                {supplier.is_active ? "Activo" : "Inactivo"}
+              </StatusBadge>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Link
+                href={`/compras/proveedores/${supplier.id}/editar`}
+                className="flex min-h-10 items-center justify-center gap-2 rounded-xl bg-pink-50 text-sm font-semibold text-pink-700"
+              >
+                <Pencil className="h-4 w-4" />
+                Editar
+              </Link>
+              <div className="flex min-h-10 items-center justify-center rounded-xl bg-zinc-50">
+                <SupplierStatusButton
+                  supplierId={supplier.id}
+                  isActive={supplier.is_active}
+                />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-2xl border bg-white shadow-sm md:block">
+        <table className="w-full">
         <thead className="bg-gray-50">
           <tr>
             <th className="p-4 text-left">Nombre</th>
@@ -68,7 +113,8 @@ export function SuppliersTable({ suppliers }: Props) {
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }

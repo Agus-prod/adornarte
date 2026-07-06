@@ -19,7 +19,7 @@ export default async function ClientesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             Clientes
@@ -32,7 +32,7 @@ export default async function ClientesPage({
 
         <Link
           href="/clientes/nuevo"
-          className="rounded-xl bg-pink-500 px-4 py-2 text-white hover:bg-pink-600"
+          className="rounded-xl bg-pink-500 px-4 py-2 text-center text-white hover:bg-pink-600"
         >
           + Nuevo Cliente
         </Link>

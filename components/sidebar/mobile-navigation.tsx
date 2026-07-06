@@ -115,7 +115,7 @@ export function MobileNavigation() {
         Menu
       </summary>
 
-      <div className="fixed inset-x-3 top-[4.75rem] z-50 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70">
+      <div className="fixed inset-x-3 bottom-4 top-[4.75rem] z-50 overflow-y-auto rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70">
         <p className="text-xs font-semibold uppercase tracking-wide text-pink-600">
           Navegacion
         </p>

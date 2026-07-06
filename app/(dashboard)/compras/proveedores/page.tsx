@@ -23,7 +23,9 @@ export default async function SuppliersPage() {
             href="/compras/proveedores/nuevo"
             className="
               inline-flex
+              w-full
               items-center
+              justify-center
               gap-2
               rounded-xl
               bg-pink-500
@@ -33,6 +35,7 @@ export default async function SuppliersPage() {
               text-white
               transition
               hover:bg-pink-600
+              sm:w-auto
             "
           >
             <Plus size={18} />

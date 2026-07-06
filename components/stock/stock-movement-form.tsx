@@ -14,17 +14,17 @@ export function StockMovementForm({
   return (
     <form
       action={createMovement}
-      className="space-y-4 rounded-xl border bg-white p-6"
+      className="space-y-4 rounded-2xl border bg-white p-4 shadow-sm sm:p-6"
     >
       <div>
-        <label className="mb-2 block">
+        <label className="mb-2 block text-sm font-semibold text-zinc-700">
           Producto
         </label>
 
         <select
           name="product_id"
           required
-          className="w-full rounded-xl border p-3"
+          className="min-h-11 w-full rounded-xl border p-3 text-base"
         >
           <option value="">
             Seleccionar producto
@@ -42,14 +42,14 @@ export function StockMovementForm({
       </div>
 
       <div>
-        <label className="mb-2 block">
+        <label className="mb-2 block text-sm font-semibold text-zinc-700">
           Tipo de movimiento
         </label>
 
         <select
           name="movement_type"
           required
-          className="w-full rounded-xl border p-3"
+          className="min-h-11 w-full rounded-xl border p-3 text-base"
         >
           <option value="ENTRADA">
             Entrada
@@ -66,7 +66,7 @@ export function StockMovementForm({
       </div>
 
       <div>
-        <label className="mb-2 block">
+        <label className="mb-2 block text-sm font-semibold text-zinc-700">
           Cantidad
         </label>
 
@@ -75,25 +75,25 @@ export function StockMovementForm({
           min="1"
           name="quantity"
           required
-          className="w-full rounded-xl border p-3"
+          className="min-h-11 w-full rounded-xl border p-3 text-base"
         />
       </div>
 
       <div>
-        <label className="mb-2 block">
+        <label className="mb-2 block text-sm font-semibold text-zinc-700">
           Notas
         </label>
 
         <textarea
           name="notes"
           rows={3}
-          className="w-full rounded-xl border p-3"
+          className="w-full rounded-xl border p-3 text-base"
         />
       </div>
 
       <button
         type="submit"
-        className="rounded-xl bg-pink-500 px-6 py-3 text-white"
+        className="min-h-12 w-full rounded-xl bg-pink-500 px-6 py-3 font-semibold text-white sm:w-auto"
       >
         Registrar Movimiento
       </button>
