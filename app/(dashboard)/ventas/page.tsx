@@ -93,32 +93,6 @@ function dedupePaymentsByOrder(
   return [...byOrder.values()];
 }
 
-function isMissingInvoiceColumn(
-  error: unknown
-) {
-  if (
-    typeof error !== "object" ||
-    error === null ||
-    !("code" in error)
-  ) {
-    return false;
-  }
-
-  const code = error.code;
-  const message =
-    "message" in error
-      ? String(error.message)
-      : "";
-
-  return (
-    code === "42703" ||
-    (code === "PGRST204" &&
-      message.includes(
-        "invoice_number"
-      ))
-  );
-}
-
 export default async function SalesPage() {
   const profile =
     await getCurrentProfile();
@@ -134,7 +108,7 @@ export default async function SalesPage() {
   const adminSupabase =
     createAdminClient();
 
-  let [
+  const [
     salesResult,
     commerceOrdersResult,
     commercePaymentsResult,
@@ -254,26 +228,6 @@ export default async function SalesPage() {
       })
       .limit(20),
   ]);
-
-  if (isMissingInvoiceColumn(salesResult.error)) {
-    salesResult = await supabase
-      .from("sales")
-      .select(`
-        id,
-        total,
-        created_at,
-        customers (
-          name
-        )
-      `)
-      .eq(
-        "organization_id",
-        profile.organization_id
-      )
-      .order("created_at", {
-        ascending: false,
-      });
-  }
 
   if (salesResult.error) {
     throw salesResult.error;

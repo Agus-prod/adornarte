@@ -127,6 +127,7 @@ export default async function SaleDetailPage({
       .from("sales")
       .select(`
         id,
+        invoice_number,
         total,
         created_at,
         paid_amount,
