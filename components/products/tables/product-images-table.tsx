@@ -10,11 +10,13 @@ import type { ProductImage } from "@/lib/catalog/repositories/image-repository";
 type Props = {
   productId: string;
   images: ProductImage[];
+  variantNames: string[];
 };
 
 export function ProductImagesTable({
   productId,
   images,
+  variantNames,
 }: Props) {
   return (
     <div className="overflow-hidden rounded-xl border">
@@ -118,6 +120,7 @@ export function ProductImagesTable({
                           productId,
                           image.id
                         )}
+                        variantNames={variantNames}
                       />
                     </div>
                   </details>

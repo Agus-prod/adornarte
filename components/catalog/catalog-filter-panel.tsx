@@ -14,18 +14,18 @@ export function CatalogFilterPanel({
 }: Props) {
   return (
     <details
-      className="group rounded-2xl border border-pink-100 bg-white shadow-sm sm:rounded-3xl"
+      className="group rounded-2xl border border-zinc-100 bg-white/90 shadow-sm"
       data-animated-disclosure
     >
-      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between px-4 text-sm font-semibold text-zinc-800 sm:px-5">
-        <span>Encuentra tu producto</span>
+      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 text-sm font-semibold text-zinc-800 sm:px-5">
+        <span>Filtros</span>
         <span className="text-pink-600 transition group-open:rotate-180">
           v
         </span>
       </summary>
     <form
       action="/catalogo"
-      className="grid gap-3 border-t border-pink-50 bg-pink-50/30 p-3 sm:p-4 md:grid-cols-4"
+      className="grid gap-3 border-t border-zinc-100 bg-white p-3 sm:p-4 md:grid-cols-4"
     >
       <select
         name="brandId"

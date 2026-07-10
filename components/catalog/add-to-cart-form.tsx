@@ -1,4 +1,5 @@
 import { addCatalogCartItem } from "@/app/catalogo/carrito/actions";
+import { AddToCartSubmitButton } from "@/components/catalog/add-to-cart-submit-button";
 import type { CatalogProductDetail } from "@/lib/catalog/types";
 
 type Props = {
@@ -72,10 +73,21 @@ export function AddToCartForm({
 
       <button
         type="submit"
-        className="min-h-11 w-full rounded-lg bg-pink-600 px-4 text-sm font-semibold text-white hover:bg-pink-700"
-      >
-        Agregar al carrito
-      </button>
+        className="sr-only"
+      />
+      <AddToCartSubmitButton
+        productName={product.name}
+        optimisticItem={{
+          productId: product.product.id,
+          variantId:
+            defaultVariant?.id ?? null,
+          unitPrice:
+            defaultVariant?.sale_price ??
+            product.salePrice ??
+            0,
+          imageUrl: product.imageUrl,
+        }}
+      />
     </form>
   );
 }

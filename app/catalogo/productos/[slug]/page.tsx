@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AddToCartForm } from "@/components/catalog/add-to-cart-form";
 import { CatalogStructuredData } from "@/components/catalog/catalog-structured-data";
 import { ProductAttributeList } from "@/components/catalog/product-attribute-list";
-import { ProductGallery } from "@/components/catalog/product-gallery";
-import { ProductVariantList } from "@/components/catalog/product-variant-list";
+import { ProductShowcase } from "@/components/catalog/product-showcase";
+import { ProductCombosSection } from "@/components/catalog/product-combos-section";
 import { RelatedProductsSection } from "@/components/catalog/related-products-section";
-import { WishlistButton } from "@/components/catalog/wishlist-button";
 import { ProductReviews } from "@/components/catalog/product-reviews";
-import { RecommendationsSection } from "@/components/catalog/recommendations-section";
 import { BranchAvailability } from "@/components/catalog/branch-availability";
 import { CatalogStorefrontHeader } from "@/components/catalog/catalog-storefront-header";
 import {
@@ -21,9 +18,6 @@ import {
   buildProductSchema,
 } from "@/lib/catalog/services/seo-service";
 import { getProductReviews } from "@/lib/catalog/services/review-service";
-import {
-  getCatalogRecommendations,
-} from "@/lib/catalog/services/recommendation-service";
 import { getCatalogBranchAvailability } from "@/lib/catalog/services/branch-inventory-service";
 import { getCartDetail } from "@/lib/catalog/services/cart-service";
 import { getCurrentCatalogCustomer } from "@/lib/catalog/services/customer-service";
@@ -33,12 +27,6 @@ type PageProps = {
     slug: string;
   }>;
 };
-
-function formatMoney(
-  value: number | null
-) {
-  return `L ${(value ?? 0).toFixed(2)}`;
-}
 
 export async function generateMetadata({
   params,
@@ -99,7 +87,6 @@ export default async function CatalogProductPage({
   const [
     relatedProducts,
     reviews,
-    recommendations,
     branchInventory,
     cart,
     customer,
@@ -109,10 +96,6 @@ export default async function CatalogProductPage({
       product.product.id
     ),
     getProductReviews(product.product.id),
-    getCatalogRecommendations(
-      organizationId,
-      product.product.id
-    ),
     getCatalogBranchAvailability(
       product.product.id,
       organizationId
@@ -120,11 +103,6 @@ export default async function CatalogProductPage({
     getCartDetail(),
     getCurrentCatalogCustomer(),
   ]);
-  const primaryStock =
-    product.variants.find(
-      (variant) => variant.is_default
-    )?.stock ?? product.product.stock ?? 0;
-
   return (
     <main className="min-h-screen bg-[#fbfaf8]">
       <CatalogStorefrontHeader
@@ -137,66 +115,12 @@ export default async function CatalogProductPage({
         data={buildProductSchema(product)}
       />
 
-      <div className="grid gap-8 rounded-[2rem] bg-white p-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_26rem]">
-        <ProductGallery
-          productName={product.name}
-          fallbackImageUrl={
-            product.imageUrl
-          }
-          images={product.images}
-        />
+      <ProductShowcase product={product} />
 
-        <div className="space-y-6 rounded-[2rem] bg-pink-50/50 p-5">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-600">
-              Producto destacado
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {product.name}
-            </h1>
-
-            <div className="mt-4 text-2xl font-bold text-pink-600">
-              {formatMoney(
-                product.salePrice
-              )}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-pink-100 bg-white p-4">
-            <div className="text-sm text-gray-500">
-              Disponibilidad
-            </div>
-            <div className="mt-1 font-semibold">
-              {primaryStock > 0
-                ? `${primaryStock} disponibles`
-                : "Sin stock"}
-            </div>
-          </div>
-
-          {product.description && (
-            <section className="space-y-2">
-              <h2 className="text-lg font-semibold">
-                Descripcion
-              </h2>
-              <p className="text-gray-600">
-                {product.description}
-              </p>
-            </section>
-          )}
-
-          <ProductVariantList
-            variants={product.variants}
-          />
-
-          <AddToCartForm
-            product={product}
-          />
-
-          <WishlistButton
-            productId={product.product.id}
-          />
-        </div>
-      </div>
+      <ProductCombosSection
+        product={product}
+        products={relatedProducts}
+      />
 
       <ProductAttributeList
         attributes={product.attributes}
@@ -207,15 +131,7 @@ export default async function CatalogProductPage({
       />
 
       <RelatedProductsSection
-        products={
-          recommendations.related.length
-            ? recommendations.related
-            : relatedProducts
-        }
-      />
-
-      <RecommendationsSection
-        recommendations={recommendations}
+        products={relatedProducts}
       />
 
       <ProductReviews

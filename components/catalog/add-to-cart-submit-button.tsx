@@ -5,6 +5,12 @@ import { useFormStatus } from "react-dom";
 
 type Props = {
   productName: string;
+  optimisticItem?: {
+    productId: string;
+    variantId?: string | null;
+    unitPrice: number;
+    imageUrl?: string | null;
+  };
 };
 
 function emitCartEvent(
@@ -22,6 +28,7 @@ function emitCartEvent(
 
 export function AddToCartSubmitButton({
   productName,
+  optimisticItem,
 }: Props) {
   const { pending } = useFormStatus();
   const wasPending = useRef(false);
@@ -45,12 +52,40 @@ export function AddToCartSubmitButton({
     <button
       type="submit"
       disabled={pending}
-      onClick={() =>
+      onClick={(event) => {
+        const form =
+          event.currentTarget.form;
+        const formData = form
+          ? new FormData(form)
+          : null;
+        const quantity = Number(
+          formData?.get("quantity") ?? 1
+        );
+
+        if (optimisticItem) {
+          window.dispatchEvent(
+            new CustomEvent(
+              "catalog-cart:optimistic-add",
+              {
+                detail: {
+                  ...optimisticItem,
+                  name: productName,
+                  quantity:
+                    Number.isFinite(quantity) &&
+                    quantity > 0
+                      ? quantity
+                      : 1,
+                },
+              }
+            )
+          );
+        }
+
         emitCartEvent(
           "catalog-cart:add-start",
           productName
-        )
-      }
+        );
+      }}
       className="min-h-11 w-full rounded-xl bg-pink-600 px-3 text-sm font-semibold leading-tight text-white transition hover:bg-pink-700 disabled:cursor-wait disabled:opacity-80 sm:rounded-2xl"
     >
       {pending ? "Agregando..." : "Agregar"}

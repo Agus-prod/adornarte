@@ -18,6 +18,10 @@ import {
   Wallet,
   X,
 } from "lucide-react";
+import {
+  canAccessPath,
+  type UserRole,
+} from "@/lib/auth/roles";
 
 const groups = [
   {
@@ -102,10 +106,26 @@ const groups = [
   },
 ];
 
-export function MobileNavigation() {
+type Props = {
+  role: UserRole;
+};
+
+export function MobileNavigation({
+  role,
+}: Props) {
   const pathname = usePathname();
   const menuRef =
     useRef<HTMLDetailsElement>(null);
+  const visibleGroups = groups
+    .map((group) => ({
+      ...group,
+      links: group.links.filter((link) =>
+        canAccessPath(role, link.href)
+      ),
+    }))
+    .filter(
+      (group) => group.links.length > 0
+    );
 
   function closeMenu() {
     if (menuRef.current) {
@@ -133,7 +153,7 @@ export function MobileNavigation() {
         </p>
 
         <div className="mt-3 grid gap-4">
-          {groups.map((group) => (
+          {visibleGroups.map((group) => (
             <section key={group.title}>
               <h2 className="px-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">
                 {group.title}

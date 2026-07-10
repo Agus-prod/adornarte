@@ -10,7 +10,7 @@ export async function getActivePromotions(
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
-    .from("catalog_promotions")
+      .from("catalog_promotions")
     .select("*")
     .eq("organization_id", organizationId)
     .eq("is_active", true)

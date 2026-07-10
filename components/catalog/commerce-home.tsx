@@ -1,10 +1,16 @@
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import {
+  ShoppingBag,
+} from "lucide-react";
+import { AdornarteBrandMark } from "@/components/brand/adornarte-brand-mark";
 import { CatalogFilterPanel } from "@/components/catalog/catalog-filter-panel";
 import { CatalogDropdownCoordinator } from "@/components/catalog/catalog-dropdown-coordinator";
+import { CatalogComboRail } from "@/components/catalog/catalog-combo-rail";
 import { CatalogProductGrid } from "@/components/catalog/catalog-product-grid";
+import { CatalogProductRail } from "@/components/catalog/catalog-product-rail";
 import { CatalogSearchForm } from "@/components/catalog/catalog-search-form";
 import { CatalogRealtimeSync } from "@/components/catalog/catalog-realtime-sync";
+import { CatalogCartMenuController } from "@/components/catalog/catalog-cart-menu-controller";
 import { MarketplaceCartPanel } from "@/components/catalog/marketplace-cart-panel";
 import { CustomerAccessMenu } from "@/components/catalog/customer-access-menu";
 import type { CatalogCustomer } from "@/lib/catalog/repositories/customer-repository";
@@ -90,6 +96,7 @@ function ProductSection({
     </section>
   );
 }
+
 function CartMenu({
   cart,
 }: {
@@ -164,21 +171,43 @@ export function CommerceHome({
       filteredProducts,
       home.offerProducts
     );
+  const categorySections =
+    filterOptions.categories
+      .map((category) => ({
+        id: category.id,
+        name: category.name,
+        products: filteredProducts.filter(
+          (product) =>
+            product.categoryId ===
+            category.id
+        ),
+      }))
+      .filter(
+        (section) =>
+          section.products.length > 0
+      )
+      .slice(0, 2);
 
   return (
     <main className="min-h-screen bg-[#fbfaf8] text-zinc-950">
       <CatalogDropdownCoordinator />
+      <CatalogCartMenuController />
       <CatalogRealtimeSync
         cartId={cart?.cart.id ?? null}
       />
-      <section className="overflow-visible border-b border-pink-100 bg-[radial-gradient(circle_at_20%_10%,#fce7f3,transparent_30%),radial-gradient(circle_at_90%_20%,#ede9fe,transparent_28%),linear-gradient(135deg,#fff_0%,#fff7fb_45%,#f8f5ff_100%)] pt-20 sm:pt-16">
+      <section className="overflow-visible border-b border-pink-100 bg-[radial-gradient(circle_at_20%_10%,#fce7f3,transparent_30%),radial-gradient(circle_at_90%_20%,#ede9fe,transparent_28%),linear-gradient(135deg,#fff_0%,#fff7fb_45%,#f8f5ff_100%)] pt-16 sm:pt-16">
         <div className="fixed inset-x-0 top-0 z-50 border-b border-pink-100/70 bg-white/85 shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4">
           <Link
             href="/catalogo"
-            className="min-w-0 truncate text-base font-black tracking-tight sm:text-lg"
+            className="min-w-0"
           >
-            AdornArte Shop
+            <AdornarteBrandMark
+              label="AdornArte Shop"
+              subtitle="Resalta tu belleza"
+              size="sm"
+              variant="shop"
+            />
           </Link>
           <nav className="flex shrink-0 items-center gap-1 text-sm font-semibold sm:gap-2">
             <CustomerAccessMenu
@@ -191,13 +220,21 @@ export function CommerceHome({
         </div>
         </div>
 
-        <div className="mx-auto grid max-w-6xl gap-5 px-3 py-8 sm:px-4 sm:py-10 lg:grid-cols-[1fr_24rem] lg:items-center">
-          <div className="space-y-5 sm:space-y-6">
+        <div className="mx-auto grid max-w-6xl gap-4 px-3 py-5 sm:px-4 sm:py-10 lg:grid-cols-[1fr_24rem] lg:items-center">
+          <div className="space-y-4 sm:space-y-6">
             <div>
+              <div className="mb-5 hidden sm:block">
+                <AdornarteBrandMark
+                  label="AdornArte Shop"
+                  subtitle="Resalta tu belleza"
+                  size="lg"
+                  variant="shop"
+                />
+              </div>
               <p className="text-xs font-semibold uppercase text-pink-600 sm:text-sm">
                 {settings.shopName}
               </p>
-              <h1 className="mt-2 max-w-3xl text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl md:text-5xl">
+              <h1 className="mt-2 max-w-3xl text-2xl font-bold tracking-tight text-zinc-950 sm:text-4xl md:text-5xl">
                 {settings.shopTagline ??
                   "Belleza lista para llevar"}
               </h1>
@@ -213,11 +250,24 @@ export function CommerceHome({
             />
           </div>
 
-          <div className="rounded-2xl border border-pink-100 bg-white p-4 text-zinc-950 shadow-xl shadow-pink-100/60 sm:rounded-3xl sm:p-5">
+          <div className="hidden rounded-2xl border border-pink-100 bg-white p-4 text-zinc-950 shadow-xl shadow-pink-100/60 sm:block sm:rounded-3xl sm:p-5">
             {heroProduct ? (
               <>
+                {(() => {
+                  const heroPrice =
+                    heroProduct.salePrice ?? 0;
+                  const heroRegularPrice =
+                    heroProduct.regularPrice;
+                  const heroOnOffer =
+                    heroRegularPrice !== null &&
+                    heroRegularPrice > heroPrice;
+
+                  return (
+                    <>
                 <p className="text-sm font-semibold uppercase text-pink-600">
-                  Disponible ahora
+                  {heroOnOffer
+                    ? "Oferta disponible"
+                    : "Disponible ahora"}
                 </p>
                 <h2 className="mt-2 text-xl font-bold sm:text-2xl">
                   {heroProduct.name}
@@ -227,9 +277,17 @@ export function CommerceHome({
                     {heroProduct.description}
                   </p>
                 )}
-                <div className="mt-4 text-2xl font-bold sm:mt-5 sm:text-3xl">
-                  L{" "}
-                  {(heroProduct.salePrice ?? 0).toFixed(2)}
+                <div className="mt-4 sm:mt-5">
+                  {heroOnOffer &&
+                    heroRegularPrice !== null && (
+                    <div className="text-sm font-semibold text-zinc-400 line-through">
+                      L{" "}
+                      {heroRegularPrice.toFixed(2)}
+                    </div>
+                  )}
+                  <div className="text-2xl font-bold sm:text-3xl">
+                    L {heroPrice.toFixed(2)}
+                  </div>
                 </div>
                 <Link
                   href={`/catalogo/productos/${heroProduct.slug}`}
@@ -237,6 +295,9 @@ export function CommerceHome({
                 >
                   Comprar producto
                 </Link>
+                    </>
+                  );
+                })()}
               </>
             ) : (
               <div className="py-10 text-center text-sm text-zinc-500">
@@ -247,7 +308,7 @@ export function CommerceHome({
         </div>
       </section>
 
-      <div className="mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-8">
+      <div className="mx-auto max-w-6xl px-3 py-5 sm:px-4 sm:py-8">
         <div className="space-y-8 sm:space-y-10">
         {orderReceived && (
           <div className="rounded-3xl border border-pink-200 bg-pink-50 p-5">
@@ -279,34 +340,50 @@ export function CommerceHome({
           options={filterOptions}
         />
 
-        <ProductSection
-          title={
-            activeFilters
-              ? "Resultados"
-              : "Comprar ahora"
-          }
-          subtitle={
-            activeFilters
-              ? "Productos que coinciden con tu busqueda."
-              : "Estos productos ya estan listos para agregarse al carrito."
-          }
-          products={filteredProducts}
-        />
+        {activeFilters ? (
+          <ProductSection
+            title="Resultados"
+            products={filteredProducts}
+          />
+        ) : (
+          <>
+            <CatalogComboRail
+              combos={home.combos}
+            />
+            <CatalogProductRail
+              title="Comprar ahora"
+              products={filteredProducts}
+            />
+          </>
+        )}
 
         {!activeFilters && (
           <>
+          <div id="categorias">
+            <div className="space-y-8 sm:space-y-10">
+              {categorySections.map(
+                (section) => (
+                <CatalogProductRail
+                  key={section.id}
+                  title={section.name}
+                  products={section.products}
+                  initialCount={8}
+                />
+                )
+              )}
+            </div>
+          </div>
+
           {showFeatured && (
-            <ProductSection
+            <CatalogProductRail
               title="Destacados"
-              subtitle="Productos marcados para mostrarse primero."
               products={home.featuredProducts}
             />
           )}
 
           {showOffers && (
-            <ProductSection
+            <CatalogProductRail
               title="Ofertas"
-              subtitle="Productos con precio promocional publicado."
               products={home.offerProducts}
             />
           )}
@@ -340,40 +417,43 @@ export function CommerceHome({
           )}
 
           {home.brands.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-2xl font-bold tracking-tight">
-                Marcas
-              </h2>
+            <section
+              id="marcas"
+              className="space-y-5"
+            >
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">
+                  Marcas
+                </h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                  Compra por tus marcas favoritas.
+                </p>
+              </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+              <div className="scrollbar-hidden flex gap-8 overflow-x-auto border-y border-pink-100 bg-white/60 px-2 py-6">
                 {home.brands.map((brand) => (
                   <Link
                     key={brand.id}
                     href={`/catalogo?brandId=${brand.id}`}
-                    className="group flex min-h-36 flex-col items-center justify-center rounded-3xl border border-pink-100 bg-white p-5 text-center shadow-sm transition hover:-translate-y-1 hover:border-pink-200 hover:shadow-xl hover:shadow-pink-100/60"
+                    className="group flex min-w-32 shrink-0 flex-col items-center justify-center text-center"
                   >
                     {brand.logo_url ? (
                       <img
                         src={brand.logo_url}
                         alt={brand.name}
-                        className="h-16 max-w-32 object-contain transition duration-300 group-hover:scale-105"
+                        className="h-14 max-w-32 object-contain grayscale transition duration-300 group-hover:scale-110 group-hover:grayscale-0"
                       />
                     ) : (
-                      <span className="flex size-16 items-center justify-center rounded-full bg-pink-50 text-xl font-black text-pink-600">
+                      <span className="flex size-14 items-center justify-center rounded-full bg-pink-50 text-xl font-black text-pink-600 transition group-hover:scale-110">
                         {brand.name
                           .trim()
                           .charAt(0)
                           .toUpperCase() || "M"}
                       </span>
                     )}
-                    <span className="mt-4 text-sm font-bold text-zinc-900 group-hover:text-pink-700">
+                    <span className="mt-3 max-w-32 text-xs font-bold text-zinc-700 transition group-hover:text-pink-700">
                       {brand.name}
                     </span>
-                    {brand.description && (
-                      <span className="mt-1 line-clamp-2 text-xs text-zinc-500">
-                        {brand.description}
-                      </span>
-                    )}
                   </Link>
                 ))}
               </div>

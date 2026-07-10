@@ -1,15 +1,21 @@
 "use client";
 
 import {
+  Barcode,
+  Camera,
   CreditCard,
   Minus,
   Package,
   Plus,
   Search,
   ShoppingCart,
+  X,
 } from "lucide-react";
 import {
+  useCallback,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -20,6 +26,8 @@ import { createSaleAction } from "@/app/(dashboard)/pos/actions";
 type Product = {
   id: string;
   name: string;
+  barcode?: string | null;
+  sku?: string | null;
   stock: number | null;
   sale_price: number | null;
 };
@@ -39,6 +47,28 @@ type PaymentMethod =
   | "CARD"
   | "TRANSFER"
   | "CREDIT";
+
+type BarcodeDetectorResult = {
+  rawValue: string;
+};
+
+type BarcodeDetectorInstance = {
+  detect(
+    source: CanvasImageSource
+  ): Promise<BarcodeDetectorResult[]>;
+};
+
+type BarcodeDetectorConstructor = new (options: {
+  formats: string[];
+}) => BarcodeDetectorInstance;
+
+function getBarcodeDetector() {
+  return (
+    globalThis as typeof globalThis & {
+      BarcodeDetector?: BarcodeDetectorConstructor;
+    }
+  ).BarcodeDetector;
+}
 
 function money(value: number) {
   return `L ${value.toFixed(2)}`;
@@ -73,17 +103,31 @@ export function PosClient({
     reference,
     setReference,
   ] = useState("");
+  const [
+    scannerOpen,
+    setScannerOpen,
+  ] = useState(false);
+  const [
+    manualCode,
+    setManualCode,
+  ] = useState("");
   const [isPending, startTransition] =
     useTransition();
 
   const filteredProducts = useMemo(
     () =>
       products.filter((product) =>
-        product.name
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          )
+        [
+          product.name,
+          product.sku,
+          product.barcode,
+        ].some((value) =>
+          (value ?? "")
+            .toLowerCase()
+            .includes(
+              search.toLowerCase()
+            )
+        )
       ),
     [products, search]
   );
@@ -171,6 +215,39 @@ export function PosClient({
       );
     });
   }
+
+  const addProductByCode = useCallback(
+    (code: string) => {
+    const cleanCode = code.trim();
+
+    if (!cleanCode) {
+      return;
+    }
+
+    const product = products.find(
+      (item) =>
+        item.barcode === cleanCode ||
+        item.sku === cleanCode
+    );
+
+    if (!product) {
+      toast.error(
+        `No encontre producto con codigo ${cleanCode}.`
+      );
+      setSearch(cleanCode);
+      return;
+    }
+
+    addToCart(product);
+    toast.success(
+      `${product.name} agregado.`
+    );
+    setSearch("");
+    setManualCode("");
+    setScannerOpen(false);
+    },
+    [products]
+  );
 
   function removeItem(productId: string) {
     setCart((current) =>
@@ -315,6 +392,47 @@ export function PosClient({
             placeholder="Buscar producto..."
             className="w-full rounded-xl border py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-pink-300"
           />
+        </div>
+
+        <div className="mb-5 grid gap-2 sm:grid-cols-[1fr_auto]">
+          <div className="relative">
+            <Barcode
+              size={18}
+              className="absolute left-3 top-3.5 text-gray-400"
+            />
+            <input
+              type="text"
+              value={manualCode}
+              onChange={(event) =>
+                setManualCode(
+                  event.target.value
+                )
+              }
+              onKeyDown={(event) => {
+                if (
+                  event.key === "Enter"
+                ) {
+                  event.preventDefault();
+                  addProductByCode(
+                    manualCode
+                  );
+                }
+              }}
+              placeholder="SKU o codigo de barra"
+              className="w-full rounded-xl border py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-pink-300"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              setScannerOpen(true)
+            }
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+          >
+            <Camera size={18} />
+            Escanear
+          </button>
         </div>
 
         <div className="grid max-h-[34rem] min-h-0 flex-1 gap-4 overflow-y-auto pr-1 sm:grid-cols-2 xl:max-h-none">
@@ -609,6 +727,204 @@ export function PosClient({
           </button>
         </div>
       </aside>
+
+      {scannerOpen && (
+        <BarcodeScannerDialog
+          onClose={() =>
+            setScannerOpen(false)
+          }
+          onDetected={addProductByCode}
+        />
+      )}
+    </div>
+  );
+}
+
+function BarcodeScannerDialog({
+  onClose,
+  onDetected,
+}: {
+  onClose: () => void;
+  onDetected: (code: string) => void;
+}) {
+  const videoRef =
+    useRef<HTMLVideoElement | null>(null);
+  const canvasRef =
+    useRef<HTMLCanvasElement | null>(
+      null
+    );
+  const detectedRef = useRef(false);
+  const [
+    scannerMessage,
+    setScannerMessage,
+  ] = useState(
+    "Apunta la camara al codigo de barras."
+  );
+
+  useEffect(() => {
+    let active = true;
+    let frameId = 0;
+    let stream: MediaStream | null = null;
+
+    async function startScanner() {
+      const BarcodeDetector =
+        getBarcodeDetector();
+
+      if (!BarcodeDetector) {
+        setScannerMessage(
+          "Este navegador no permite lectura automatica. Usa el campo de codigo manual."
+        );
+        return;
+      }
+
+      try {
+        stream =
+          await navigator.mediaDevices.getUserMedia(
+            {
+              video: {
+                facingMode:
+                  "environment",
+              },
+              audio: false,
+            }
+          );
+
+        if (videoRef.current) {
+          videoRef.current.srcObject =
+            stream;
+          await videoRef.current.play();
+        }
+
+        const detector =
+          new BarcodeDetector({
+            formats: [
+              "ean_13",
+              "ean_8",
+              "code_128",
+              "code_39",
+              "upc_a",
+              "upc_e",
+              "qr_code",
+            ],
+          });
+
+        async function scan() {
+          if (
+            !active ||
+            detectedRef.current
+          ) {
+            return;
+          }
+
+          const video =
+            videoRef.current;
+          const canvas =
+            canvasRef.current;
+
+          if (
+            video &&
+            canvas &&
+            video.readyState >= 2
+          ) {
+            canvas.width =
+              video.videoWidth;
+            canvas.height =
+              video.videoHeight;
+            const context =
+              canvas.getContext("2d");
+
+            if (context) {
+              context.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+              );
+              const results =
+                await detector.detect(
+                  canvas
+                );
+              const code =
+                results[0]?.rawValue;
+
+              if (code) {
+                detectedRef.current =
+                  true;
+                onDetected(code);
+                return;
+              }
+            }
+          }
+
+          frameId =
+            requestAnimationFrame(
+              scan
+            );
+        }
+
+        frameId =
+          requestAnimationFrame(scan);
+      } catch {
+        setScannerMessage(
+          "No pude abrir la camara. Revisa permisos del navegador."
+        );
+      }
+    }
+
+    void startScanner();
+
+    return () => {
+      active = false;
+      cancelAnimationFrame(frameId);
+      stream
+        ?.getTracks()
+        .forEach((track) =>
+          track.stop()
+        );
+    };
+  }, [onDetected]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/70 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b p-4">
+          <div>
+            <p className="text-xs font-semibold uppercase text-pink-600">
+              POS
+            </p>
+            <h3 className="text-lg font-bold">
+              Escaner de codigo
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border p-2 text-zinc-600"
+            aria-label="Cerrar escaner"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="space-y-4 p-4">
+          <div className="overflow-hidden rounded-2xl bg-zinc-950">
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              className="aspect-video w-full object-cover"
+            />
+          </div>
+          <canvas
+            ref={canvasRef}
+            className="hidden"
+          />
+          <p className="rounded-2xl bg-pink-50 p-3 text-sm text-zinc-600">
+            {scannerMessage}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

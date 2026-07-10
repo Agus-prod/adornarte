@@ -128,6 +128,46 @@ export function CheckoutForm({
                 placeholder="Telefono"
                 className="min-h-12 min-w-0 rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100 md:col-span-2"
               />
+              <div className="rounded-2xl border border-pink-100 bg-pink-50/60 p-4 md:col-span-2">
+                <input
+                  type="hidden"
+                  name="create_account"
+                  value="on"
+                />
+                <div className="flex items-start gap-3 text-sm font-semibold text-zinc-900">
+                  <input
+                    type="checkbox"
+                    checked
+                    readOnly
+                    className="mt-1"
+                  />
+                  <span>
+                    Crear mi cuenta para ver mi pedido despues
+                    <span className="mt-1 block font-normal text-zinc-500">
+                      Usa una contrasena que recuerdes. Con esta cuenta podras ver pedidos, direcciones e historial.
+                    </span>
+                  </span>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <input
+                    name="password"
+                    type="password"
+                    required
+                    minLength={8}
+                    placeholder="Crear contrasena"
+                    className="min-h-12 min-w-0 rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
+                  />
+                  <input
+                    name="confirm_password"
+                    type="password"
+                    required
+                    minLength={8}
+                    placeholder="Confirmar contrasena"
+                    className="min-h-12 min-w-0 rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
+                  />
+                </div>
+              </div>
             </div>
           )}
         </section>
@@ -200,7 +240,7 @@ export function CheckoutForm({
           Resumen
         </h2>
 
-        <div className="mt-5 space-y-3 text-sm text-zinc-600">
+        <div className="scrollbar-hidden mt-5 max-h-64 space-y-3 overflow-y-auto pr-1 text-sm text-zinc-600">
           {cart.items.map((item) => (
             <div
               key={item.id}
@@ -231,7 +271,7 @@ export function CheckoutForm({
           type="submit"
           className="mt-5 min-h-12 w-full rounded-2xl bg-pink-600 px-4 text-sm font-semibold text-white shadow-lg shadow-pink-200/70 transition hover:bg-pink-700"
         >
-          Continuar
+          Continuar con mi pedido
         </button>
       </aside>
     </form>

@@ -129,6 +129,15 @@
 }
 
 @layer utilities {
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
   details[data-catalog-menu][open]
     [data-dropdown-panel],
   details[data-animated-disclosure][open]
@@ -153,8 +162,8 @@
 
 @media print {
   @page {
-    size: A4;
-    margin: 0;
+    size: A4 portrait;
+    margin: 6mm;
   }
 
   html,
@@ -174,10 +183,11 @@
   }
 
   .print-page {
-    min-height: 297mm;
-    width: 210mm;
+    min-height: auto !important;
+    width: 100% !important;
+    max-width: 198mm !important;
     margin: 0 auto;
-    padding: 14mm;
+    padding: 0 !important;
     background: white !important;
     box-shadow: none !important;
   }
@@ -185,5 +195,85 @@
   .print-card {
     border: 0 !important;
     box-shadow: none !important;
+  }
+
+  .invoice-document {
+    border-radius: 0 !important;
+    font-size: 9.5px !important;
+    line-height: 1.25 !important;
+    overflow: visible !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .invoice-document header,
+  .invoice-document section {
+    padding: 5mm 7mm !important;
+  }
+
+  .invoice-document footer {
+    padding: 3mm 7mm !important;
+  }
+
+  .invoice-document h1,
+  .invoice-document h2 {
+    font-size: 18px !important;
+    line-height: 1.1 !important;
+  }
+
+  .invoice-document .rounded-3xl,
+  .invoice-document .rounded-\[2rem\] {
+    border-radius: 10px !important;
+  }
+
+  .invoice-document .p-8,
+  .invoice-document .p-5 {
+    padding: 10px !important;
+  }
+
+  .invoice-document .gap-8,
+  .invoice-document .gap-5 {
+    gap: 10px !important;
+  }
+
+  .invoice-document .mt-8 {
+    margin-top: 10px !important;
+  }
+
+  .invoice-document .mt-5,
+  .invoice-document .mt-4 {
+    margin-top: 8px !important;
+  }
+
+  .invoice-document .text-3xl {
+    font-size: 20px !important;
+  }
+
+  .invoice-document .text-2xl {
+    font-size: 17px !important;
+  }
+
+  .invoice-document .text-xl {
+    font-size: 14px !important;
+  }
+
+  .invoice-document .text-lg {
+    font-size: 12px !important;
+  }
+
+  .invoice-document table th,
+  .invoice-document table td {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  .invoice-document img {
+    max-width: 50px !important;
+    max-height: 50px !important;
+  }
+
+  .invoice-document * {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

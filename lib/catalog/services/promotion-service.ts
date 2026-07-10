@@ -1,8 +1,15 @@
 import { getActivePromotions } from "@/lib/catalog/repositories/promotion-repository";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   CatalogCartDetail,
   CatalogPromotionDiscount,
 } from "@/lib/catalog/types";
+
+type PromotionComboItem = {
+  id: string;
+  product_id: string;
+  quantity: number;
+};
 
 function isPromotionActive(
   startsAt: string | null,
@@ -34,6 +41,32 @@ export async function getCartPromotionDiscounts(
     await getActivePromotions(
       cart.cart.organization_id
     );
+  const promotionIds = promotions.map(
+    (promotion) => promotion.id
+  );
+  let comboItems: Array<
+    PromotionComboItem & {
+      promotion_id: string;
+    }
+  > = [];
+
+  if (promotionIds.length > 0) {
+    const supabase = createAdminClient();
+    const { data, error } =
+      await supabase
+        .from("catalog_promotion_items")
+        .select(
+          "id, promotion_id, product_id, quantity"
+        )
+        .in(
+          "promotion_id",
+          promotionIds
+        );
+
+    if (!error) {
+      comboItems = data ?? [];
+    }
+  }
 
   return promotions
     .filter((promotion) =>
@@ -115,6 +148,63 @@ export async function getCartPromotionDiscounts(
       }
 
       if (
+        promotion.type === "combo" &&
+        comboItems.some(
+          (item) =>
+            item.promotion_id ===
+            promotion.id
+        )
+      ) {
+        const promotionComboItems =
+          comboItems.filter(
+            (item) =>
+              item.promotion_id ===
+              promotion.id
+          );
+        const hasEveryProduct =
+          promotionComboItems.every((comboItem) => {
+            const cartItem =
+              cart.items.find(
+                (item) =>
+                  item.product_id ===
+                  comboItem.product_id
+              );
+
+            return (
+              cartItem &&
+              cartItem.quantity >=
+                comboItem.quantity
+            );
+          });
+
+        if (hasEveryProduct) {
+          const regularPrice =
+            promotionComboItems.reduce(
+              (total, comboItem) => {
+                const cartItem =
+                  cart.items.find(
+                    (item) =>
+                      item.product_id ===
+                      comboItem.product_id
+                  );
+
+                return (
+                  total +
+                  Number(
+                    cartItem?.unit_price ?? 0
+                  ) *
+                    comboItem.quantity
+                );
+              },
+              0
+            );
+
+          discount = Math.max(
+            0,
+            regularPrice - promotion.value
+          );
+        }
+      } else if (
         promotion.type === "combo" &&
         promotion.minimum_quantity &&
         eligibleQuantity >=

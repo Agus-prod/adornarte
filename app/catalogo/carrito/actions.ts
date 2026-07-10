@@ -25,6 +25,31 @@ export async function addCatalogCartItem(
   revalidatePath("/catalogo/carrito");
 }
 
+export async function addCatalogComboItems(
+  formData: FormData
+) {
+  const productIds = formData
+    .getAll("product_id")
+    .map((value) => String(value))
+    .filter(Boolean);
+
+  for (const productId of productIds) {
+    const itemFormData = new FormData();
+    itemFormData.set(
+      "product_id",
+      productId
+    );
+    itemFormData.set("quantity", "1");
+
+    await addCatalogCartItemFromForm(
+      itemFormData
+    );
+  }
+
+  revalidatePath("/catalogo", "layout");
+  revalidatePath("/catalogo/carrito");
+}
+
 export async function updateCatalogCartItem(
   itemId: string,
   formData: FormData

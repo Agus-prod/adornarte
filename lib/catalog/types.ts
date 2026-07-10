@@ -70,9 +70,25 @@ export type CatalogProductSummary = {
   name: string;
   slug: string;
   description: string | null;
+  categoryId: string | null;
   imageUrl: string | null;
+  regularPrice: number | null;
   salePrice: number | null;
   isFeatured: boolean;
+};
+
+export type CatalogComboProduct = CatalogProductSummary & {
+  quantity: number;
+};
+
+export type CatalogComboSummary = {
+  id: string;
+  name: string;
+  description: string | null;
+  regularPrice: number;
+  offerPrice: number;
+  savings: number;
+  products: CatalogComboProduct[];
 };
 
 export type CatalogSearchResult =
@@ -107,6 +123,7 @@ export type CatalogHomeData = {
   offerProducts: CatalogProductSummary[];
   collections: CatalogCollection[];
   brands: CatalogBrand[];
+  combos: CatalogComboSummary[];
 };
 
 export type CatalogCartTotals = {

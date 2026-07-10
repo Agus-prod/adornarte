@@ -1,15 +1,16 @@
+import { normalizeUserRole } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getCurrentProfile() {
   const supabase = await createClient();
 
   const {
-  data: { user },
-} = await supabase.auth.getUser();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-if (!user) {
-  return null;
-}
+  if (!user) {
+    return null;
+  }
 
   const { data: profile, error } =
     await supabase
@@ -28,13 +29,20 @@ if (!user) {
 
   if (!profile.organization_id) {
     throw new Error(
-      "El usuario no tiene organización asignada"
+      "El usuario no tiene organizacion asignada"
     );
   }
 
   return {
     ...profile,
+    role: normalizeUserRole(
+      profile.role
+    ),
     organization_id:
       profile.organization_id,
   };
 }
+
+export type CurrentProfile = NonNullable<
+  Awaited<ReturnType<typeof getCurrentProfile>>
+>;

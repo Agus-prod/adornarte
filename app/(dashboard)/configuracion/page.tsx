@@ -1,9 +1,9 @@
 import Link from "next/link";
 import {
-  Settings,
   TicketPercent,
   Users,
   Store,
+  PackagePlus,
 } from "lucide-react";
 
 const sections = [
@@ -20,6 +20,13 @@ const sections = [
       "Promociones generales y cupones personalizados por cliente.",
     href: "/configuracion/cupones",
     icon: TicketPercent,
+  },
+  {
+    title: "Combos",
+    description:
+      "Reglas de combos y descuentos por cantidad para el catalogo.",
+    href: "/configuracion/combos",
+    icon: PackagePlus,
   },
   {
     title: "Perfiles y roles",
@@ -42,7 +49,7 @@ export default function ConfiguracionPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {sections.map((section) => {
           const Icon = section.icon;
 
@@ -64,20 +71,6 @@ export default function ConfiguracionPage() {
             </Link>
           );
         })}
-      </div>
-
-      <div className="rounded-3xl border border-pink-100 bg-pink-50/70 p-5">
-        <div className="flex items-center gap-3">
-          <Settings className="text-pink-600" />
-          <div>
-            <h2 className="font-bold">
-              Proximo paso recomendado
-            </h2>
-            <p className="text-sm text-gray-600">
-              Definir permisos reales por rol en middleware y acciones del servidor.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );

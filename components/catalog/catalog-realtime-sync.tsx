@@ -17,10 +17,6 @@ export function CatalogRealtimeSync({
   >(null);
 
   useEffect(() => {
-    if (!cartId) {
-      return;
-    }
-
     const supabase = createClient();
 
     function scheduleRefresh() {
@@ -33,9 +29,51 @@ export function CatalogRealtimeSync({
       }, 250);
     }
 
-    const channel = supabase
-      .channel(`catalog-cart-${cartId}`)
+    let channel = supabase
+      .channel(
+        cartId
+          ? `catalog-sync-${cartId}`
+          : "catalog-sync-public"
+      )
       .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "products",
+        },
+        scheduleRefresh
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "product_publications",
+        },
+        scheduleRefresh
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "product_images",
+        },
+        scheduleRefresh
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "product_variants",
+        },
+        scheduleRefresh
+      );
+
+    if (cartId) {
+      channel = channel.on(
         "postgres_changes",
         {
           event: "*",
@@ -45,15 +83,20 @@ export function CatalogRealtimeSync({
           filter: `cart_id=eq.${cartId}`,
         },
         scheduleRefresh
-      )
-      .subscribe();
+      );
+    }
+
+    const subscription =
+      channel.subscribe();
 
     return () => {
       if (refreshTimer.current) {
         clearTimeout(refreshTimer.current);
       }
 
-      void supabase.removeChannel(channel);
+      void supabase.removeChannel(
+        subscription
+      );
     };
   }, [cartId, router]);
 

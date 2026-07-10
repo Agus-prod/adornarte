@@ -3,7 +3,10 @@ import {
   ArrowLeft,
   ShoppingBag,
 } from "lucide-react";
+import { AdornarteBrandMark } from "@/components/brand/adornarte-brand-mark";
 import { CatalogDropdownCoordinator } from "@/components/catalog/catalog-dropdown-coordinator";
+import { CatalogCartMenuController } from "@/components/catalog/catalog-cart-menu-controller";
+import { CatalogRealtimeSync } from "@/components/catalog/catalog-realtime-sync";
 import { MarketplaceCartPanel } from "@/components/catalog/marketplace-cart-panel";
 import { CustomerAccessMenu } from "@/components/catalog/customer-access-menu";
 import type { CatalogCustomer } from "@/lib/catalog/repositories/customer-repository";
@@ -29,6 +32,7 @@ function CartMenu({
     <details
       className="group relative"
       data-catalog-menu
+      data-catalog-cart-menu
     >
       <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-full bg-white px-4 py-2 text-pink-700 shadow-sm">
         <ShoppingBag className="size-4" />
@@ -43,6 +47,12 @@ function CartMenu({
         data-dropdown-panel
         className="fixed inset-x-3 top-16 z-30 max-w-none sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
       >
+        <div
+          data-cart-live-status
+          hidden
+          aria-live="polite"
+          className="mb-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700 shadow-sm"
+        />
         <MarketplaceCartPanel
           cart={cart}
           variant="dropdown"
@@ -60,6 +70,10 @@ export function CatalogStorefrontHeader({
   return (
     <div className="sticky top-0 z-50 border-b border-pink-100/70 bg-white/80 backdrop-blur-xl">
       <CatalogDropdownCoordinator />
+      <CatalogCartMenuController />
+      <CatalogRealtimeSync
+        cartId={cart?.cart.id ?? null}
+      />
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           {showBack && (
@@ -72,9 +86,14 @@ export function CatalogStorefrontHeader({
           )}
           <Link
             href="/catalogo"
-            className="min-w-0 truncate text-base font-black tracking-tight sm:text-lg"
+            className="min-w-0"
           >
-            AdornArte Shop
+            <AdornarteBrandMark
+              label="AdornArte Shop"
+              subtitle="Resalta tu belleza"
+              size="sm"
+              variant="shop"
+            />
           </Link>
         </div>
         <nav className="flex shrink-0 items-center gap-1 text-sm font-semibold sm:gap-2">

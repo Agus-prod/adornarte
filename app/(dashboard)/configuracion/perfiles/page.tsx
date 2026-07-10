@@ -1,17 +1,7 @@
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+import { roleScopes } from "@/lib/auth/roles";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { StaffUserForm } from "@/components/users/staff-user-form";
-
-const roleScopes = {
-  admin:
-    "Acceso completo a ERP, POS, Commerce, reportes y configuracion.",
-  caja:
-    "Caja, POS, ventas, cobros y clientes.",
-  inventario:
-    "Productos, stock, movimientos y compras.",
-  vendedor:
-    "POS, catalogo, clientes y ventas propias.",
-};
 
 export default async function PerfilesPage() {
   const profile =
@@ -52,19 +42,28 @@ export default async function PerfilesPage() {
 
       <StaffUserForm />
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {Object.entries(roleScopes).map(
-          ([role, description]) => (
+          ([role, scope]) => (
             <div
               key={role}
               className="rounded-3xl border bg-white p-5 shadow-sm"
             >
               <h2 className="font-bold capitalize">
-                {role}
+                {scope.label}
               </h2>
               <p className="mt-2 text-sm text-gray-500">
-                {description}
+                {scope.description}
               </p>
+              <ul className="mt-4 space-y-2 text-sm text-zinc-600">
+                {scope.capabilities.map(
+                  (capability) => (
+                    <li key={capability}>
+                      {capability}
+                    </li>
+                  )
+                )}
+              </ul>
             </div>
           )
         )}

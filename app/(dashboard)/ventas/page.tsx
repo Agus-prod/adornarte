@@ -1,4 +1,10 @@
 import Link from "next/link";
+import {
+  Clock3,
+  PackageCheck,
+  ReceiptText,
+  ShieldCheck,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -56,6 +62,18 @@ type CommercePaymentReview = {
     | null;
 };
 
+type SalesPanel =
+  | "orders"
+  | "transfers"
+  | "transfer-history"
+  | "sales";
+
+type PageProps = {
+  searchParams?: Promise<{
+    panel?: string;
+  }>;
+};
+
 function getPaymentGroupKey(
   payment: CommercePaymentReview
 ) {
@@ -93,7 +111,44 @@ function dedupePaymentsByOrder(
   return [...byOrder.values()];
 }
 
-export default async function SalesPage() {
+function formatMoney(value: number) {
+  return `L ${value.toFixed(2)}`;
+}
+
+function getStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    pending: "Pendiente",
+    paid: "Pagado",
+    preparing: "Preparando",
+    shipped: "Enviado",
+    delivered: "Entregado",
+  };
+
+  return labels[status] ?? status;
+}
+
+function getSelectedPanel(
+  panel: string | undefined
+): SalesPanel {
+  if (
+    panel === "orders" ||
+    panel === "transfers" ||
+    panel === "transfer-history" ||
+    panel === "sales"
+  ) {
+    return panel;
+  }
+
+  return "orders";
+}
+
+export default async function SalesPage({
+  searchParams,
+}: PageProps) {
+  const params =
+    await searchParams;
+  const selectedPanel =
+    getSelectedPanel(params?.panel);
   const profile =
     await getCurrentProfile();
 
@@ -303,6 +358,23 @@ export default async function SalesPage() {
       }))
       )
     );
+  const commerceTotal =
+    commerceOrders.reduce(
+      (total, order) =>
+        total + Number(order.total),
+      0
+    );
+  const transferTotal =
+    commercePayments.reduce(
+      (total, payment) =>
+        total + Number(payment.amount),
+      0
+    );
+  const salesTotal = sales.reduce(
+    (total, sale) =>
+      total + Number(sale.total),
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -316,7 +388,78 @@ export default async function SalesPage() {
         </p>
       </div>
 
-      <div
+      <section className="grid gap-4 md:grid-cols-4">
+        {[
+          {
+            label: "Pedidos activos",
+            value: commerceOrders.length,
+            detail: formatMoney(commerceTotal),
+            icon: PackageCheck,
+            href: "/ventas?panel=orders",
+            panel: "orders",
+          },
+          {
+            label: "Por convertir",
+            value: commerceOrdersToConvert.length,
+            detail: "Requieren venta",
+            icon: Clock3,
+            href: "/ventas?panel=orders",
+            panel: "orders",
+          },
+          {
+            label: "Transferencias",
+            value: commercePayments.length,
+            detail: formatMoney(transferTotal),
+            icon: ShieldCheck,
+            href: "/ventas?panel=transfers",
+            panel: "transfers",
+          },
+          {
+            label: "Ventas",
+            value: sales.length,
+            detail: formatMoney(salesTotal),
+            icon: ReceiptText,
+            href: "/ventas?panel=sales",
+            panel: "sales",
+          },
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive =
+            selectedPanel === item.panel;
+
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={
+                isActive
+                  ? "rounded-3xl border border-pink-200 bg-pink-50 p-5 shadow-sm"
+                  : "rounded-3xl border border-white/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-pink-100 hover:shadow-md"
+              }
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-3xl font-black">
+                    {item.value}
+                  </p>
+                </div>
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-pink-50 text-pink-600">
+                  <Icon size={22} />
+                </div>
+              </div>
+              <p className="mt-3 text-sm font-semibold text-zinc-500">
+                {item.detail}
+              </p>
+            </Link>
+          );
+        })}
+      </section>
+
+      {selectedPanel === "orders" && (
+      <section
         className="
           rounded-3xl
           border
@@ -415,9 +558,11 @@ export default async function SalesPage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
+      )}
 
-      <div
+      {selectedPanel === "transfers" && (
+      <section
         className="
           rounded-3xl
           border
@@ -529,9 +674,11 @@ export default async function SalesPage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
+      )}
 
-      <div
+      {selectedPanel === "transfer-history" && (
+      <section
         className="
           rounded-3xl
           border
@@ -636,9 +783,11 @@ export default async function SalesPage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
+      )}
 
-      <div
+      {selectedPanel === "sales" && (
+      <section
         className="
           rounded-3xl
           border
@@ -649,12 +798,26 @@ export default async function SalesPage() {
           backdrop-blur-xl
         "
       >
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">
+              Ventas registradas
+            </h2>
+            <p className="text-sm text-gray-500">
+              Facturas y ventas convertidas desde POS o Commerce.
+            </p>
+          </div>
+          <span className="text-sm font-semibold text-pink-700">
+            {sales.length} ventas
+          </span>
+        </div>
+
         {!sales.length ? (
-          <p className="text-gray-500">
+          <p className="mt-5 text-gray-500">
             No hay ventas registradas.
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="mt-5 space-y-3">
             {sales.map((sale) => (
               <Link
                 key={sale.id}
@@ -707,7 +870,8 @@ export default async function SalesPage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
+      )}
     </div>
   );
 }

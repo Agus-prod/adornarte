@@ -2,19 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+import { userRoles } from "@/lib/auth/roles";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type CreateUserState = {
   status: "idle" | "success" | "error";
   message: string | null;
 };
-
-const allowedRoles = [
-  "admin",
-  "caja",
-  "inventario",
-  "vendedor",
-] as const;
 
 function readText(
   formData: FormData,
@@ -32,9 +26,9 @@ function normalizeEmail(email: string) {
 
 function isAllowedRole(
   role: string
-): role is (typeof allowedRoles)[number] {
-  return allowedRoles.includes(
-    role as (typeof allowedRoles)[number]
+): role is (typeof userRoles)[number] {
+  return userRoles.includes(
+    role as (typeof userRoles)[number]
   );
 }
 

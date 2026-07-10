@@ -15,7 +15,7 @@ export function RelatedProductsSection({
   return (
     <section className="space-y-4">
       <h2 className="text-xl font-semibold">
-        Productos relacionados
+        Más de la misma categoría
       </h2>
 
       <CatalogProductGrid

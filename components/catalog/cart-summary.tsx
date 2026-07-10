@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import {
   removeCatalogCartItemAction,
   removeCatalogCoupon,
@@ -103,9 +104,11 @@ export function CartSummary({
               >
                 <button
                   type="submit"
-                  className="text-sm font-semibold text-red-600 hover:text-red-700"
+                  aria-label={`Eliminar ${item.name}`}
+                  title="Eliminar"
+                  className="inline-flex size-10 items-center justify-center rounded-full text-zinc-400 transition hover:bg-red-50 hover:text-red-600"
                 >
-                  Eliminar
+                  <Trash2 size={17} />
                 </button>
               </form>
             </div>

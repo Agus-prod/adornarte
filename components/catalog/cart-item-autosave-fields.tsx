@@ -1,33 +1,20 @@
 "use client";
 
 import { useEffect, useTransition } from "react";
-import { useFormStatus } from "react-dom";
 import { updateCatalogCartItem } from "@/app/catalogo/carrito/actions";
 
 type Props = {
   itemId: string;
   quantity: number;
   notes: string | null;
+  unitPrice?: number;
 };
-
-function SaveStatus() {
-  const { pending } = useFormStatus();
-
-  if (!pending) {
-    return null;
-  }
-
-  return (
-    <span className="col-span-2 text-xs font-semibold text-pink-600">
-      Guardando...
-    </span>
-  );
-}
 
 export function CartItemAutosaveFields({
   itemId,
   quantity,
   notes,
+  unitPrice,
 }: Props) {
   const [, startTransition] =
     useTransition();
@@ -40,21 +27,73 @@ export function CartItemAutosaveFields({
     const cleanups: Array<() => void> = [];
 
     for (const form of forms) {
+      let timer: ReturnType<
+        typeof setTimeout
+      > | null = null;
+
       const handler = () => {
+        const formData = new FormData(form);
+        const nextQuantity = Number(
+          formData.get("quantity") ?? quantity
+        );
+
+        if (
+          Number.isFinite(nextQuantity) &&
+          nextQuantity > 0
+        ) {
+          window.dispatchEvent(
+            new CustomEvent(
+              "catalog-cart:item-change",
+              {
+                detail: {
+                  itemId,
+                  quantity: nextQuantity,
+                  unitPrice,
+                },
+              }
+            )
+          );
+        }
+
+        if (timer) {
+          clearTimeout(timer);
+        }
+
+        timer = setTimeout(() => {
+          startTransition(() => {
+            form.requestSubmit();
+          });
+        }, 250);
+      };
+
+      const submitOnChange = () => {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+
         startTransition(() => {
           form.requestSubmit();
         });
       };
 
+      form.addEventListener("input", handler);
       form.addEventListener(
         "change",
-        handler
+        submitOnChange
       );
 
       cleanups.push(() => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        form.removeEventListener(
+          "input",
+          handler
+        );
         form.removeEventListener(
           "change",
-          handler
+          submitOnChange
         );
       });
     }
@@ -64,7 +103,12 @@ export function CartItemAutosaveFields({
         cleanup()
       );
     };
-  }, [itemId, startTransition]);
+  }, [
+    itemId,
+    quantity,
+    startTransition,
+    unitPrice,
+  ]);
 
   return (
     <form
@@ -90,7 +134,6 @@ export function CartItemAutosaveFields({
         placeholder="Nota"
         className="min-h-10 min-w-0 rounded-xl border border-zinc-200 bg-white px-3 text-sm"
       />
-      <SaveStatus />
     </form>
   );
 }

@@ -320,17 +320,30 @@ export async function createCustomerAccount(
   const organizationId =
     getOrganizationId();
   const email = normalizeEmail(
-    readText(formData, "email")
+    readFirstText(formData, [
+      "email",
+      "customer_email",
+    ])
   );
-  const name = readText(
+  const name = readFirstText(
     formData,
-    "name"
+    [
+      "name",
+      "customer_name",
+    ]
   );
-  const phone = readOptionalText(
+  const phone = readFirstOptionalText(
     formData,
-    "phone"
+    [
+      "phone",
+      "customer_phone",
+    ]
   );
   const password = getPassword(formData);
+  const confirmPassword = readText(
+    formData,
+    "confirm_password"
+  );
 
   if (!email || !name || !password) {
     throw new Error(
@@ -339,6 +352,15 @@ export async function createCustomerAccount(
   }
 
   assertPassword(password);
+
+  if (
+    confirmPassword &&
+    confirmPassword !== password
+  ) {
+    throw new Error(
+      "La confirmacion de contrasena no coincide."
+    );
+  }
 
   const existingCustomer =
     await getCustomerByEmail(

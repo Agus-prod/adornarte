@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PrintButton } from "@/components/ventas/print-button";
-import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 
 type PageProps = {
   params: Promise<{
@@ -54,6 +54,36 @@ function formatMoney(value: number) {
   return `L ${value.toFixed(2)}`;
 }
 
+function formatPaymentMethod(
+  method: string | null
+) {
+  const labels: Record<string, string> = {
+    CASH: "Efectivo",
+    CARD: "Tarjeta",
+    TRANSFER: "Transferencia",
+    CREDIT: "Crédito",
+  };
+
+  return method
+    ? labels[method] ?? method
+    : "No registrado";
+}
+
+function formatPaymentStatus(
+  status: string | null
+) {
+  const labels: Record<string, string> = {
+    PAID: "Pagado",
+    PENDING: "Pendiente",
+    PARTIAL: "Parcial",
+    CANCELLED: "Cancelado",
+  };
+
+  return status
+    ? labels[status] ?? status
+    : "No registrado";
+}
+
 function getProductName(
   item: SaleItem
 ) {
@@ -94,7 +124,8 @@ export default async function SaleDetailPage({
   params,
 }: PageProps) {
   const { id } = await params;
-  const user = await getCurrentUser();
+  const profile =
+    await getCurrentProfile();
 
   const supabase =
     await createClient();
@@ -187,12 +218,6 @@ export default async function SaleDetailPage({
   const catalogOrder =
     orderData as CatalogOrderForSale | null;
 
-  const totalUnits =
-    saleItems.reduce(
-      (acc, item) =>
-        acc + item.quantity,
-      0
-    );
   const invoiceNumber =
     sale.invoice_number ??
     sale.id.slice(0, 8).toUpperCase();
@@ -200,15 +225,10 @@ export default async function SaleDetailPage({
     sale.created_at
       ? new Date(sale.created_at)
       : new Date();
-  const paidAmount = Number(
-    sale.paid_amount ?? 0
-  );
-  const pendingAmount = Number(
-    sale.pending_amount ?? 0
-  );
   const total = Number(sale.total);
   const sellerName =
-    user?.email ?? "Cajero #1";
+    profile?.full_name ??
+    "Cajero #1";
 
   return (
     <div className="space-y-6">
@@ -226,7 +246,7 @@ export default async function SaleDetailPage({
         <PrintButton />
       </div>
 
-      <article className="print-page print-card mx-auto overflow-hidden rounded-[2rem] border border-pink-100 bg-white shadow-sm">
+      <article className="invoice-document print-page print-card mx-auto overflow-hidden rounded-[2rem] border border-pink-100 bg-white shadow-sm">
         <header className="border-b border-pink-100 bg-white p-8">
           <div className="flex items-start justify-between gap-8">
             <div className="flex items-start gap-5">
@@ -279,7 +299,7 @@ export default async function SaleDetailPage({
           </div>
         </header>
 
-        <section className="grid gap-5 border-b border-pink-100 p-8 md:grid-cols-4">
+        <section className="grid gap-5 border-b border-pink-100 p-8 md:grid-cols-3">
           <div className="rounded-3xl bg-zinc-50 p-5">
             <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
               Cliente
@@ -304,24 +324,20 @@ export default async function SaleDetailPage({
             <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
               Forma de pago
             </p>
-            <p className="mt-2 text-lg font-black">
-              {sale.payment_method ?? "N/A"}
-            </p>
-            <p className="mt-1 text-sm text-zinc-500">
-              Estado:{" "}
-              {sale.payment_status ?? "N/A"}
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-zinc-50 p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Resumen
-            </p>
-            <p className="mt-2 text-lg font-black">
-              {totalUnits} unidades
-            </p>
-            <p className="mt-1 text-sm text-zinc-500">
-              {saleItems.length} productos distintos
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <p className="text-lg font-black">
+                {formatPaymentMethod(
+                  sale.payment_method
+                )}
+              </p>
+              <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-pink-700">
+                {formatPaymentStatus(
+                  sale.payment_status
+                )}
+              </span>
+            </div>
+            <p className="mt-3 text-sm text-zinc-500">
+              Comprobante de venta emitido al cliente.
             </p>
           </div>
 
@@ -333,7 +349,7 @@ export default async function SaleDetailPage({
               {sellerName}
             </p>
             <p className="mt-1 text-sm text-zinc-500">
-              Cajero #1
+              Responsable de venta
             </p>
           </div>
         </section>
@@ -427,7 +443,7 @@ export default async function SaleDetailPage({
             </table>
           )}
 
-          <div className="mt-8 grid gap-8 md:grid-cols-[1fr_20rem]">
+          <div className="mt-8 grid gap-8 md:grid-cols-[1fr_18rem]">
             <div className="rounded-3xl border border-pink-100 bg-pink-50/60 p-5 text-sm text-zinc-600">
               <p className="font-bold text-zinc-950">
                 Observaciones
@@ -436,11 +452,6 @@ export default async function SaleDetailPage({
                 Esta factura sirve como comprobante de compra.
                 Para cambios o consultas, conserva este documento.
               </p>
-              {pendingAmount > 0 && (
-                <p className="mt-3 font-semibold text-pink-700">
-                  Saldo pendiente asociado a crédito del cliente.
-                </p>
-              )}
             </div>
 
             <div className="space-y-3">
@@ -458,22 +469,6 @@ export default async function SaleDetailPage({
                 </span>
                 <span className="font-semibold">
                   {formatMoney(0)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-500">
-                  Pagado
-                </span>
-                <span className="font-semibold">
-                  {formatMoney(paidAmount)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-500">
-                  Pendiente
-                </span>
-                <span className="font-semibold">
-                  {formatMoney(pendingAmount)}
                 </span>
               </div>
               <div className="flex justify-between border-t-2 border-zinc-950 pt-4 text-2xl font-black">

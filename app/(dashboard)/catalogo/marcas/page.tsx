@@ -24,9 +24,16 @@ export default async function CatalogBrandsPage() {
       </div>
 
       <section className="rounded-3xl border border-white/60 bg-white/80 p-6 shadow-sm backdrop-blur-xl">
-        <h2 className="text-xl font-bold">
-          Nueva marca
-        </h2>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-xl font-bold">
+              Nueva marca
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              Usa imágenes PNG o SVG con fondo transparente para que el logo se vea limpio en la tienda.
+            </p>
+          </div>
+        </div>
         <form
           action={createCatalogBrandAction}
           className="mt-5 grid gap-4 lg:grid-cols-2"
@@ -55,14 +62,32 @@ export default async function CatalogBrandsPage() {
 
           <label className="space-y-2 lg:col-span-2">
             <span className="text-sm font-semibold">
-              URL del logotipo
+              Imagen de logo de marca
             </span>
             <input
               name="logo_url"
               type="url"
-              placeholder="https://..."
+              placeholder="https://.../logo-marca.png"
               className="min-h-11 w-full rounded-2xl border border-zinc-200 px-4"
             />
+            <span className="block text-xs text-gray-500">
+              Pega aquí la URL de la imagen del logo. Ideal: PNG transparente, horizontal o cuadrado.
+            </span>
+          </label>
+
+          <label className="space-y-2 lg:col-span-2">
+            <span className="text-sm font-semibold">
+              Banner de marca
+            </span>
+            <input
+              name="banner_url"
+              type="url"
+              placeholder="https://.../banner-marca.jpg"
+              className="min-h-11 w-full rounded-2xl border border-zinc-200 px-4"
+            />
+            <span className="block text-xs text-gray-500">
+              Opcional para futuras páginas de marca o campañas.
+            </span>
           </label>
 
           <label className="space-y-2 lg:col-span-2">
@@ -164,12 +189,27 @@ export default async function CatalogBrandsPage() {
 
                 <label className="space-y-2 lg:col-span-2">
                   <span className="text-sm font-semibold">
-                    URL del logotipo
+                    Imagen de logo de marca
                   </span>
                   <input
                     name="logo_url"
                     type="url"
                     defaultValue={brand.logo_url ?? ""}
+                    className="min-h-11 w-full rounded-2xl border border-zinc-200 px-4"
+                  />
+                  <span className="block text-xs text-gray-500">
+                    PNG/SVG transparente recomendado. Esto se muestra como logo limpio en el catálogo.
+                  </span>
+                </label>
+
+                <label className="space-y-2 lg:col-span-2">
+                  <span className="text-sm font-semibold">
+                    Banner de marca
+                  </span>
+                  <input
+                    name="banner_url"
+                    type="url"
+                    defaultValue={brand.banner_url ?? ""}
                     className="min-h-11 w-full rounded-2xl border border-zinc-200 px-4"
                   />
                 </label>

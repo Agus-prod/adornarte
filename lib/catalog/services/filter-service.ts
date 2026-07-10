@@ -238,9 +238,13 @@ export async function getFilteredCatalogProducts(
           slug: publication.slug,
           description:
             product.description,
+          categoryId:
+            product.category_id,
           imageUrl:
             publication.open_graph_image_url ??
             product.image_url,
+          regularPrice:
+            product.sale_price,
           salePrice,
           isFeatured:
             publication.is_featured,

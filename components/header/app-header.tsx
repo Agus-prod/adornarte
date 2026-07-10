@@ -1,7 +1,10 @@
 import { dismissAllAppNotifications, dismissAppNotification } from "@/app/(dashboard)/notificaciones/actions";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { AdornarteBrandMark } from "@/components/brand/adornarte-brand-mark";
+import { AppRealtimeSync } from "@/components/header/app-realtime-sync";
 import { MobileNavigation } from "@/components/sidebar/mobile-navigation";
-import { getCurrentUser } from "@/lib/auth/get-current-user";
+import type { CurrentProfile } from "@/lib/auth/get-current-profile";
+import { roleScopes } from "@/lib/auth/roles";
 import { getAppNotifications } from "@/lib/notifications/get-app-notifications";
 import {
   Bell,
@@ -10,84 +13,38 @@ import {
   X,
 } from "lucide-react";
 
-export async function AppHeader() {
-  const user = await getCurrentUser();
+type Props = {
+  profile: CurrentProfile;
+};
+
+export async function AppHeader({
+  profile,
+}: Props) {
   const notifications =
     await getAppNotifications();
+  const role =
+    roleScopes[profile.role];
 
   return (
     <header
       data-app-chrome
-      className="
-        sticky
-        top-0
-        z-50
-        border-b
-        border-white/60
-        bg-white/80
-        backdrop-blur-xl
-      "
+      className="sticky top-0 z-50 border-b border-white/60 bg-white/80 backdrop-blur-xl"
     >
-      <div
-        className="
-          flex
-          items-center
-          justify-between
-          px-3
-          sm:px-4
-          md:px-8
-          py-3
-          md:py-4
-        "
-      >
+      <AppRealtimeSync />
+      <div className="flex items-center justify-between px-3 py-3 sm:px-4 md:px-8 md:py-4">
         <div className="flex min-w-0 items-center gap-2">
-          <MobileNavigation />
-          <div className="min-w-0">
-          <h1
-            className="
-              truncate
-              text-lg
-              sm:text-xl
-              md:text-2xl
-              font-bold
-              bg-gradient-to-r
-              from-pink-500
-              to-fuchsia-500
-              bg-clip-text
-              text-transparent
-            "
-          >
-            AdornArte
-          </h1>
-
-          <p className="text-xs md:text-sm text-gray-500">
-            Sistema de Gestión
-          </p>
-          </div>
+          <MobileNavigation
+            role={profile.role}
+          />
+          <AdornarteBrandMark
+            subtitle="Sistema de Gestion"
+            size="md"
+          />
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 md:gap-4">
           <details className="group relative">
-            <summary
-              className="
-                relative
-                flex
-                cursor-pointer
-                list-none
-                items-center
-                rounded-2xl
-                border
-                border-gray-100
-                bg-white
-                p-2.5
-                sm:p-3
-                text-gray-500
-                transition-all
-                hover:-translate-y-0.5
-                hover:shadow-md
-                hover:text-pink-600
-              "
-            >
+            <summary className="relative flex cursor-pointer list-none items-center rounded-2xl border border-gray-100 bg-white p-2.5 text-gray-500 transition-all hover:-translate-y-0.5 hover:shadow-md hover:text-pink-600 sm:p-3">
               <Bell size={18} />
               {notifications.length > 0 && (
                 <span className="absolute -right-1 -top-1 rounded-full bg-pink-600 px-1.5 text-xs font-bold text-white">
@@ -103,7 +60,7 @@ export async function AppHeader() {
                     Notificaciones
                   </p>
                   <h2 className="mt-1 text-lg font-bold">
-                    Pendientes del día
+                    Pendientes del dia
                   </h2>
                 </div>
 
@@ -166,8 +123,8 @@ export async function AppHeader() {
                           />
                           <button
                             type="submit"
-                            title="Borrar notificación"
-                            aria-label="Borrar notificación"
+                            title="Borrar notificacion"
+                            aria-label="Borrar notificacion"
                             className="flex size-8 items-center justify-center rounded-full text-zinc-400 transition hover:bg-white hover:text-pink-700"
                           >
                             <X size={15} />
@@ -185,39 +142,19 @@ export async function AppHeader() {
             </div>
           </details>
 
-          <div
-            className="
-              hidden
-              md:flex
-              items-center
-              gap-3
-              rounded-2xl
-              border
-              border-gray-100
-              bg-white
-              px-4
-              py-2
-              shadow-sm
-            "
-          >
-            <div
-              className="
-                rounded-full
-                bg-pink-100
-                p-2
-                text-pink-600
-              "
-            >
+          <div className="hidden items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-2 shadow-sm md:flex">
+            <div className="rounded-full bg-pink-100 p-2 text-pink-600">
               <UserCircle2 size={24} />
             </div>
 
             <div>
-              <p className="font-medium text-sm">
-                {user?.email ?? "Usuario"}
+              <p className="text-sm font-medium">
+                {profile.full_name ??
+                  profile.email}
               </p>
 
               <p className="text-xs text-gray-500">
-                Administrador
+                {role.label}
               </p>
             </div>
           </div>

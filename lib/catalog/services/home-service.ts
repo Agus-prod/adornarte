@@ -7,6 +7,7 @@ import {
   getPublishedPublications,
 } from "@/lib/catalog/repositories/publication-repository";
 import { getCatalogProductSummaries } from "@/lib/catalog/services/catalog-service";
+import { getActiveCatalogCombos } from "@/lib/catalog/services/combo-service";
 import type { CatalogHomeData } from "@/lib/catalog/types";
 
 export async function getCatalogHomeData(
@@ -17,6 +18,7 @@ export async function getCatalogHomeData(
     collections,
     brands,
     publications,
+    combos,
   ] = await Promise.all([
     getCatalogProductSummaries(
       organizationId
@@ -28,6 +30,9 @@ export async function getCatalogHomeData(
       organizationId
     ),
     getPublishedPublications(
+      organizationId
+    ),
+    getActiveCatalogCombos(
       organizationId
     ),
   ]);
@@ -72,5 +77,6 @@ export async function getCatalogHomeData(
       .slice(0, 8),
     collections: collections.slice(0, 6),
     brands: brands.slice(0, 12),
+    combos: combos.slice(0, 8),
   };
 }

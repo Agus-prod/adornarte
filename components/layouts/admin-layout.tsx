@@ -1,10 +1,13 @@
 import { AppHeader } from "@/components/header/app-header";
 import { Sidebar } from "@/components/sidebar/sidebar";
+import type { CurrentProfile } from "@/lib/auth/get-current-profile";
 
 export function AdminLayout({
   children,
+  profile,
 }: {
   children: React.ReactNode;
+  profile: CurrentProfile;
 }) {
   return (
     <div
@@ -16,10 +19,10 @@ export function AdminLayout({
         to-pink-50/40
       "
     >
-      <AppHeader />
+      <AppHeader profile={profile} />
 
       <div className="flex min-h-[calc(100vh-4.5rem)] lg:h-[calc(100vh-5rem)] lg:overflow-hidden">
-        <Sidebar />
+        <Sidebar role={profile.role} />
 
         <main
           className="

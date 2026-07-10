@@ -3,6 +3,7 @@ import { ProductImagesTable } from "@/components/products/tables/product-images-
 import { EmptyState } from "@/components/ui/empty-state";
 import { uploadProductImage } from "@/app/(dashboard)/inventario/productos/image-actions";
 import { getProductImagesForEditor } from "@/lib/catalog/services/image-service";
+import { getProductVariantsForEditor } from "@/lib/catalog/services/variant-service";
 
 type Props = {
   productId: string;
@@ -15,6 +16,13 @@ export async function ProductImagesCard({
     await getProductImagesForEditor(
       productId
     );
+  const variants =
+    await getProductVariantsForEditor(
+      productId
+    );
+  const variantNames = variants.map(
+    (variant) => variant.name
+  );
 
   return (
     <div className="rounded-2xl border bg-white p-6 shadow-sm">
@@ -42,6 +50,7 @@ export async function ProductImagesCard({
                 null,
                 productId
               )}
+              variantNames={variantNames}
             />
           </div>
         </details>
@@ -57,6 +66,7 @@ export async function ProductImagesCard({
           <ProductImagesTable
             productId={productId}
             images={images}
+            variantNames={variantNames}
           />
         )}
       </div>

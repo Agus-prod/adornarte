@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { Trash2 } from "lucide-react";
 import {
   removeCatalogCartItemAction,
   removeCatalogCoupon,
@@ -12,19 +16,223 @@ type Props = {
   variant?: "page" | "dropdown";
 };
 
+type OptimisticCartItem = CatalogCartDetail["items"][number];
+
 function formatMoney(value: number) {
   return `L ${value.toFixed(2)}`;
+}
+
+function getCartTotals(items: OptimisticCartItem[]) {
+  const subtotal = items.reduce(
+    (total, item) =>
+      total +
+      Number(item.unit_price) * item.quantity,
+    0
+  );
+
+  return {
+    subtotal,
+    discountTotal: 0,
+    total: subtotal,
+  };
 }
 
 export function MarketplaceCartPanel({
   cart,
   variant = "page",
 }: Props) {
+  const [items, setItems] = useState<
+    OptimisticCartItem[]
+  >(cart?.items ?? []);
+  const [optimisticTotals, setOptimisticTotals] =
+    useState(() =>
+      getCartTotals(cart?.items ?? [])
+    );
+
+  useEffect(() => {
+    const nextItems = cart?.items ?? [];
+    setItems(nextItems);
+    setOptimisticTotals(
+      getCartTotals(nextItems)
+    );
+  }, [cart]);
+
+  useEffect(() => {
+    function handleOptimisticAdd(
+      event: Event
+    ) {
+      if (!(event instanceof CustomEvent)) {
+        return;
+      }
+
+      const detail = event.detail as {
+        productId?: string;
+        variantId?: string | null;
+        name?: string;
+        quantity?: number;
+        unitPrice?: number;
+        imageUrl?: string | null;
+      };
+
+      if (
+        !detail.productId ||
+        !detail.name ||
+        !detail.unitPrice
+      ) {
+        return;
+      }
+
+      const productId = detail.productId;
+      const productName = detail.name;
+      const unitPrice = detail.unitPrice;
+
+      setItems((currentItems) => {
+        const quantity =
+          detail.quantity ?? 1;
+        const existingIndex =
+          currentItems.findIndex(
+            (item) =>
+              item.product_id ===
+                productId &&
+              item.variant_id ===
+                (detail.variantId ?? null)
+          );
+
+        const nextItems =
+          [...currentItems];
+
+        if (existingIndex >= 0) {
+          const existing =
+            nextItems[existingIndex];
+          nextItems[existingIndex] = {
+            ...existing,
+            quantity:
+              existing.quantity +
+              quantity,
+          };
+        } else {
+          nextItems.unshift({
+            id: `optimistic-${productId}-${detail.variantId ?? "default"}`,
+            cart_id:
+              cart?.cart.id ?? "optimistic",
+            created_at:
+              new Date().toISOString(),
+            updated_at:
+              new Date().toISOString(),
+            organization_id:
+              cart?.cart.organization_id ??
+              "optimistic",
+            product_id: productId,
+            variant_id:
+              detail.variantId ?? null,
+            name: productName,
+            sku: null,
+            image_url:
+              detail.imageUrl ?? null,
+            quantity,
+            notes: null,
+            unit_price: unitPrice,
+          });
+        }
+
+        setOptimisticTotals(
+          getCartTotals(nextItems)
+        );
+
+        return nextItems;
+      });
+    }
+
+    window.addEventListener(
+      "catalog-cart:optimistic-add",
+      handleOptimisticAdd
+    );
+
+    return () => {
+      window.removeEventListener(
+        "catalog-cart:optimistic-add",
+        handleOptimisticAdd
+      );
+    };
+  }, [cart]);
+
+  useEffect(() => {
+    function handleItemChange(event: Event) {
+      if (!(event instanceof CustomEvent)) {
+        return;
+      }
+
+      const detail = event.detail as {
+        itemId?: string;
+        quantity?: number;
+      };
+
+      if (
+        !detail.itemId ||
+        !detail.quantity ||
+        detail.quantity < 1
+      ) {
+        return;
+      }
+
+      setItems((currentItems) => {
+        const nextItems =
+          currentItems.map((item) =>
+            item.id === detail.itemId
+              ? {
+                  ...item,
+                  quantity:
+                    detail.quantity ?? item.quantity,
+                }
+              : item
+          );
+
+        setOptimisticTotals(
+          getCartTotals(nextItems)
+        );
+
+        return nextItems;
+      });
+    }
+
+    window.addEventListener(
+      "catalog-cart:item-change",
+      handleItemChange
+    );
+
+    return () => {
+      window.removeEventListener(
+        "catalog-cart:item-change",
+        handleItemChange
+      );
+    };
+  }, []);
+
+  const totals = useMemo(() => {
+    if (cart && items === cart.items) {
+      return cart.totals;
+    }
+
+    return {
+      subtotal:
+        optimisticTotals.subtotal,
+      discountTotal:
+        cart?.totals.discountTotal ?? 0,
+      shippingTotal:
+        cart?.totals.shippingTotal ?? 0,
+      taxTotal:
+        cart?.totals.taxTotal ?? 0,
+      total:
+        optimisticTotals.subtotal -
+        (cart?.totals.discountTotal ?? 0),
+    };
+  }, [cart, items, optimisticTotals]);
+
   const itemCount =
-    cart?.items.reduce(
+    items.reduce(
       (total, item) => total + item.quantity,
       0
-    ) ?? 0;
+    );
 
   return (
     <aside
@@ -48,14 +256,14 @@ export function MarketplaceCartPanel({
         </span>
       </div>
 
-      {!cart || cart.items.length === 0 ? (
+      {items.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-pink-100 bg-pink-50/50 p-5 text-sm text-zinc-500">
           Agrega productos y apareceran aqui sin salir del catalogo.
         </div>
       ) : (
         <div className="mt-5 space-y-4">
           <div className="max-h-[18rem] space-y-3 overflow-y-auto pr-1 sm:max-h-[22rem]">
-            {cart.items.map((item) => (
+            {items.map((item) => (
               <div
                 key={item.id}
                 className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-3"
@@ -71,70 +279,87 @@ export function MarketplaceCartPanel({
                       )}
                     </p>
                   </div>
-                  <form
-                    action={removeCatalogCartItemAction.bind(
-                      null,
-                      item.id
-                    )}
-                  >
-                    <button
-                      type="submit"
-                      className="text-xs font-semibold text-zinc-400 hover:text-red-600"
+                  {!item.id.startsWith(
+                    "optimistic-"
+                  ) && (
+                    <form
+                      action={removeCatalogCartItemAction.bind(
+                        null,
+                        item.id
+                      )}
                     >
-                      Quitar
-                    </button>
-                  </form>
+                      <button
+                        type="submit"
+                        aria-label={`Eliminar ${item.name}`}
+                        title="Eliminar"
+                        className="flex size-9 items-center justify-center rounded-full text-zinc-400 transition hover:bg-red-50 hover:text-red-600"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </form>
+                  )}
                 </div>
 
-                <CartItemAutosaveFields
-                  itemId={item.id}
-                  quantity={item.quantity}
-                  notes={item.notes}
-                />
+                {!item.id.startsWith(
+                  "optimistic-"
+                ) && (
+                  <CartItemAutosaveFields
+                    itemId={item.id}
+                    quantity={item.quantity}
+                    notes={item.notes}
+                    unitPrice={Number(
+                      item.unit_price
+                    )}
+                  />
+                )}
               </div>
             ))}
           </div>
 
-          <CouponForm
-            defaultValue={cart.cart.coupon_code}
-            inputClassName="min-h-10 min-w-0 flex-1 rounded-xl border border-zinc-200 px-3 text-sm"
-            buttonClassName="rounded-xl bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-70"
-            messageClassName="rounded-2xl border border-pink-100 bg-pink-50 p-3 text-sm font-semibold text-pink-700"
-          />
+          {cart && (
+            <>
+              <CouponForm
+                defaultValue={cart.cart.coupon_code}
+                inputClassName="min-h-10 min-w-0 flex-1 rounded-xl border border-zinc-200 px-3 text-sm"
+                buttonClassName="rounded-xl bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-70"
+                messageClassName="rounded-2xl border border-pink-100 bg-pink-50 p-3 text-sm font-semibold text-pink-700"
+              />
 
-          {cart.cart.coupon_code && (
-            <form action={removeCatalogCoupon}>
-              <button
-                type="submit"
-                className="text-sm font-semibold text-zinc-500 hover:text-zinc-900"
-              >
-                Quitar {cart.cart.coupon_code}
-              </button>
-            </form>
+              {cart.cart.coupon_code && (
+                <form action={removeCatalogCoupon}>
+                  <button
+                    type="submit"
+                    className="text-sm font-semibold text-zinc-500 hover:text-zinc-900"
+                  >
+                    Quitar {cart.cart.coupon_code}
+                  </button>
+                </form>
+              )}
+            </>
           )}
 
           <dl className="space-y-2 border-t border-zinc-100 pt-4 text-sm">
             <div className="flex justify-between">
               <dt>Subtotal</dt>
               <dd>
-                {formatMoney(
-                  cart.totals.subtotal
+                  {formatMoney(
+                  totals.subtotal
                 )}
               </dd>
             </div>
             <div className="flex justify-between text-zinc-500">
               <dt>Descuento</dt>
               <dd>
-                {formatMoney(
-                  cart.totals.discountTotal
+                  {formatMoney(
+                  totals.discountTotal
                 )}
               </dd>
             </div>
             <div className="flex justify-between text-lg font-bold">
               <dt>Total</dt>
               <dd className="text-pink-600">
-                {formatMoney(
-                  cart.totals.total
+                  {formatMoney(
+                  totals.total
                 )}
               </dd>
             </div>

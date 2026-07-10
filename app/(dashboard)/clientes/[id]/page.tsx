@@ -52,12 +52,14 @@ export default async function ClientePage({
         </div>
       </div>
 
-      <section className="rounded-[2rem] border border-pink-100 bg-white p-6 shadow-sm print:border-none print:shadow-none">
+      <section className="invoice-document print-page print-card rounded-[2rem] border border-pink-100 bg-white p-6 shadow-sm print:border-none print:shadow-none">
         <div className="flex flex-col gap-5 border-b border-pink-100 pb-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex size-20 items-center justify-center rounded-full border-4 border-pink-100 bg-pink-50 text-center text-xs font-black uppercase text-pink-700">
-              AdornArte
-            </div>
+            <img
+              src="/adornarte-logo.jpg"
+              alt="AdornArte"
+              className="size-20 rounded-full border-4 border-pink-100 object-cover"
+            />
             <div>
               <p className="text-xs font-semibold uppercase text-pink-600">
                 Resalta tu belleza

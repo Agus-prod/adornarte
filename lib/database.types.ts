@@ -1459,6 +1459,58 @@ export type Database = {
           },
         ]
       }
+      catalog_promotion_items: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          product_id: string
+          promotion_id: string
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          product_id: string
+          promotion_id: string
+          quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          product_id?: string
+          promotion_id?: string
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_promotion_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_promotion_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalog_promotion_items_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       catalog_reviews: {
         Row: {
           comment: string | null

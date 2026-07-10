@@ -12,6 +12,7 @@ type Props = {
   submitLabel: string;
   image?: ProductImage;
   mode: "create" | "edit";
+  variantNames?: string[];
 };
 
 const maxImageSize = 1600;
@@ -130,6 +131,7 @@ export function ImageForm({
   submitLabel,
   image,
   mode,
+  variantNames = [],
 }: Props) {
   const formRef =
     useRef<HTMLFormElement>(null);
@@ -142,6 +144,9 @@ export function ImageForm({
 
   const [isOptimizing, setIsOptimizing] =
     useState(false);
+  const variantListId = image
+    ? `product-image-variants-${image.id}`
+    : "product-image-variants-new";
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
@@ -218,8 +223,28 @@ export function ImageForm({
           <input
             name="alt_text"
             defaultValue={image?.alt_text ?? ""}
+            list={
+              variantNames.length > 0
+                ? variantListId
+                : undefined
+            }
             className="w-full rounded-xl border p-3"
           />
+          {variantNames.length > 0 && (
+            <>
+              <datalist id={variantListId}>
+                {variantNames.map((name) => (
+                  <option
+                    key={name}
+                    value={name}
+                  />
+                ))}
+              </datalist>
+              <p className="mt-2 text-xs text-gray-500">
+                Para cambiar la imagen automaticamente al elegir un tono, usa el nombre exacto de la variante.
+              </p>
+            </>
+          )}
         </div>
 
         <div>

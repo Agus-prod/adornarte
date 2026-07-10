@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   getCatalogProductById,
 } from "@/lib/catalog/repositories/product-repository";
@@ -14,6 +15,10 @@ import type {
   CatalogProductSummary,
 } from "@/lib/catalog/types";
 import type { ProductPublication } from "@/lib/catalog/repositories/publication-repository";
+
+type CatalogProductRecord = Awaited<
+  ReturnType<typeof getCatalogProductById>
+>;
 
 function getSeo(
   publication: ProductPublication
@@ -43,15 +48,29 @@ async function getSummary(
       organizationId
     );
 
+  return getSummaryFromProduct(
+    publication,
+    product
+  );
+}
+
+function getSummaryFromProduct(
+  publication: ProductPublication,
+  product: CatalogProductRecord
+): CatalogProductSummary {
   return {
     id: product.id,
     name: product.name,
     slug: publication.slug,
     description: product.description,
+    categoryId: product.category_id,
     imageUrl:
       publication.open_graph_image_url ??
       product.image_url,
-    salePrice: product.sale_price,
+    regularPrice: product.sale_price,
+    salePrice:
+      product.offer_price ??
+      product.sale_price,
     isFeatured: publication.is_featured,
   };
 }
@@ -74,7 +93,7 @@ export async function getCatalogProductSummaries(
   );
 }
 
-export async function getCatalogProductDetailBySlug(
+export const getCatalogProductDetailBySlug = cache(async function getCatalogProductDetailBySlug(
   organizationId: string,
   slug: string
 ): Promise<CatalogProductDetail | null> {
@@ -117,10 +136,14 @@ export async function getCatalogProductDetailBySlug(
     name: product.name,
     slug: publication.slug,
     description: product.description,
+    categoryId: product.category_id,
     imageUrl:
       publication.open_graph_image_url ??
       product.image_url,
-    salePrice: product.sale_price,
+    regularPrice: product.sale_price,
+    salePrice:
+      product.offer_price ??
+      product.sale_price,
     isFeatured: publication.is_featured,
     product,
     publication,
@@ -129,22 +152,26 @@ export async function getCatalogProductDetailBySlug(
     attributes,
     seo: getSeo(publication),
   };
-}
+});
 
 export async function getRelatedCatalogProducts(
   organizationId: string,
   productId: string,
   limit = 4
 ) {
-  const currentProduct =
-    await getCatalogProductById(
+  const [
+    currentProduct,
+    publications,
+  ] = await Promise.all([
+    getCatalogProductById(
       productId,
       organizationId
-    );
-  const publications =
-    await getPublishedPublications(
+    ),
+    getPublishedPublications(
       organizationId
-    );
+    ),
+  ]);
+
   const relatedProducts =
     await Promise.all(
       publications.map(async (publication) => {
@@ -165,18 +192,13 @@ export async function getRelatedCatalogProducts(
             null &&
           currentProduct.category_id ===
             product.category_id;
-        const sameBrand =
-          currentProduct.brand_id !== null &&
-          currentProduct.brand_id ===
-            product.brand_id;
-
-        if (!sameCategory && !sameBrand) {
+        if (!sameCategory) {
           return null;
         }
 
-        return getSummary(
-          organizationId,
-          publication
+        return getSummaryFromProduct(
+          publication,
+          product
         );
       })
     );

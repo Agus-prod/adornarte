@@ -107,7 +107,11 @@ export async function getWishlistProductSummaries() {
           slug: product.id,
           description:
             product.description,
+          categoryId:
+            product.category_id,
           imageUrl: product.image_url,
+          regularPrice:
+            product.sale_price,
           salePrice:
             product.offer_price ??
             product.sale_price,
