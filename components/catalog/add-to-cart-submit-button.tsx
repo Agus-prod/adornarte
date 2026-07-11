@@ -56,6 +56,15 @@ export function AddToCartSubmitButton({
       disabled={pending}
       aria-busy={pending}
       onClick={(event) => {
+        if (
+          sessionStorage.getItem(
+            "adornarte_cart_clearing"
+          ) === "true"
+        ) {
+          event.preventDefault();
+          return;
+        }
+
         const form =
           event.currentTarget.form;
         const formData = form

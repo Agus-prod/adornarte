@@ -36,6 +36,9 @@ type Props = {
   customer: CatalogCustomer | null;
 };
 
+type CatalogHomeBrand =
+  CatalogHomeData["brands"][number];
+
 function hasActiveFilters(
   filters: CatalogProductFilters,
   query: string
@@ -91,15 +94,130 @@ function getBrandWordmark(name: string) {
   return wordmarks[key] ?? name;
 }
 
+function getBrandLogoUrl(
+  brand: CatalogHomeBrand
+) {
+  const fallbackLogos: Record<string, string> = {
+    maybelline:
+      "https://www.google.com/s2/favicons?domain=maybelline.com&sz=128",
+    lorealparis:
+      "https://www.google.com/s2/favicons?domain=lorealparisusa.com&sz=128",
+    nyxprofessionalmakeup:
+      "https://www.google.com/s2/favicons?domain=nyxcosmetics.com&sz=128",
+    elfcosmetics:
+      "https://www.google.com/s2/favicons?domain=elfcosmetics.com&sz=128",
+    milani:
+      "https://www.google.com/s2/favicons?domain=milanicosmetics.com&sz=128",
+    wetnwild:
+      "https://www.google.com/s2/favicons?domain=wetnwildbeauty.com&sz=128",
+    essence:
+      "https://www.google.com/s2/favicons?domain=essencemakeup.com&sz=128",
+    catrice:
+      "https://www.google.com/s2/favicons?domain=catricecosmetics.com&sz=128",
+    revlon:
+      "https://www.google.com/s2/favicons?domain=revlon.com&sz=128",
+    covergirl:
+      "https://www.google.com/s2/favicons?domain=covergirl.com&sz=128",
+    lagirl:
+      "https://www.google.com/s2/favicons?domain=lagirlusa.com&sz=128",
+  };
+  const key = normalizeBrandName(
+    brand.name
+  );
+
+  if (
+    brand.logo_url &&
+    !brand.logo_url.includes(
+      "adornarte-logo"
+    )
+  ) {
+    return brand.logo_url;
+  }
+
+  return fallbackLogos[key] ?? null;
+}
+
 function BrandWordmark({
   name,
 }: {
   name: string;
 }) {
   return (
-    <span className="flex h-14 min-w-28 items-center justify-center rounded-full border border-zinc-100 bg-white px-5 text-center text-sm font-black tracking-wide text-zinc-300 shadow-sm transition duration-300 group-hover:-translate-y-0.5 group-hover:text-zinc-950 group-hover:shadow-md sm:min-w-36 sm:text-base">
+    <span className="flex h-14 min-w-28 items-center justify-center px-5 text-center text-sm font-black tracking-wide text-zinc-300 transition duration-300 group-hover:text-zinc-950 sm:min-w-36 sm:text-base">
       {getBrandWordmark(name)}
     </span>
+  );
+}
+
+function BrandMarquee({
+  brands,
+}: {
+  brands: CatalogHomeBrand[];
+}) {
+  const publicBrands = brands.filter(
+    (brand) =>
+      brand.name.trim().toLowerCase() !==
+      "generica"
+  );
+
+  if (publicBrands.length === 0) {
+    return null;
+  }
+
+  return (
+    <section
+      id="marcas"
+      className="space-y-5"
+    >
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">
+          Marcas
+        </h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Compra por tus marcas favoritas.
+        </p>
+      </div>
+
+      <div className="relative overflow-hidden border-y border-pink-100 bg-white py-7 [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+        <div className="catalog-brand-marquee flex w-max items-center gap-10 sm:gap-16">
+          {[
+            ...publicBrands,
+            ...publicBrands,
+            ...publicBrands,
+            ...publicBrands,
+          ].map((brand, index) => {
+            const logoUrl =
+              getBrandLogoUrl(brand);
+
+            return (
+              <Link
+                key={`${brand.id}-${index}`}
+                href={`/catalogo?brandId=${brand.id}`}
+                className="group flex min-w-24 shrink-0 items-center justify-center sm:min-w-32"
+                aria-label={`Ver productos de ${brand.name}`}
+              >
+                {logoUrl ? (
+                  <span className="relative grid h-16 min-w-24 place-items-center sm:min-w-32">
+                    <BrandWordmark
+                      name={brand.name}
+                    />
+                    <img
+                      src={logoUrl}
+                      alt={brand.name}
+                      className="absolute max-h-14 max-w-28 object-contain transition duration-300 group-hover:scale-110 sm:max-w-32"
+                    />
+                  </span>
+                ) : (
+                  <BrandWordmark
+                    name={brand.name}
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -376,6 +494,10 @@ export function CommerceHome({
           options={filterOptions}
         />
 
+        <BrandMarquee
+          brands={home.brands}
+        />
+
         {activeFilters ? (
           <ProductSection
             title="Resultados"
@@ -448,60 +570,6 @@ export function CommerceHome({
                     </div>
                   )
                 )}
-              </div>
-            </section>
-          )}
-
-          {home.brands.length > 0 && (
-            <section
-              id="marcas"
-              className="space-y-5"
-            >
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight">
-                  Marcas
-                </h2>
-                <p className="mt-1 text-sm text-zinc-500">
-                  Compra por tus marcas favoritas.
-                </p>
-              </div>
-
-              <div className="relative overflow-hidden border-y border-pink-100 bg-white/60 py-7">
-                <div className="catalog-brand-marquee flex w-max items-center gap-8 sm:gap-12">
-                  {[...home.brands, ...home.brands]
-                    .filter(
-                      (brand) =>
-                        brand.name
-                          .trim()
-                          .toLowerCase() !==
-                        "generica"
-                    )
-                    .map((brand, index) => (
-                      <Link
-                        key={`${brand.id}-${index}`}
-                        href={`/catalogo?brandId=${brand.id}`}
-                        className="group flex min-w-28 shrink-0 items-center justify-center"
-                        aria-label={`Ver productos de ${brand.name}`}
-                      >
-                        {brand.logo_url ? (
-                          <span className="relative grid place-items-center">
-                            <BrandWordmark
-                              name={brand.name}
-                            />
-                            <img
-                              src={brand.logo_url}
-                              alt={brand.name}
-                              className="absolute max-h-12 max-w-32 object-contain opacity-80 grayscale transition duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0"
-                            />
-                          </span>
-                        ) : (
-                          <BrandWordmark
-                            name={brand.name}
-                          />
-                        )}
-                      </Link>
-                    ))}
-                </div>
               </div>
             </section>
           )}

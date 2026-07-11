@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { Trash2 } from "lucide-react";
 import {
   clearCatalogCartAction,
@@ -49,9 +55,33 @@ export function MarketplaceCartPanel({
     useState(() =>
       getCartTotals(cart?.items ?? [])
     );
+  const [isClearing, startClearing] =
+    useTransition();
+  const lastClearAtRef = useRef(0);
 
   useEffect(() => {
     const nextItems = cart?.items ?? [];
+
+    if (lastClearAtRef.current > 0) {
+      const cartUpdatedAt = cart?.cart.updated_at
+        ? new Date(
+            cart.cart.updated_at
+          ).getTime()
+        : 0;
+
+      if (
+        nextItems.length > 0 &&
+        cartUpdatedAt <
+          lastClearAtRef.current
+      ) {
+        return;
+      }
+
+      if (nextItems.length === 0) {
+        lastClearAtRef.current = 0;
+      }
+    }
+
     setItems(nextItems);
     setOptimisticTotals(
       getCartTotals(nextItems)
@@ -241,6 +271,7 @@ export function MarketplaceCartPanel({
     }
 
     function handleOptimisticClear() {
+      lastClearAtRef.current = Date.now();
       setItems([]);
       setOptimisticTotals(
         getCartTotals([])
@@ -293,6 +324,8 @@ export function MarketplaceCartPanel({
       (total, item) => total + item.quantity,
       0
     );
+  const canClear =
+    items.length > 0 && !isClearing;
 
   return (
     <aside
@@ -319,24 +352,39 @@ export function MarketplaceCartPanel({
         </span>
       </div>
       {items.length > 0 && (
-        <form
-          action={clearCatalogCartAction}
-          className="mt-3 flex justify-end"
-        >
+        <div className="mt-3 flex justify-end">
           <button
-            type="submit"
+            type="button"
+            disabled={!canClear}
             onClick={() => {
+              sessionStorage.setItem(
+                "adornarte_cart_clearing",
+                "true"
+              );
               window.dispatchEvent(
                 new CustomEvent(
                   "catalog-cart:optimistic-clear"
                 )
               );
+              startClearing(() => {
+                void clearCatalogCartAction()
+                  .catch(() => {
+                    lastClearAtRef.current = 0;
+                  })
+                  .finally(() => {
+                    sessionStorage.removeItem(
+                      "adornarte_cart_clearing"
+                    );
+                  });
+              });
             }}
-            className="text-xs font-semibold uppercase tracking-wide text-zinc-400 transition hover:text-red-600"
+            className="text-xs font-semibold uppercase tracking-wide text-zinc-400 transition hover:text-red-600 disabled:cursor-wait disabled:opacity-60"
           >
-            Limpiar todo
+            {isClearing
+              ? "Limpiando"
+              : "Limpiar todo"}
           </button>
-        </form>
+        </div>
       )}
 
       {items.length === 0 ? (
