@@ -72,39 +72,35 @@ function normalizeBrandName(name: string) {
     .replace(/[^a-z0-9]+/g, "");
 }
 
-function getFallbackBrandLogoUrl(
-  name: string
-) {
-  const domains: Record<string, string> = {
-    maybelline:
-      "maybelline.com",
-    lorealparis:
-      "lorealparisusa.com",
-    nyxprofessionalmakeup:
-      "nyxcosmetics.com",
-    elfcosmetics:
-      "elfcosmetics.com",
-    milani:
-      "milanicosmetics.com",
-    wetnwild:
-      "wetnwildbeauty.com",
-    essence:
-      "essence.eu",
-    catrice:
-      "catrice.eu",
-    revlon:
-      "revlon.com",
-    covergirl:
-      "covergirl.com",
-    lagirl:
-      "lagirlusa.com",
+function getBrandWordmark(name: string) {
+  const wordmarks: Record<string, string> = {
+    maybelline: "MAYBELLINE",
+    lorealparis: "L'OREAL PARIS",
+    nyxprofessionalmakeup: "NYX",
+    elfcosmetics: "e.l.f.",
+    milani: "MILANI",
+    wetnwild: "wet n wild",
+    essence: "essence",
+    catrice: "CATRICE",
+    revlon: "REVLON",
+    covergirl: "COVERGIRL",
+    lagirl: "L.A. GIRL",
   };
   const key = normalizeBrandName(name);
-  const domain = domains[key];
 
-  return domain
-    ? `https://logo.clearbit.com/${domain}`
-    : "/adornarte-logo.jpg";
+  return wordmarks[key] ?? name;
+}
+
+function BrandWordmark({
+  name,
+}: {
+  name: string;
+}) {
+  return (
+    <span className="flex h-14 min-w-28 items-center justify-center rounded-full border border-zinc-100 bg-white px-5 text-center text-sm font-black tracking-wide text-zinc-300 shadow-sm transition duration-300 group-hover:-translate-y-0.5 group-hover:text-zinc-950 group-hover:shadow-md sm:min-w-36 sm:text-base">
+      {getBrandWordmark(name)}
+    </span>
+  );
 }
 
 function ProductSection({
@@ -477,34 +473,40 @@ export function CommerceHome({
               </div>
 
               <div className="relative overflow-hidden border-y border-pink-100 bg-white/60 py-7">
-                <div className="catalog-brand-marquee flex w-max items-center gap-12">
-                {[...home.brands, ...home.brands]
-                  .filter(
-                    (brand) =>
-                      brand.name
-                        .trim()
-                        .toLowerCase() !==
-                      "generica"
-                  )
-                  .map((brand, index) => (
-                  <Link
-                    key={`${brand.id}-${index}`}
-                    href={`/catalogo?brandId=${brand.id}`}
-                    className="group flex min-w-28 shrink-0 items-center justify-center"
-                    aria-label={`Ver productos de ${brand.name}`}
-                  >
-                    <img
-                      src={
-                        brand.logo_url ??
-                        getFallbackBrandLogoUrl(
-                          brand.name
-                        )
-                      }
-                      alt={brand.name}
-                      className="h-12 max-w-32 object-contain opacity-45 grayscale transition duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0"
-                    />
-                  </Link>
-                  ))}
+                <div className="catalog-brand-marquee flex w-max items-center gap-8 sm:gap-12">
+                  {[...home.brands, ...home.brands]
+                    .filter(
+                      (brand) =>
+                        brand.name
+                          .trim()
+                          .toLowerCase() !==
+                        "generica"
+                    )
+                    .map((brand, index) => (
+                      <Link
+                        key={`${brand.id}-${index}`}
+                        href={`/catalogo?brandId=${brand.id}`}
+                        className="group flex min-w-28 shrink-0 items-center justify-center"
+                        aria-label={`Ver productos de ${brand.name}`}
+                      >
+                        {brand.logo_url ? (
+                          <span className="relative grid place-items-center">
+                            <BrandWordmark
+                              name={brand.name}
+                            />
+                            <img
+                              src={brand.logo_url}
+                              alt={brand.name}
+                              className="absolute max-h-12 max-w-32 object-contain opacity-80 grayscale transition duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0"
+                            />
+                          </span>
+                        ) : (
+                          <BrandWordmark
+                            name={brand.name}
+                          />
+                        )}
+                      </Link>
+                    ))}
                 </div>
               </div>
             </section>
