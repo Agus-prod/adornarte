@@ -142,9 +142,9 @@ export function CheckoutForm({
                     className="mt-1"
                   />
                   <span>
-                    Crear mi cuenta para ver mi pedido despues
+                    Crear mi cuenta para ver mi pedido después
                     <span className="mt-1 block font-normal text-zinc-500">
-                      Usa una contrasena que recuerdes. Con esta cuenta podras ver pedidos, direcciones e historial.
+                      Usa una contraseña que recuerdes. Con esta cuenta podrás ver pedidos, direcciones e historial.
                     </span>
                   </span>
                 </div>
@@ -155,7 +155,7 @@ export function CheckoutForm({
                     type="password"
                     required
                     minLength={8}
-                    placeholder="Crear contrasena"
+                    placeholder="Crear contraseña"
                     className="min-h-12 min-w-0 rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
                   />
                   <input
@@ -163,7 +163,7 @@ export function CheckoutForm({
                     type="password"
                     required
                     minLength={8}
-                    placeholder="Confirmar contrasena"
+                    placeholder="Confirmar contraseña"
                     className="min-h-12 min-w-0 rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
                   />
                 </div>

@@ -52,7 +52,7 @@ function getCreateUserErrorMessage(
       message.includes("password") ||
       message.includes("contrasena")
     ) {
-      return "La contrasena debe tener al menos 8 caracteres.";
+      return "La contraseña debe tener al menos 8 caracteres.";
     }
 
     return error.message;
@@ -108,7 +108,7 @@ export async function createStaffUser(
     return {
       status: "error",
       message:
-        "Nombre, correo, contrasena y rol son requeridos.",
+        "Nombre, correo, contraseña y rol son requeridos.",
     };
   }
 
@@ -116,7 +116,7 @@ export async function createStaffUser(
     return {
       status: "error",
       message:
-        "La contrasena debe tener al menos 8 caracteres.",
+        "La contraseña debe tener al menos 8 caracteres.",
     };
   }
 

@@ -82,14 +82,14 @@ function getCreateAccountErrorMessage(
 ) {
   if (error instanceof Error) {
     if (error.message.includes("Ya existe")) {
-      return "Ya existe una cuenta con ese email. Intenta iniciar sesion.";
+      return "Ya existe una cuenta con ese email. Intenta iniciar sesión.";
     }
 
     if (
       error.message.includes("contraseña") ||
       error.message.includes("contrasena")
     ) {
-      return "La contrasena debe tener al menos 8 caracteres.";
+      return "La contraseña debe tener al menos 8 caracteres.";
     }
 
     if (

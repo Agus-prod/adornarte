@@ -358,7 +358,7 @@ export async function createCustomerAccount(
     confirmPassword !== password
   ) {
     throw new Error(
-      "La confirmacion de contrasena no coincide."
+      "La confirmación de contraseña no coincide."
     );
   }
 

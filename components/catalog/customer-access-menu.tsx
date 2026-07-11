@@ -142,7 +142,7 @@ export function CustomerAccessMenu({
               Tu cuenta de AdornArte
             </h2>
             <p className="mt-1 text-sm text-zinc-500">
-              Entra con tu email y contrasena para ver pedidos, direcciones e historial.
+              Entra con tu email y contraseña para ver pedidos, direcciones e historial.
             </p>
 
             <div className="mt-4 rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
@@ -176,7 +176,7 @@ export function CustomerAccessMenu({
                   name="password"
                   type="password"
                   required
-                  placeholder="Contrasena"
+                  placeholder="Contraseña"
                   className="min-h-10 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
                 />
                 <SubmitButton
@@ -221,7 +221,7 @@ export function CustomerAccessMenu({
                 type="password"
                 required
                 minLength={8}
-                placeholder="Contrasena"
+                placeholder="Contraseña"
                 className="min-h-10 w-full rounded-2xl border border-zinc-200 px-3 text-sm"
               />
               <SubmitButton

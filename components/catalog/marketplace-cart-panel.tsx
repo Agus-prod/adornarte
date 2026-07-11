@@ -389,7 +389,7 @@ export function MarketplaceCartPanel({
 
       {items.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-pink-100 bg-pink-50/50 p-5 text-sm text-zinc-500">
-          Agrega productos y apareceran aqui sin salir del catalogo.
+          Comienza a cargar productos y los verás aquí sin salir del catálogo.
         </div>
       ) : (
         <div className="mt-5 space-y-4">

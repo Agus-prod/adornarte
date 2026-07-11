@@ -86,7 +86,7 @@ export function StaffUserForm() {
         </label>
 
         <label className="grid gap-2 text-sm font-semibold text-zinc-700">
-          Contrasena temporal
+          Contraseña temporal
           <input
             name="password"
             type="password"
