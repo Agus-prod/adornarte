@@ -144,10 +144,6 @@
     will-change: transform;
   }
 
-  .catalog-brand-marquee:hover {
-    animation-play-state: paused;
-  }
-
   details[data-catalog-menu][open]
     [data-dropdown-panel],
   details[data-animated-disclosure][open]
