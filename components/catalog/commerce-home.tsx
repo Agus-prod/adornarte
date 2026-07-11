@@ -172,12 +172,6 @@ function CartMenu({
         data-dropdown-panel
         className="fixed inset-x-3 top-16 z-30 max-w-none overscroll-contain touch-pan-y sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
       >
-        <div
-          data-cart-live-status
-          hidden
-          aria-live="polite"
-          className="mb-2 rounded-2xl border border-pink-100 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700 shadow-sm"
-        />
         <MarketplaceCartPanel
           cart={cart}
           variant="dropdown"

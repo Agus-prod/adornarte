@@ -4,6 +4,7 @@ import {
   createCartItem,
   createCartRealtimeEvent,
   deleteCartItem,
+  deleteCartItems,
   getCart,
   getCartItemByProduct,
   getCartItems,
@@ -373,6 +374,27 @@ export async function removeCatalogCartItem(
   );
 
   await persistTotals(cart, items);
+}
+
+export async function clearCatalogCart() {
+  const cart =
+    await getOrCreateCart();
+
+  await deleteCartItems(
+    cart.id,
+    cart.organization_id
+  );
+
+  const updatedCart = await updateCart(
+    cart.id,
+    cart.organization_id,
+    {
+      coupon_code: null,
+      updated_at: new Date().toISOString(),
+    }
+  );
+
+  await persistTotals(updatedCart, []);
 }
 
 export async function applyCouponToCart(

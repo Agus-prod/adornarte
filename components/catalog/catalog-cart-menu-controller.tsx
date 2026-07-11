@@ -23,66 +23,14 @@ function openCartMenu() {
   });
 }
 
-function setCartStatus(message: string) {
-  const statusElements =
-    document.querySelectorAll<HTMLElement>(
-      "[data-cart-live-status]"
-    );
-
-  statusElements.forEach((element) => {
-    element.hidden = false;
-    element.textContent = message;
-  });
-}
-
-function clearCartStatus() {
-  const statusElements =
-    document.querySelectorAll<HTMLElement>(
-      "[data-cart-live-status]"
-    );
-
-  statusElements.forEach((element) => {
-    element.hidden = true;
-    element.textContent = "";
-  });
-}
-
 export function CatalogCartMenuController() {
   useEffect(() => {
-    function handleAddStart(event: Event) {
-      const detail =
-        event instanceof CustomEvent
-          ? (event.detail as {
-              productName?: string;
-            })
-          : {};
-
+    function handleAddStart() {
       openCartMenu();
-      setCartStatus(
-        detail.productName
-          ? `Agregando ${detail.productName}...`
-          : "Agregando producto..."
-      );
     }
 
-    function handleAddDone(event: Event) {
-      const detail =
-        event instanceof CustomEvent
-          ? (event.detail as {
-              productName?: string;
-            })
-          : {};
-
+    function handleAddDone() {
       openCartMenu();
-      setCartStatus(
-        detail.productName
-          ? `${detail.productName} agregado al carrito.`
-          : "Producto agregado al carrito."
-      );
-
-      window.setTimeout(() => {
-        clearCartStatus();
-      }, 1800);
     }
 
     window.addEventListener(

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   addCatalogCartItemFromForm,
   applyCouponToCart,
+  clearCatalogCart,
   removeCouponFromCart,
   removeCatalogCartItem,
   updateCatalogCartItemFromForm,
@@ -67,6 +68,13 @@ export async function removeCatalogCartItemAction(
   itemId: string
 ) {
   await removeCatalogCartItem(itemId);
+
+  revalidatePath("/catalogo", "layout");
+  revalidatePath("/catalogo/carrito");
+}
+
+export async function clearCatalogCartAction() {
+  await clearCatalogCart();
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");

@@ -159,6 +159,21 @@ export async function deleteCartItem(
   if (error) throw error;
 }
 
+export async function deleteCartItems(
+  cartId: string,
+  organizationId: string
+) {
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("catalog_cart_items")
+    .delete()
+    .eq("cart_id", cartId)
+    .eq("organization_id", organizationId);
+
+  if (error) throw error;
+}
+
 export async function createCartRealtimeEvent(
   cartId: string,
   eventType: string

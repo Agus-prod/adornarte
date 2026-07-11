@@ -4,6 +4,8 @@ import {
   createOrderItems,
 } from "@/lib/catalog/repositories/order-repository";
 import { updatePayment } from "@/lib/catalog/repositories/payment-repository";
+import { getCatalogProductById } from "@/lib/catalog/repositories/product-repository";
+import { getVariant } from "@/lib/catalog/repositories/variant-repository";
 import { getCartDetail } from "@/lib/catalog/services/cart-service";
 import { queueCatalogNotification } from "@/lib/catalog/services/notification-service";
 import { getCurrentCartPayments } from "@/lib/catalog/services/payment-service";
@@ -55,12 +57,60 @@ async function queueOrderNotifications(
   );
 }
 
+async function assertCartStock(
+  cart: NonNullable<
+    Awaited<
+      ReturnType<typeof getCartDetail>
+    >
+  >
+) {
+  for (const item of cart.items) {
+    const availableStock =
+      await getAvailableStock(
+        item.product_id,
+        item.variant_id,
+        cart.cart.organization_id
+      );
+
+    if (availableStock < item.quantity) {
+      throw new Error(
+        `${item.name} ya no tiene suficiente stock disponible.`
+      );
+    }
+  }
+}
+
+async function getAvailableStock(
+  productId: string,
+  variantId: string | null,
+  organizationId: string
+) {
+  if (variantId) {
+    const variant = await getVariant(
+      variantId,
+      organizationId
+    );
+
+    return variant.stock;
+  }
+
+  const product =
+    await getCatalogProductById(
+      productId,
+      organizationId
+    );
+
+  return product.stock ?? 0;
+}
+
 export async function createOrderFromCurrentCart() {
   const cart = await getCartDetail();
 
   if (!cart || cart.items.length === 0) {
     throw new Error("Carrito vacio.");
   }
+
+  await assertCartStock(cart);
 
   const payments =
     await getCurrentCartPayments();

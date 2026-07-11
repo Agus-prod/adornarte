@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 import {
+  clearCatalogCartAction,
   removeCatalogCartItemAction,
   removeCatalogCoupon,
 } from "@/app/catalogo/carrito/actions";
@@ -208,6 +209,65 @@ export function MarketplaceCartPanel({
     };
   }, []);
 
+  useEffect(() => {
+    function handleOptimisticRemove(
+      event: Event
+    ) {
+      if (!(event instanceof CustomEvent)) {
+        return;
+      }
+
+      const detail = event.detail as {
+        itemId?: string;
+      };
+
+      if (!detail.itemId) {
+        return;
+      }
+
+      setItems((currentItems) => {
+        const nextItems =
+          currentItems.filter(
+            (item) =>
+              item.id !== detail.itemId
+          );
+
+        setOptimisticTotals(
+          getCartTotals(nextItems)
+        );
+
+        return nextItems;
+      });
+    }
+
+    function handleOptimisticClear() {
+      setItems([]);
+      setOptimisticTotals(
+        getCartTotals([])
+      );
+    }
+
+    window.addEventListener(
+      "catalog-cart:optimistic-remove",
+      handleOptimisticRemove
+    );
+    window.addEventListener(
+      "catalog-cart:optimistic-clear",
+      handleOptimisticClear
+    );
+
+    return () => {
+      window.removeEventListener(
+        "catalog-cart:optimistic-remove",
+        handleOptimisticRemove
+      );
+      window.removeEventListener(
+        "catalog-cart:optimistic-clear",
+        handleOptimisticClear
+      );
+    };
+  }, []);
+
   const totals = useMemo(() => {
     if (cart && items === cart.items) {
       return cart.totals;
@@ -236,6 +296,9 @@ export function MarketplaceCartPanel({
 
   return (
     <aside
+      onWheel={(event) => {
+        event.stopPropagation();
+      }}
       className={
         variant === "dropdown"
           ? "max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain touch-pan-y rounded-2xl border border-pink-100 bg-white/95 p-4 shadow-2xl shadow-pink-100/70 sm:max-h-[min(34rem,calc(100vh-6rem))] sm:rounded-3xl sm:p-5"
@@ -255,6 +318,26 @@ export function MarketplaceCartPanel({
           {itemCount}
         </span>
       </div>
+      {items.length > 0 && (
+        <form
+          action={clearCatalogCartAction}
+          className="mt-3 flex justify-end"
+        >
+          <button
+            type="submit"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent(
+                  "catalog-cart:optimistic-clear"
+                )
+              );
+            }}
+            className="text-xs font-semibold uppercase tracking-wide text-zinc-400 transition hover:text-red-600"
+          >
+            Limpiar todo
+          </button>
+        </form>
+      )}
 
       {items.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-pink-100 bg-pink-50/50 p-5 text-sm text-zinc-500">
@@ -262,7 +345,7 @@ export function MarketplaceCartPanel({
         </div>
       ) : (
         <div className="mt-5 space-y-4">
-          <div className="max-h-[18rem] space-y-3 overflow-y-auto overscroll-contain touch-pan-y pr-1 sm:max-h-[22rem]">
+          <div className="space-y-3">
             {items.map((item) => (
               <div
                 key={item.id}
@@ -290,6 +373,20 @@ export function MarketplaceCartPanel({
                     >
                       <button
                         type="submit"
+                        onClick={() => {
+                          window.dispatchEvent(
+                            new CustomEvent(
+                              "catalog-cart:optimistic-remove",
+                              {
+                                detail: {
+                                  itemId: item.id,
+                                  quantity:
+                                    item.quantity,
+                                },
+                              }
+                            )
+                          );
+                        }}
                         aria-label={`Eliminar ${item.name}`}
                         title="Eliminar"
                         className="flex size-9 items-center justify-center rounded-full text-zinc-400 transition hover:bg-red-50 hover:text-red-600"

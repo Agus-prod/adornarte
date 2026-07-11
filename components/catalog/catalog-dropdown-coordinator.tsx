@@ -55,10 +55,7 @@ export function CatalogDropdownCoordinator() {
       }
     }
 
-    function showCartStatus(
-      productName: string,
-      done = false
-    ) {
+    function openCartMenu() {
       const cartMenu =
         document.querySelector<HTMLDetailsElement>(
           "[data-catalog-cart-menu]"
@@ -70,27 +67,6 @@ export function CatalogDropdownCoordinator() {
 
       closeOthers(cartMenu);
       cartMenu.open = true;
-
-      const status =
-        cartMenu.querySelector<HTMLElement>(
-          "[data-cart-live-status]"
-        );
-
-      if (!status) {
-        return;
-      }
-
-      status.hidden = false;
-      status.textContent = done
-        ? "Carrito actualizado."
-        : `Agregando ${productName} al carrito...`;
-
-      if (done) {
-        window.setTimeout(() => {
-          status.hidden = true;
-          status.textContent = "";
-        }, 1800);
-      }
     }
 
     function updateCartBadges(
@@ -111,22 +87,26 @@ export function CatalogDropdownCoordinator() {
             : quantity;
 
         badge.textContent =
-          String(next);
+          String(Math.max(0, next));
       }
     }
 
-    function handleCartAddStart(
-      event: Event
+    function setCartBadges(
+      quantity: number
     ) {
-      const productName =
-        event instanceof CustomEvent
-          ? String(
-              event.detail?.productName ??
-                "producto"
-            )
-          : "producto";
+      const badges =
+        document.querySelectorAll<HTMLElement>(
+          "[data-cart-count-badge]"
+        );
 
-      showCartStatus(productName);
+      for (const badge of badges) {
+        badge.textContent =
+          String(Math.max(0, quantity));
+      }
+    }
+
+    function handleCartAddStart() {
+      openCartMenu();
     }
 
     function handleOptimisticAdd(
@@ -147,18 +127,26 @@ export function CatalogDropdownCoordinator() {
       );
     }
 
-    function handleCartAddDone(
+    function handleOptimisticRemove(
       event: Event
     ) {
-      const productName =
+      const quantity =
         event instanceof CustomEvent
-          ? String(
-              event.detail?.productName ??
-                "producto"
+          ? Number(
+              event.detail?.quantity ?? 1
             )
-          : "producto";
+          : 1;
 
-      showCartStatus(productName, true);
+      updateCartBadges(
+        Number.isFinite(quantity) &&
+          quantity > 0
+          ? -quantity
+          : -1
+      );
+    }
+
+    function handleOptimisticClear() {
+      setCartBadges(0);
     }
 
     const menus =
@@ -182,12 +170,16 @@ export function CatalogDropdownCoordinator() {
       handleCartAddStart
     );
     window.addEventListener(
-      "catalog-cart:add-done",
-      handleCartAddDone
-    );
-    window.addEventListener(
       "catalog-cart:optimistic-add",
       handleOptimisticAdd
+    );
+    window.addEventListener(
+      "catalog-cart:optimistic-remove",
+      handleOptimisticRemove
+    );
+    window.addEventListener(
+      "catalog-cart:optimistic-clear",
+      handleOptimisticClear
     );
 
     return () => {
@@ -207,12 +199,16 @@ export function CatalogDropdownCoordinator() {
         handleCartAddStart
       );
       window.removeEventListener(
-        "catalog-cart:add-done",
-        handleCartAddDone
-      );
-      window.removeEventListener(
         "catalog-cart:optimistic-add",
         handleOptimisticAdd
+      );
+      window.removeEventListener(
+        "catalog-cart:optimistic-remove",
+        handleOptimisticRemove
+      );
+      window.removeEventListener(
+        "catalog-cart:optimistic-clear",
+        handleOptimisticClear
       );
     };
   }, []);

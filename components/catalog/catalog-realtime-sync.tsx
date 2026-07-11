@@ -15,6 +15,9 @@ export function CatalogRealtimeSync({
   const refreshTimer = useRef<
     ReturnType<typeof setTimeout> | null
   >(null);
+  const fallbackTimer = useRef<
+    ReturnType<typeof setInterval> | null
+  >(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -27,6 +30,15 @@ export function CatalogRealtimeSync({
       refreshTimer.current = setTimeout(() => {
         router.refresh();
       }, 250);
+    }
+
+    function scheduleVisibleRefresh() {
+      if (
+        document.visibilityState ===
+        "visible"
+      ) {
+        scheduleRefresh();
+      }
     }
 
     let channel = supabase
@@ -70,6 +82,24 @@ export function CatalogRealtimeSync({
           table: "product_variants",
         },
         scheduleRefresh
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "stock_movements",
+        },
+        scheduleRefresh
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "sale_items",
+        },
+        scheduleRefresh
       );
 
     if (cartId) {
@@ -89,9 +119,21 @@ export function CatalogRealtimeSync({
     const subscription =
       channel.subscribe();
 
+    fallbackTimer.current =
+      setInterval(
+        scheduleVisibleRefresh,
+        5000
+      );
+
     return () => {
       if (refreshTimer.current) {
         clearTimeout(refreshTimer.current);
+      }
+
+      if (fallbackTimer.current) {
+        clearInterval(
+          fallbackTimer.current
+        );
       }
 
       void supabase.removeChannel(
