@@ -12,7 +12,11 @@ import type { CatalogHomeData } from "@/lib/catalog/types";
 
 function isPublicBrand(name: string) {
   return (
-    name.trim().toLowerCase() !==
+    name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase() !==
     "generica"
   );
 }

@@ -99,27 +99,11 @@ function getBrandLogoUrl(
 ) {
   const fallbackLogos: Record<string, string> = {
     maybelline:
-      "https://www.google.com/s2/favicons?domain=maybelline.com&sz=128",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Maybelline-Logo.svg",
     lorealparis:
-      "https://www.google.com/s2/favicons?domain=lorealparisusa.com&sz=128",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/L%27Or%C3%A9al_logo.svg",
     nyxprofessionalmakeup:
-      "https://www.google.com/s2/favicons?domain=nyxcosmetics.com&sz=128",
-    elfcosmetics:
-      "https://www.google.com/s2/favicons?domain=elfcosmetics.com&sz=128",
-    milani:
-      "https://www.google.com/s2/favicons?domain=milanicosmetics.com&sz=128",
-    wetnwild:
-      "https://www.google.com/s2/favicons?domain=wetnwildbeauty.com&sz=128",
-    essence:
-      "https://www.google.com/s2/favicons?domain=essencemakeup.com&sz=128",
-    catrice:
-      "https://www.google.com/s2/favicons?domain=catricecosmetics.com&sz=128",
-    revlon:
-      "https://www.google.com/s2/favicons?domain=revlon.com&sz=128",
-    covergirl:
-      "https://www.google.com/s2/favicons?domain=covergirl.com&sz=128",
-    lagirl:
-      "https://www.google.com/s2/favicons?domain=lagirlusa.com&sz=128",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/NYX_Professional_Makeup_Logo.jpeg",
   };
   const key = normalizeBrandName(
     brand.name
@@ -156,7 +140,7 @@ function BrandMarquee({
 }) {
   const publicBrands = brands.filter(
     (brand) =>
-      brand.name.trim().toLowerCase() !==
+      normalizeBrandName(brand.name) !==
       "generica"
   );
 
@@ -197,14 +181,11 @@ function BrandMarquee({
                 aria-label={`Ver productos de ${brand.name}`}
               >
                 {logoUrl ? (
-                  <span className="relative grid h-16 min-w-24 place-items-center sm:min-w-32">
-                    <BrandWordmark
-                      name={brand.name}
-                    />
+                  <span className="grid h-16 min-w-24 place-items-center sm:min-w-32">
                     <img
                       src={logoUrl}
                       alt={brand.name}
-                      className="absolute max-h-14 max-w-28 object-contain transition duration-300 group-hover:scale-110 sm:max-w-32"
+                      className="max-h-14 max-w-28 object-contain transition duration-300 group-hover:scale-110 sm:max-w-32"
                     />
                   </span>
                 ) : (
@@ -494,10 +475,6 @@ export function CommerceHome({
           options={filterOptions}
         />
 
-        <BrandMarquee
-          brands={home.brands}
-        />
-
         {activeFilters ? (
           <ProductSection
             title="Resultados"
@@ -575,6 +552,10 @@ export function CommerceHome({
           )}
           </>
         )}
+
+        <BrandMarquee
+          brands={home.brands}
+        />
         </div>
 
       </div>
