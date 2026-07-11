@@ -1,5 +1,6 @@
 "use client";
 
+import { BrowserMultiFormatReader } from "@zxing/browser";
 import {
   Barcode,
   Camera,
@@ -765,18 +766,43 @@ function BarcodeScannerDialog({
     let active = true;
     let frameId = 0;
     let stream: MediaStream | null = null;
+    let scannerControls: {
+      stop: () => void;
+    } | null = null;
 
     async function startScanner() {
-      const BarcodeDetector =
-        getBarcodeDetector();
-
-      if (!BarcodeDetector) {
+      if (
+        !navigator.mediaDevices
+          ?.getUserMedia
+      ) {
         setScannerMessage(
-          "Este navegador no permite lectura automatica. Usa el campo de codigo manual."
+          "Este navegador no tiene acceso directo a la camara. Usa el campo de codigo manual."
         );
         return;
       }
 
+      const BarcodeDetector =
+        getBarcodeDetector();
+
+      if (BarcodeDetector) {
+        await startNativeScanner(
+          BarcodeDetector
+        );
+        return;
+      }
+
+      try {
+        await startCompatibleScanner();
+      } catch {
+        setScannerMessage(
+          "No pude abrir la camara. Revisa permisos o usa el codigo manual."
+        );
+      }
+    }
+
+    async function startNativeScanner(
+      BarcodeDetector: BarcodeDetectorConstructor
+    ) {
       try {
         stream =
           await navigator.mediaDevices.getUserMedia(
@@ -867,9 +893,55 @@ function BarcodeScannerDialog({
           requestAnimationFrame(scan);
       } catch {
         setScannerMessage(
-          "No pude abrir la camara. Revisa permisos del navegador."
+          "No pude abrir la camara. Revisa permisos o usa el codigo manual."
         );
       }
+    }
+
+    async function startCompatibleScanner() {
+      const video = videoRef.current;
+
+      if (!video) {
+        return;
+      }
+
+      setScannerMessage(
+        "Lector compatible activo. Acerca el codigo y manten la camara estable."
+      );
+
+      const reader =
+        new BrowserMultiFormatReader();
+
+      scannerControls =
+        await reader.decodeFromConstraints(
+          {
+            video: {
+              facingMode: {
+                ideal: "environment",
+              },
+            },
+            audio: false,
+          },
+          video,
+          (result) => {
+            if (
+              !active ||
+              detectedRef.current
+            ) {
+              return;
+            }
+
+            const code =
+              result?.getText();
+
+            if (code) {
+              detectedRef.current =
+                true;
+              scannerControls?.stop();
+              onDetected(code);
+            }
+          }
+        );
     }
 
     void startScanner();
@@ -877,6 +949,7 @@ function BarcodeScannerDialog({
     return () => {
       active = false;
       cancelAnimationFrame(frameId);
+      scannerControls?.stop();
       stream
         ?.getTracks()
         .forEach((track) =>

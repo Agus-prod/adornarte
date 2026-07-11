@@ -14,6 +14,7 @@ type Props = {
   sections: Section[];
   cart: CatalogCartDetail | null;
   customer: CatalogCustomer | null;
+  variant?: "cards" | "faq";
 };
 
 export function CatalogInfoPage({
@@ -23,6 +24,7 @@ export function CatalogInfoPage({
   sections,
   cart,
   customer,
+  variant = "cards",
 }: Props) {
   return (
     <main className="min-h-screen bg-[#fbfaf8] text-zinc-950">
@@ -47,19 +49,36 @@ export function CatalogInfoPage({
       </section>
 
       <div className="mx-auto grid max-w-4xl gap-4 px-4 py-8">
-        {sections.map((section) => (
-          <section
-            key={section.title}
-            className="rounded-3xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-100/50"
-          >
-            <h2 className="text-lg font-bold">
-              {section.title}
-            </h2>
-            <p className="mt-2 leading-7 text-zinc-600">
-              {section.body}
-            </p>
-          </section>
-        ))}
+        {variant === "faq"
+          ? sections.map((section) => (
+              <details
+                key={section.title}
+                className="group rounded-3xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-100/50 transition-all open:border-pink-200 open:bg-pink-50/40"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold">
+                  <span>{section.title}</span>
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-pink-50 text-pink-600 transition group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 leading-7 text-zinc-600">
+                  {section.body}
+                </p>
+              </details>
+            ))
+          : sections.map((section) => (
+              <section
+                key={section.title}
+                className="rounded-3xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-100/50"
+              >
+                <h2 className="text-lg font-bold">
+                  {section.title}
+                </h2>
+                <p className="mt-2 leading-7 text-zinc-600">
+                  {section.body}
+                </p>
+              </section>
+            ))}
       </div>
     </main>
   );
