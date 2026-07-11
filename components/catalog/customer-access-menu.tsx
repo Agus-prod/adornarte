@@ -104,7 +104,7 @@ export function CustomerAccessMenu({
 
       <div
         data-dropdown-panel
-        className="fixed inset-x-3 top-16 z-30 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70 sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[22rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-3xl"
+        className="fixed inset-x-3 top-16 z-30 max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain touch-pan-y rounded-2xl border border-pink-100 bg-white p-4 shadow-2xl shadow-pink-100/70 sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[22rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-3xl"
       >
         <p className="text-xs font-semibold uppercase text-pink-600">
           Acceso cliente
@@ -180,7 +180,7 @@ export function CustomerAccessMenu({
                   className="min-h-10 min-w-0 rounded-2xl border border-zinc-200 bg-white px-3 text-sm"
                 />
                 <SubmitButton
-                  className="rounded-2xl bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-80"
+                  className="min-h-10 w-full rounded-2xl bg-zinc-950 px-4 text-sm font-semibold text-white hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-80 sm:w-auto"
                   pendingLabel="Entrando..."
                 >
                   Iniciar

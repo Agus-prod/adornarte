@@ -41,8 +41,8 @@ export default async function ContactPage() {
     getWhatsAppHref(whatsapp);
   const email =
     settings?.billingEmail ?? null;
-  const address =
-    settings?.billingAddress ?? null;
+  const contactPhone =
+    phone ?? whatsapp;
 
   return (
     <main className="min-h-screen bg-[#fbfaf8] text-zinc-950">
@@ -77,8 +77,10 @@ export default async function ContactPage() {
             Atencion directa
           </h2>
           <p className="mt-2 leading-7 text-zinc-600">
-            Escribenos para consultar pedidos,
-            disponibilidad, cambios o entregas.
+            Escribenos para consultas de
+            productos, pedidos, pagos,
+            cambios, garantias o entregas a
+            nivel nacional.
           </p>
           {whatsappHref ? (
             <a
@@ -102,15 +104,15 @@ export default async function ContactPage() {
             Telefono
           </p>
           <h2 className="mt-2 text-xl font-bold">
-            Llamadas y mensajes
+            Telefono de la tienda
           </h2>
           <p className="mt-2 leading-7 text-zinc-600">
-            {phone ??
-              "Te contactaremos con los datos registrados en tu pedido."}
+            {contactPhone ??
+              "Atendemos consultas por WhatsApp desde el boton de contacto."}
           </p>
-          {phone ? (
+          {contactPhone ? (
             <a
-              href={`tel:${cleanPhone(phone)}`}
+              href={`tel:${cleanPhone(contactPhone)}`}
               className="mt-4 inline-flex min-h-11 items-center rounded-full border border-pink-200 px-5 text-sm font-bold text-pink-600"
             >
               Llamar ahora
@@ -123,11 +125,11 @@ export default async function ContactPage() {
             Correo
           </p>
           <h2 className="mt-2 text-xl font-bold">
-            Soporte por email
+            Correo de contacto
           </h2>
           <p className="mt-2 leading-7 text-zinc-600">
             {email ??
-              "Usa tu cuenta para dar seguimiento a pedidos y mensajes importantes."}
+              "Si necesitas soporte por correo, escribenos por WhatsApp y te compartimos el canal disponible."}
           </p>
           {email ? (
             <a
@@ -141,14 +143,17 @@ export default async function ContactPage() {
 
         <article className="rounded-3xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-100/50">
           <p className="text-xs font-semibold uppercase text-pink-600">
-            Ubicacion
+            Cobertura
           </p>
           <h2 className="mt-2 text-xl font-bold">
-            Entregas coordinadas
+            Entregas nacionales
           </h2>
           <p className="mt-2 leading-7 text-zinc-600">
-            {address ??
-              "La entrega se coordina segun ciudad, direccion y disponibilidad del pedido."}
+            Enviamos y coordinamos entregas
+            a nivel nacional. Al completar tu
+            pedido revisamos ciudad,
+            direccion, disponibilidad y forma
+            de pago para darte seguimiento.
           </p>
         </article>
       </section>

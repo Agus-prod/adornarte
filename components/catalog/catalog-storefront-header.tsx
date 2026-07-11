@@ -39,13 +39,16 @@ function CartMenu({
         <span className="hidden sm:inline">
           Carrito
         </span>
-        <span className="rounded-full bg-pink-50 px-2 py-0.5 text-xs font-bold">
+        <span
+          data-cart-count-badge
+          className="rounded-full bg-pink-50 px-2 py-0.5 text-xs font-bold"
+        >
           {count}
         </span>
       </summary>
       <div
         data-dropdown-panel
-        className="fixed inset-x-3 top-16 z-30 max-w-none sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
+        className="fixed inset-x-3 top-16 z-30 max-w-none overscroll-contain touch-pan-y sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
       >
         <div
           data-cart-live-status

@@ -138,6 +138,15 @@
     display: none;
   }
 
+  .catalog-brand-marquee {
+    animation: adornarte-brand-marquee 28s linear
+      infinite;
+  }
+
+  .catalog-brand-marquee:hover {
+    animation-play-state: paused;
+  }
+
   details[data-catalog-menu][open]
     [data-dropdown-panel],
   details[data-animated-disclosure][open]
@@ -145,6 +154,22 @@
   details[open] > *:not(summary) {
     animation: adornarte-dropdown-in 180ms ease-out;
     transform-origin: top center;
+  }
+}
+
+@keyframes adornarte-brand-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-brand-marquee {
+    animation: none;
   }
 }
 

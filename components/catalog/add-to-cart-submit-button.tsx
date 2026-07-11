@@ -15,12 +15,14 @@ type Props = {
 
 function emitCartEvent(
   type: "catalog-cart:add-start" | "catalog-cart:add-done",
-  productName: string
+  productName: string,
+  quantity = 1
 ) {
   window.dispatchEvent(
     new CustomEvent(type, {
       detail: {
         productName,
+        quantity,
       },
     })
   );
@@ -52,6 +54,7 @@ export function AddToCartSubmitButton({
     <button
       type="submit"
       disabled={pending}
+      aria-busy={pending}
       onClick={(event) => {
         const form =
           event.currentTarget.form;
@@ -83,12 +86,16 @@ export function AddToCartSubmitButton({
 
         emitCartEvent(
           "catalog-cart:add-start",
-          productName
+          productName,
+          Number.isFinite(quantity) &&
+            quantity > 0
+            ? quantity
+            : 1
         );
       }}
-      className="min-h-11 w-full rounded-xl bg-pink-600 px-3 text-sm font-semibold leading-tight text-white transition hover:bg-pink-700 disabled:cursor-wait disabled:opacity-80 sm:rounded-2xl"
+      className="min-h-11 w-full rounded-xl bg-pink-600 px-3 text-sm font-semibold leading-tight text-white transition hover:bg-pink-700 disabled:cursor-wait sm:rounded-2xl"
     >
-      {pending ? "Agregando..." : "Agregar"}
+      Agregar
     </button>
   );
 }

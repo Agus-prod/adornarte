@@ -10,6 +10,13 @@ import { getCatalogProductSummaries } from "@/lib/catalog/services/catalog-servi
 import { getActiveCatalogCombos } from "@/lib/catalog/services/combo-service";
 import type { CatalogHomeData } from "@/lib/catalog/types";
 
+function isPublicBrand(name: string) {
+  return (
+    name.trim().toLowerCase() !==
+    "generica"
+  );
+}
+
 export async function getCatalogHomeData(
   organizationId: string
 ): Promise<CatalogHomeData> {
@@ -76,7 +83,11 @@ export async function getCatalogHomeData(
       )
       .slice(0, 8),
     collections: collections.slice(0, 6),
-    brands: brands.slice(0, 12),
+    brands: brands
+      .filter((brand) =>
+        isPublicBrand(brand.name)
+      )
+      .slice(0, 12),
     combos: combos.slice(0, 8),
   };
 }

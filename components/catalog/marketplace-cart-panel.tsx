@@ -238,7 +238,7 @@ export function MarketplaceCartPanel({
     <aside
       className={
         variant === "dropdown"
-          ? "max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl border border-pink-100 bg-white/95 p-4 shadow-2xl shadow-pink-100/70 sm:max-h-[min(34rem,calc(100vh-6rem))] sm:rounded-3xl sm:p-5"
+          ? "max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain touch-pan-y rounded-2xl border border-pink-100 bg-white/95 p-4 shadow-2xl shadow-pink-100/70 sm:max-h-[min(34rem,calc(100vh-6rem))] sm:rounded-3xl sm:p-5"
           : "h-fit rounded-2xl border border-pink-100 bg-white/95 p-4 shadow-xl shadow-pink-100/50 sm:rounded-3xl sm:p-5"
       }
     >
@@ -262,7 +262,7 @@ export function MarketplaceCartPanel({
         </div>
       ) : (
         <div className="mt-5 space-y-4">
-          <div className="max-h-[18rem] space-y-3 overflow-y-auto pr-1 sm:max-h-[22rem]">
+          <div className="max-h-[18rem] space-y-3 overflow-y-auto overscroll-contain touch-pan-y pr-1 sm:max-h-[22rem]">
             {items.map((item) => (
               <div
                 key={item.id}

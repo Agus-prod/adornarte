@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { addCatalogCartItem } from "@/app/catalogo/carrito/actions";
+import { AddToCartSubmitButton } from "@/components/catalog/add-to-cart-submit-button";
 import type { CatalogProductSummary } from "@/lib/catalog/types";
 
 type Props = {
@@ -15,6 +16,11 @@ function MiniProductTile({
   product: CatalogProductSummary;
 }) {
   const price = product.salePrice ?? 0;
+  const regularPrice =
+    product.regularPrice ?? null;
+  const isOnOffer =
+    regularPrice !== null &&
+    regularPrice > price;
   const initial =
     product.name.trim().charAt(0).toUpperCase() ||
     "A";
@@ -49,6 +55,11 @@ function MiniProductTile({
           {product.name}
         </Link>
         <p className="text-sm font-black text-zinc-950">
+          {isOnOffer && (
+            <span className="mr-1 font-semibold text-zinc-400 line-through">
+              L {regularPrice.toFixed(2)}
+            </span>
+          )}
           L {price.toFixed(2)}
         </p>
         <form action={addCatalogCartItem}>
@@ -62,12 +73,14 @@ function MiniProductTile({
             name="quantity"
             value="1"
           />
-          <button
-            type="submit"
-            className="min-h-9 w-full rounded-xl bg-pink-600 px-2 text-xs font-bold text-white"
-          >
-            Agregar
-          </button>
+          <AddToCartSubmitButton
+            productName={product.name}
+            optimisticItem={{
+              productId: product.id,
+              unitPrice: price,
+              imageUrl: product.imageUrl,
+            }}
+          />
         </form>
       </div>
     </article>

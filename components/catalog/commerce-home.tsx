@@ -64,6 +64,49 @@ function hasDifferentProducts(
   );
 }
 
+function normalizeBrandName(name: string) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function getFallbackBrandLogoUrl(
+  name: string
+) {
+  const domains: Record<string, string> = {
+    maybelline:
+      "maybelline.com",
+    lorealparis:
+      "lorealparisusa.com",
+    nyxprofessionalmakeup:
+      "nyxcosmetics.com",
+    elfcosmetics:
+      "elfcosmetics.com",
+    milani:
+      "milanicosmetics.com",
+    wetnwild:
+      "wetnwildbeauty.com",
+    essence:
+      "essence.eu",
+    catrice:
+      "catrice.eu",
+    revlon:
+      "revlon.com",
+    covergirl:
+      "covergirl.com",
+    lagirl:
+      "lagirlusa.com",
+  };
+  const key = normalizeBrandName(name);
+  const domain = domains[key];
+
+  return domain
+    ? `https://logo.clearbit.com/${domain}`
+    : "/adornarte-logo.jpg";
+}
+
 function ProductSection({
   title,
   subtitle,
@@ -122,13 +165,16 @@ function CartMenu({
         <span className="hidden sm:inline">
           Carrito
         </span>
-        <span className="rounded-full bg-pink-50 px-2 py-0.5 text-xs font-bold">
+        <span
+          data-cart-count-badge
+          className="rounded-full bg-pink-50 px-2 py-0.5 text-xs font-bold"
+        >
           {itemCount}
         </span>
       </summary>
       <div
         data-dropdown-panel
-        className="fixed inset-x-3 top-16 z-30 max-w-none sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
+        className="fixed inset-x-3 top-16 z-30 max-w-none overscroll-contain touch-pan-y sm:absolute sm:inset-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-[24rem] sm:max-w-[calc(100vw-2rem)]"
       >
         <div
           data-cart-live-status
@@ -430,32 +476,36 @@ export function CommerceHome({
                 </p>
               </div>
 
-              <div className="scrollbar-hidden flex gap-8 overflow-x-auto border-y border-pink-100 bg-white/60 px-2 py-6">
-                {home.brands.map((brand) => (
+              <div className="relative overflow-hidden border-y border-pink-100 bg-white/60 py-7">
+                <div className="catalog-brand-marquee flex w-max items-center gap-12">
+                {[...home.brands, ...home.brands]
+                  .filter(
+                    (brand) =>
+                      brand.name
+                        .trim()
+                        .toLowerCase() !==
+                      "generica"
+                  )
+                  .map((brand, index) => (
                   <Link
-                    key={brand.id}
+                    key={`${brand.id}-${index}`}
                     href={`/catalogo?brandId=${brand.id}`}
-                    className="group flex min-w-32 shrink-0 flex-col items-center justify-center text-center"
+                    className="group flex min-w-28 shrink-0 items-center justify-center"
+                    aria-label={`Ver productos de ${brand.name}`}
                   >
-                    {brand.logo_url ? (
-                      <img
-                        src={brand.logo_url}
-                        alt={brand.name}
-                        className="h-14 max-w-32 object-contain grayscale transition duration-300 group-hover:scale-110 group-hover:grayscale-0"
-                      />
-                    ) : (
-                      <span className="flex size-14 items-center justify-center rounded-full bg-pink-50 text-xl font-black text-pink-600 transition group-hover:scale-110">
-                        {brand.name
-                          .trim()
-                          .charAt(0)
-                          .toUpperCase() || "M"}
-                      </span>
-                    )}
-                    <span className="mt-3 max-w-32 text-xs font-bold text-zinc-700 transition group-hover:text-pink-700">
-                      {brand.name}
-                    </span>
+                    <img
+                      src={
+                        brand.logo_url ??
+                        getFallbackBrandLogoUrl(
+                          brand.name
+                        )
+                      }
+                      alt={brand.name}
+                      className="h-12 max-w-32 object-contain opacity-45 grayscale transition duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0"
+                    />
                   </Link>
-                ))}
+                  ))}
+                </div>
               </div>
             </section>
           )}

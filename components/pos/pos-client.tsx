@@ -2,6 +2,10 @@
 
 import { BrowserMultiFormatReader } from "@zxing/browser";
 import {
+  BarcodeFormat,
+  DecodeHintType,
+} from "@zxing/library";
+import {
   Barcode,
   Camera,
   CreditCard,
@@ -69,6 +73,33 @@ function getBarcodeDetector() {
       BarcodeDetector?: BarcodeDetectorConstructor;
     }
   ).BarcodeDetector;
+}
+
+function getBarcodeReader() {
+  const hints =
+    new Map<DecodeHintType, unknown>();
+
+  hints.set(
+    DecodeHintType.POSSIBLE_FORMATS,
+    [
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+      BarcodeFormat.CODE_128,
+      BarcodeFormat.CODE_39,
+      BarcodeFormat.ITF,
+      BarcodeFormat.QR_CODE,
+    ]
+  );
+  hints.set(
+    DecodeHintType.TRY_HARDER,
+    true
+  );
+
+  return new BrowserMultiFormatReader(
+    hints
+  );
 }
 
 function money(value: number) {
@@ -810,6 +841,12 @@ function BarcodeScannerDialog({
               video: {
                 facingMode:
                   "environment",
+                width: {
+                  ideal: 1280,
+                },
+                height: {
+                  ideal: 720,
+                },
               },
               audio: false,
             }
@@ -909,8 +946,7 @@ function BarcodeScannerDialog({
         "Lector compatible activo. Acerca el codigo y manten la camara estable."
       );
 
-      const reader =
-        new BrowserMultiFormatReader();
+      const reader = getBarcodeReader();
 
       scannerControls =
         await reader.decodeFromConstraints(
@@ -918,6 +954,12 @@ function BarcodeScannerDialog({
             video: {
               facingMode: {
                 ideal: "environment",
+              },
+              width: {
+                ideal: 1280,
+              },
+              height: {
+                ideal: 720,
               },
             },
             audio: false,

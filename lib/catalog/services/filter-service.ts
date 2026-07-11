@@ -83,7 +83,11 @@ export async function getCatalogFilterOptions(
     attributeGroups.flat();
 
   return {
-    brands,
+    brands: brands.filter(
+      (brand) =>
+        normalize(brand.name) !==
+        "generica"
+    ),
     categories,
     colors: getDistinctValues(
       attributes
