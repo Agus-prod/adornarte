@@ -7,6 +7,7 @@ import { updatePayment } from "@/lib/catalog/repositories/payment-repository";
 import { getCatalogProductById } from "@/lib/catalog/repositories/product-repository";
 import { getVariant } from "@/lib/catalog/repositories/variant-repository";
 import { getCartDetail } from "@/lib/catalog/services/cart-service";
+import { registerCouponUse } from "@/lib/catalog/services/coupon-service";
 import { queueCatalogNotification } from "@/lib/catalog/services/notification-service";
 import { getCurrentCartPayments } from "@/lib/catalog/services/payment-service";
 import { getCatalogSettingsView } from "@/lib/catalog/services/settings-service";
@@ -205,6 +206,11 @@ export async function createOrderFromCurrentCart() {
       status: "converted",
       updated_at: new Date().toISOString(),
     }
+  );
+
+  await registerCouponUse(
+    cart.cart.organization_id,
+    cart.cart.coupon_code
   );
 
   await queueOrderNotifications(

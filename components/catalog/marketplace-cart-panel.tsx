@@ -349,7 +349,8 @@ export function MarketplaceCartPanel({
         cart?.totals.taxTotal ?? 0,
       total:
         optimisticTotals.subtotal -
-        (cart?.totals.discountTotal ?? 0),
+        (cart?.totals.discountTotal ?? 0) +
+        (cart?.totals.shippingTotal ?? 0),
     };
   }, [cart, items, optimisticTotals]);
 
@@ -523,6 +524,14 @@ export function MarketplaceCartPanel({
               <dd>
                   {formatMoney(
                   totals.subtotal
+                )}
+              </dd>
+            </div>
+            <div className="flex justify-between text-zinc-500">
+              <dt>Envio</dt>
+              <dd>
+                  {formatMoney(
+                  totals.shippingTotal
                 )}
               </dd>
             </div>

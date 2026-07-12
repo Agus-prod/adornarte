@@ -28,6 +28,45 @@ function readNumber(
     : 0;
 }
 
+function readCouponType(
+  formData: FormData
+) {
+  const type = readText(formData, "type");
+
+  if (
+    type === "percent" ||
+    type === "amount" ||
+    type === "free_shipping"
+  ) {
+    return type;
+  }
+
+  return "percent";
+}
+
+function getCouponValue(
+  formData: FormData
+) {
+  const type = readCouponType(formData);
+  const value = readNumber(
+    formData,
+    "value"
+  );
+
+  if (type === "free_shipping") {
+    return 0;
+  }
+
+  if (type === "percent") {
+    return Math.min(
+      100,
+      Math.max(0, value)
+    );
+  }
+
+  return Math.max(0, value);
+}
+
 export async function getCouponManagementView() {
   const profile =
     await getCurrentProfile();
@@ -90,11 +129,8 @@ export async function createCouponFromForm(
       profile.organization_id,
     name: readText(formData, "name"),
     code,
-    type: readText(formData, "type"),
-    value: readNumber(
-      formData,
-      "value"
-    ),
+    type: readCouponType(formData),
+    value: getCouponValue(formData),
     minimum_subtotal: readNumber(
       formData,
       "minimum_subtotal"

@@ -38,10 +38,10 @@ export default async function CuponesPage() {
           defaultValue="percent"
         >
           <option value="percent">
-            Porcentaje
+            Porcentaje (%)
           </option>
           <option value="amount">
-            Monto
+            Monto fijo (L)
           </option>
           <option value="free_shipping">
             Envio gratis
@@ -120,6 +120,7 @@ export default async function CuponesPage() {
               <th className="p-4">Tipo</th>
               <th className="p-4">Valor</th>
               <th className="p-4">Usos</th>
+              <th className="p-4">Estado</th>
             </tr>
           </thead>
           <tbody>
@@ -135,10 +136,22 @@ export default async function CuponesPage() {
                   {coupon.name}
                 </td>
                 <td className="p-4">
-                  {coupon.type}
+                  {coupon.type ===
+                  "percent"
+                    ? "Porcentaje"
+                    : coupon.type ===
+                        "amount"
+                      ? "Monto fijo"
+                      : "Envio gratis"}
                 </td>
                 <td className="p-4">
-                  {Number(coupon.value).toFixed(2)}
+                  {coupon.type ===
+                  "free_shipping"
+                    ? "Envio"
+                    : coupon.type ===
+                        "percent"
+                      ? `${Number(coupon.value).toFixed(2)}%`
+                      : `L ${Number(coupon.value).toFixed(2)}`}
                 </td>
                 <td className="p-4">
                   {coupon.used_count}
@@ -146,12 +159,17 @@ export default async function CuponesPage() {
                     ? ` / ${coupon.usage_limit}`
                     : ""}
                 </td>
+                <td className="p-4">
+                  {coupon.is_active
+                    ? "Activo"
+                    : "Inactivo"}
+                </td>
               </tr>
             ))}
             {!coupons.length && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="p-8 text-center text-gray-500"
                 >
                   No hay cupones creados.

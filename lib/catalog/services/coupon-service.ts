@@ -1,5 +1,6 @@
 import {
   getCouponByCode,
+  updateCoupon,
   type CatalogCoupon,
 } from "@/lib/catalog/repositories/coupon-repository";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -125,6 +126,33 @@ export async function getValidCouponByCode(
     coupon,
     subtotal,
     customerId
+  );
+}
+
+export async function registerCouponUse(
+  organizationId: string,
+  code: string | null
+) {
+  if (!code) {
+    return;
+  }
+
+  const coupon = await getCouponByCode(
+    organizationId,
+    normalizeCouponCode(code)
+  );
+
+  if (!coupon) {
+    return;
+  }
+
+  await updateCoupon(
+    coupon.id,
+    organizationId,
+    {
+      used_count: coupon.used_count + 1,
+      updated_at: new Date().toISOString(),
+    }
   );
 }
 

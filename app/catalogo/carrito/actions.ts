@@ -24,6 +24,7 @@ export async function addCatalogCartItem(
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 }
 
 export async function addCatalogComboItems(
@@ -49,6 +50,7 @@ export async function addCatalogComboItems(
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 }
 
 export async function updateCatalogCartItem(
@@ -62,6 +64,7 @@ export async function updateCatalogCartItem(
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 }
 
 export async function removeCatalogCartItemAction(
@@ -71,6 +74,7 @@ export async function removeCatalogCartItemAction(
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 }
 
 export async function clearCatalogCartAction() {
@@ -78,6 +82,7 @@ export async function clearCatalogCartAction() {
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 }
 
 export async function applyCatalogCoupon(
@@ -95,6 +100,7 @@ export async function applyCatalogCoupon(
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 
   return {
     status: "success",
@@ -107,6 +113,7 @@ export async function removeCatalogCoupon() {
 
   revalidatePath("/catalogo", "layout");
   revalidatePath("/catalogo/carrito");
+  revalidatePath("/catalogo/checkout");
 }
 
 function getCouponErrorMessage(

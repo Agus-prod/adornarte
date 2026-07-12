@@ -131,6 +131,14 @@ export function CartSummary({
             </dd>
           </div>
           <div className="flex justify-between">
+            <dt>Envio</dt>
+            <dd>
+              {formatMoney(
+                cart.totals.shippingTotal
+              )}
+            </dd>
+          </div>
+          <div className="flex justify-between">
             <dt>Descuento</dt>
             <dd>
               {formatMoney(

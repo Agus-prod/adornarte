@@ -5,6 +5,7 @@ import { getPublicCatalogOrganizationId } from "@/lib/catalog/services/catalog-c
 import { getCartDetail } from "@/lib/catalog/services/cart-service";
 import { getCurrentCatalogCustomer } from "@/lib/catalog/services/customer-service";
 import { getConfiguredCatalogBankAccounts } from "@/lib/catalog/services/bank-account-service";
+import { getActiveShippingZones } from "@/lib/catalog/repositories/shipping-repository";
 
 export default async function CheckoutPage() {
   const organizationId =
@@ -20,11 +21,19 @@ export default async function CheckoutPage() {
     );
   }
 
-  const [cart, customer, bankAccounts] =
+  const [
+    cart,
+    customer,
+    bankAccounts,
+    shippingZones,
+  ] =
     await Promise.all([
       getCartDetail(),
       getCurrentCatalogCustomer(),
       getConfiguredCatalogBankAccounts(
+        organizationId
+      ),
+      getActiveShippingZones(
         organizationId
       ),
     ]);
@@ -60,6 +69,7 @@ export default async function CheckoutPage() {
           cart={cart}
           customer={customer}
           bankAccounts={bankAccounts}
+          shippingZones={shippingZones}
         />
       </div>
     </main>

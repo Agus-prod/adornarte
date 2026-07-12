@@ -24,6 +24,7 @@ import {
   getCurrentCustomerEmail,
   saveCustomerProfile,
 } from "@/lib/catalog/services/customer-service";
+import { getShippingQuote } from "@/lib/catalog/services/shipping-service";
 import type {
   CatalogCartDetail,
   CatalogCartTotals,
@@ -63,6 +64,43 @@ function readQuantity(formData: FormData) {
     value > 0
     ? value
     : 1;
+}
+
+function readDeliveryMethod(
+  formData: FormData
+) {
+  const value = readText(
+    formData,
+    "delivery_method"
+  );
+
+  return value === "pickup"
+    ? "pickup"
+    : "home_delivery";
+}
+
+async function getCheckoutShippingTotal(
+  cart: CatalogCart,
+  items: CatalogCartItem[],
+  formData: FormData
+) {
+  const deliveryMethod =
+    readDeliveryMethod(formData);
+
+  if (deliveryMethod === "pickup") {
+    return 0;
+  }
+
+  const subtotal =
+    getTotals(items).subtotal;
+  const quote =
+    await getShippingQuote(
+      cart.organization_id,
+      readText(formData, "shipping_city"),
+      subtotal
+    );
+
+  return quote ? quote.cost : 0;
 }
 
 function getOrganizationId() {
@@ -529,6 +567,27 @@ export async function updateCheckoutFromForm(
 ) {
   const cart =
     await getOrCreateCart();
+  const items = await getCartItems(
+    cart.id,
+    cart.organization_id
+  );
+  const deliveryMethod =
+    readDeliveryMethod(formData);
+  const shippingTotal =
+    await getCheckoutShippingTotal(
+      cart,
+      items,
+      formData
+    );
+  const deliveryLabel =
+    deliveryMethod === "pickup"
+      ? "Recoger en punto publico"
+      : "Envio a casa";
+  const shippingNotes =
+    readOptionalText(
+      formData,
+      "shipping_notes"
+    );
 
   await saveCustomerProfile(formData);
 
@@ -551,15 +610,15 @@ export async function updateCheckoutFromForm(
       shipping_address: readText(
         formData,
         "shipping_address"
-      ),
+      ) || deliveryLabel,
       shipping_city: readText(
         formData,
         "shipping_city"
-      ),
-      shipping_notes: readOptionalText(
-        formData,
-        "shipping_notes"
-      ),
+      ) || "Juticalpa",
+      shipping_notes: shippingNotes
+        ? `${deliveryLabel}: ${shippingNotes}`
+        : deliveryLabel,
+      shipping_total: shippingTotal,
       payment_method: readText(
         formData,
         "payment_method"
@@ -569,11 +628,6 @@ export async function updateCheckoutFromForm(
       ),
       updated_at: new Date().toISOString(),
     }
-  );
-
-  const items = await getCartItems(
-    cart.id,
-    cart.organization_id
   );
 
   await persistTotals(

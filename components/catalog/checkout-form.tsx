@@ -1,6 +1,7 @@
 import { saveCheckout } from "@/app/catalogo/checkout/actions";
 import { PaymentMethodFields } from "@/components/catalog/payment-method-fields";
 import type { CatalogCustomer } from "@/lib/catalog/repositories/customer-repository";
+import type { CatalogShippingZone } from "@/lib/catalog/repositories/shipping-repository";
 import type {
   CatalogBankAccount,
   CatalogCartDetail,
@@ -11,12 +12,14 @@ type Props = {
   cart: CatalogCartDetail;
   customer: CatalogCustomer | null;
   bankAccounts: CatalogBankAccount[];
+  shippingZones: CatalogShippingZone[];
 };
 
 export function CheckoutForm({
   cart,
   customer,
   bankAccounts,
+  shippingZones,
 }: Props) {
   const customerName =
     customer?.name ??
@@ -35,6 +38,8 @@ export function CheckoutForm({
   const paymentMethod =
     (cart.cart.payment_method ??
       "cash_on_delivery") as CatalogPaymentMethod;
+  const defaultShippingZone =
+    shippingZones[0] ?? null;
 
   return (
     <form
@@ -183,24 +188,87 @@ export function CheckoutForm({
           </div>
 
           <div className="space-y-4 p-4 sm:p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="rounded-2xl border border-pink-200 bg-pink-50/70 p-4 text-sm">
+                <input
+                  type="radio"
+                  name="delivery_method"
+                  value="home_delivery"
+                  defaultChecked
+                  className="mr-2"
+                />
+                <span className="font-semibold">
+                  Envio a casa
+                </span>
+                <span className="mt-1 block text-zinc-500">
+                  Entrega nacional
+                  {defaultShippingZone
+                    ? ` desde L ${Number(defaultShippingZone.base_rate).toFixed(2)}.`
+                    : " con costo segun zona disponible."}
+                </span>
+              </label>
+              <label className="rounded-2xl border border-zinc-200 bg-white p-4 text-sm">
+                <input
+                  type="radio"
+                  name="delivery_method"
+                  value="pickup"
+                  className="mr-2"
+                />
+                <span className="font-semibold">
+                  Recoger en punto publico
+                </span>
+                <span className="mt-1 block text-zinc-500">
+                  Sin costo de envio. Coordinamos el punto de entrega.
+                </span>
+              </label>
+            </div>
             <input
               name="shipping_address"
-              required
               defaultValue={
                 cart.cart.shipping_address ?? ""
               }
-              placeholder="Direccion"
+              placeholder="Direccion o referencia de entrega"
               className="min-h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
             />
-            <input
-              name="shipping_city"
-              required
-              defaultValue={
-                cart.cart.shipping_city ?? ""
-              }
-              placeholder="Ciudad"
-              className="min-h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
-            />
+            {shippingZones.length > 0 ? (
+              <select
+                name="shipping_city"
+                defaultValue={
+                  cart.cart.shipping_city ??
+                  defaultShippingZone?.city ??
+                  defaultShippingZone?.name ??
+                  ""
+                }
+                className="min-h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
+              >
+                {shippingZones.map((zone) => (
+                  <option
+                    key={zone.id}
+                    value={
+                      zone.city ?? zone.name
+                    }
+                  >
+                    {zone.name}
+                    {zone.city
+                      ? ` - ${zone.city}`
+                      : ""}{" "}
+                    · L{" "}
+                    {Number(
+                      zone.base_rate
+                    ).toFixed(2)}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                name="shipping_city"
+                defaultValue={
+                  cart.cart.shipping_city ?? ""
+                }
+                placeholder="Ciudad o zona"
+                className="min-h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-pink-300 focus:ring-4 focus:ring-pink-100"
+              />
+            )}
             <textarea
               name="shipping_notes"
               rows={3}
@@ -260,12 +328,32 @@ export function CheckoutForm({
           ))}
         </div>
 
-        <div className="mt-5 flex justify-between border-t border-pink-100 pt-4 text-lg font-bold">
-          <span>Total</span>
-          <span>
-            L {cart.totals.total.toFixed(2)}
-          </span>
-        </div>
+        <dl className="mt-5 space-y-2 border-t border-pink-100 pt-4 text-sm">
+          <div className="flex justify-between">
+            <dt>Subtotal</dt>
+            <dd>
+              L {cart.totals.subtotal.toFixed(2)}
+            </dd>
+          </div>
+          <div className="flex justify-between text-zinc-500">
+            <dt>Envio</dt>
+            <dd>
+              L {cart.totals.shippingTotal.toFixed(2)}
+            </dd>
+          </div>
+          <div className="flex justify-between text-zinc-500">
+            <dt>Descuento</dt>
+            <dd>
+              - L {cart.totals.discountTotal.toFixed(2)}
+            </dd>
+          </div>
+          <div className="flex justify-between border-t border-pink-100 pt-3 text-lg font-bold">
+            <dt>Total</dt>
+            <dd>
+              L {cart.totals.total.toFixed(2)}
+            </dd>
+          </div>
+        </dl>
 
         <button
           type="submit"
