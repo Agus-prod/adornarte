@@ -149,8 +149,15 @@ export function CommerceSettingsForm({
             defaultValue={settings.shopBannerUrl}
             placeholder="https://.../banner-catalogo.jpg"
           />
+          <div className="overflow-hidden rounded-2xl border border-pink-100 bg-pink-50">
+            <img
+              src={settings.shopBannerUrl ?? ""}
+              alt="Preview del banner del catalogo"
+              className="h-28 w-full object-cover sm:h-36"
+            />
+          </div>
           <p className="text-xs leading-5 text-zinc-500">
-            Imagen horizontal para mostrar sobre las categorias. Recomendado: 1600 x 420 px.
+            Puedes dejar el banner base de AdornArte o reemplazarlo con una URL propia. Recomendado: 1600 x 420 px.
           </p>
         </div>
       </Section>

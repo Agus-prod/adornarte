@@ -10,6 +10,8 @@ import type {
 
 const defaultShopName =
   "AdornArte Shop";
+const defaultShopBannerUrl =
+  "/adornarte-catalog-banner.svg";
 
 function readText(
   formData: FormData,
@@ -199,7 +201,8 @@ export async function getCatalogSettingsView(
       settings?.shop_description ??
       "Encuentra tus productos favoritos y compra en linea de forma facil.",
     shopBannerUrl:
-      settings?.shop_banner_url ?? null,
+      settings?.shop_banner_url ??
+      defaultShopBannerUrl,
     billingName:
       settings?.billing_name ?? null,
     billingRtn:
