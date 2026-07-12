@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import {
+  Barcode,
   ImagePlus,
   PackagePlus,
   Plus,
@@ -10,6 +11,7 @@ import {
   Tags,
   Trash2,
 } from "lucide-react";
+import { BarcodeScannerDialog } from "@/components/barcode/barcode-scanner-dialog";
 import type { Tables } from "@/lib/database.types";
 
 type Category = Tables<"categories">;
@@ -20,6 +22,15 @@ type Props = {
   brands: Brand[];
   action: (formData: FormData) => Promise<void>;
 };
+
+type ScannerTarget =
+  | {
+      type: "product";
+    }
+  | {
+      type: "variant";
+      id: string;
+    };
 
 const attributeTypes = [
   {
@@ -129,6 +140,34 @@ export function NewProductCompleteForm({
   ]);
   const [attributes, setAttributes] =
     useState([createId("attribute")]);
+  const [mainBarcode, setMainBarcode] =
+    useState("");
+  const [
+    variantBarcodes,
+    setVariantBarcodes,
+  ] = useState<Record<string, string>>({});
+  const [
+    scannerTarget,
+    setScannerTarget,
+  ] = useState<ScannerTarget | null>(null);
+
+  function applyScannedCode(code: string) {
+    const cleanCode = code.trim();
+
+    if (!scannerTarget || !cleanCode) {
+      return;
+    }
+
+    if (scannerTarget.type === "product") {
+      setMainBarcode(cleanCode);
+      return;
+    }
+
+    setVariantBarcodes((current) => ({
+      ...current,
+      [scannerTarget.id]: cleanCode,
+    }));
+  }
 
   return (
     <form
@@ -173,10 +212,30 @@ export function NewProductCompleteForm({
             </div>
             <div>
               <FieldLabel>Codigo de barras</FieldLabel>
-              <input
-                name="barcode"
-                className="w-full rounded-xl border p-3"
-              />
+              <div className="flex gap-2">
+                <input
+                  name="barcode"
+                  value={mainBarcode}
+                  onChange={(event) =>
+                    setMainBarcode(
+                      event.target.value
+                    )
+                  }
+                  className="min-w-0 flex-1 rounded-xl border p-3"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setScannerTarget({
+                      type: "product",
+                    })
+                  }
+                  className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-sm font-bold text-white"
+                >
+                  <Barcode className="size-4" />
+                  Escanear
+                </button>
+              </div>
             </div>
           </div>
 
@@ -329,9 +388,33 @@ export function NewProductCompleteForm({
                 />
                 <input
                   name="variant_barcode"
+                  value={
+                    variantBarcodes[id] ?? ""
+                  }
+                  onChange={(event) =>
+                    setVariantBarcodes(
+                      (current) => ({
+                        ...current,
+                        [id]: event.target.value,
+                      })
+                    )
+                  }
                   placeholder="Codigo de barras"
                   className="rounded-xl border bg-white p-3"
                 />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setScannerTarget({
+                      type: "variant",
+                      id,
+                    })
+                  }
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 text-sm font-bold text-white"
+                >
+                  <Barcode className="size-4" />
+                  Escanear codigo
+                </button>
                 <input
                   name="variant_stock"
                   type="number"
@@ -537,6 +620,17 @@ export function NewProductCompleteForm({
           Crear producto completo
         </button>
       </div>
+
+      {scannerTarget && (
+        <BarcodeScannerDialog
+          label="Inventario"
+          title="Escanear codigo de producto"
+          onClose={() =>
+            setScannerTarget(null)
+          }
+          onDetected={applyScannedCode}
+        />
+      )}
     </form>
   );
 }

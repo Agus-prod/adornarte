@@ -55,10 +55,12 @@ export const roleScopes = {
       "/inventario",
       "/compras",
       "/catalogo/marcas",
+      "/contabilidad",
     ],
     capabilities: [
       "Crear y editar productos.",
       "Administrar stock, variantes y movimientos.",
+      "Realizar conteos fisicos y revisar diferencias de inventario.",
       "Gestionar compras, recepcion y proveedores.",
       "Mantener marcas visibles en el catalogo.",
     ],

@@ -3,7 +3,9 @@ import { AdornarteBrandMark } from "@/components/brand/adornarte-brand-mark";
 import {
   ArrowLeftRight,
   BarChart3,
+  Barcode,
   Building2,
+  Calculator,
   FileBarChart,
   LayoutDashboard,
   Package,
@@ -45,6 +47,11 @@ const groups = [
         href: "/inventario/movimientos",
         label: "Movimientos",
         icon: <ArrowLeftRight size={18} />,
+      },
+      {
+        href: "/inventario/conteo",
+        label: "Conteo",
+        icon: <Barcode size={18} />,
       },
     ],
   },
@@ -95,6 +102,11 @@ const groups = [
         href: "/caja",
         label: "Caja",
         icon: <Wallet size={18} />,
+      },
+      {
+        href: "/contabilidad",
+        label: "Contabilidad",
+        icon: <Calculator size={18} />,
       },
     ],
   },

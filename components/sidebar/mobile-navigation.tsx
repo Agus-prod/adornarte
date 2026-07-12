@@ -6,7 +6,9 @@ import { useRef } from "react";
 import {
   ArrowLeftRight,
   BarChart3,
+  Barcode,
   Building2,
+  Calculator,
   FileBarChart,
   LayoutDashboard,
   Menu,
@@ -52,6 +54,11 @@ const groups = [
         label: "Caja",
         icon: Wallet,
       },
+      {
+        href: "/contabilidad",
+        label: "Contabilidad",
+        icon: Calculator,
+      },
     ],
   },
   {
@@ -66,6 +73,11 @@ const groups = [
         href: "/inventario/movimientos",
         label: "Movimientos",
         icon: ArrowLeftRight,
+      },
+      {
+        href: "/inventario/conteo",
+        label: "Conteo",
+        icon: Barcode,
       },
     ],
   },
