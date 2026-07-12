@@ -164,40 +164,46 @@ function BrandMarquee({
         </p>
       </div>
 
-      <div className="relative overflow-hidden border-y border-pink-100 bg-white py-7 [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
-        <div className="catalog-brand-marquee flex w-max items-center gap-10 sm:gap-16">
-          {[
-            ...publicBrands,
-            ...publicBrands,
-            ...publicBrands,
-            ...publicBrands,
-          ].map((brand, index) => {
-            const logoUrl =
-              getBrandLogoUrl(brand);
+      <div className="relative overflow-hidden border-y border-pink-100 bg-white py-7 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+        <div className="catalog-brand-marquee flex w-max items-center">
+          {[0, 1].map((loop) => (
+            <div
+              key={loop}
+              className="flex min-w-max shrink-0 items-center gap-12 pr-12 sm:gap-20 sm:pr-20"
+              aria-hidden={loop === 1}
+            >
+              {publicBrands.map((brand) => {
+                const logoUrl =
+                  getBrandLogoUrl(brand);
 
-            return (
-              <Link
-                key={`${brand.id}-${index}`}
-                href={`/catalogo?brandId=${brand.id}`}
-                className="group flex min-w-24 shrink-0 items-center justify-center sm:min-w-32"
-                aria-label={`Ver productos de ${brand.name}`}
-              >
-                {logoUrl ? (
-                  <span className="grid h-16 min-w-24 place-items-center sm:min-w-32">
-                    <img
-                      src={logoUrl}
-                      alt={brand.name}
-                      className="max-h-14 max-w-28 object-contain transition duration-300 group-hover:scale-110 sm:max-w-32"
-                    />
-                  </span>
-                ) : (
-                  <BrandWordmark
-                    name={brand.name}
-                  />
-                )}
-              </Link>
-            );
-          })}
+                return (
+                  <Link
+                    key={`${brand.id}-${loop}`}
+                    href={`/catalogo?brandId=${brand.id}`}
+                    className="group flex min-w-32 shrink-0 items-center justify-center sm:min-w-44"
+                    aria-label={`Ver productos de ${brand.name}`}
+                    tabIndex={
+                      loop === 1 ? -1 : 0
+                    }
+                  >
+                    {logoUrl ? (
+                      <span className="grid h-16 min-w-32 place-items-center sm:min-w-44">
+                        <img
+                          src={logoUrl}
+                          alt={brand.name}
+                          className="max-h-14 max-w-32 object-contain transition duration-300 group-hover:scale-110 sm:max-w-40"
+                        />
+                      </span>
+                    ) : (
+                      <BrandWordmark
+                        name={brand.name}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
     </section>
