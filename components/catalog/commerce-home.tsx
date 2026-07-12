@@ -12,6 +12,7 @@ import { CatalogProductRail } from "@/components/catalog/catalog-product-rail";
 import { CatalogSearchForm } from "@/components/catalog/catalog-search-form";
 import { CatalogRealtimeSync } from "@/components/catalog/catalog-realtime-sync";
 import { CatalogCartMenuController } from "@/components/catalog/catalog-cart-menu-controller";
+import { HorizontalDragScroll } from "@/components/catalog/horizontal-drag-scroll";
 import { MarketplaceCartPanel } from "@/components/catalog/marketplace-cart-panel";
 import { CustomerAccessMenu } from "@/components/catalog/customer-access-menu";
 import type { CatalogCustomer } from "@/lib/catalog/repositories/customer-repository";
@@ -211,14 +212,17 @@ function CategoryQuickNav({
   activeCategoryId?: string;
 }) {
   const visibleCategories =
-    categories.slice(0, 12);
+    categories;
 
   return (
     <section
       aria-label="Categorias principales"
       className="space-y-3"
     >
-      <div className="scrollbar-hidden flex snap-x items-center gap-3 overflow-x-auto pb-1">
+      <HorizontalDragScroll
+        ariaLabel="Desplazar categorias"
+        className="scrollbar-hidden flex cursor-grab snap-x items-center gap-3 overflow-x-auto pb-1 active:cursor-grabbing"
+      >
         <Link
           href="/catalogo#buscar"
           className="flex size-14 shrink-0 snap-start items-center justify-center rounded-2xl bg-white text-zinc-950 shadow-sm ring-1 ring-zinc-100 transition hover:text-pink-700"
@@ -271,7 +275,7 @@ function CategoryQuickNav({
             </Link>
           )
         )}
-      </div>
+      </HorizontalDragScroll>
     </section>
   );
 }
