@@ -334,18 +334,53 @@ export async function updateCatalogCartItemFromForm(
   const cart =
     await getOrCreateCart();
 
-  await updateCartItem(
-    itemId,
-    organizationId,
-    {
-      quantity: readQuantity(formData),
-      notes: readOptionalText(
-        formData,
-        "notes"
-      ),
-      updated_at: new Date().toISOString(),
+  try {
+    await updateCartItem(
+      itemId,
+      organizationId,
+      {
+        quantity: readQuantity(formData),
+        notes: readOptionalText(
+          formData,
+          "notes"
+        ),
+        updated_at: new Date().toISOString(),
+      }
+    );
+  } catch (error) {
+    const errorRecord =
+      typeof error === "object" &&
+      error !== null
+        ? error
+        : null;
+    const message =
+      error instanceof Error
+        ? error.message
+        : errorRecord &&
+            "message" in errorRecord &&
+            typeof errorRecord.message ===
+              "string"
+          ? errorRecord.message
+          : "";
+    const code =
+      errorRecord &&
+      "code" in errorRecord &&
+      typeof errorRecord.code ===
+        "string"
+        ? errorRecord.code
+        : "";
+
+    if (
+      code === "PGRST116" ||
+      message.includes(
+        "JSON object requested"
+      )
+    ) {
+      return;
     }
-  );
+
+    throw error;
+  }
 
   const items = await getCartItems(
     cart.id,
@@ -385,16 +420,41 @@ export async function clearCatalogCart() {
     cart.organization_id
   );
 
-  const updatedCart = await updateCart(
+  await updateCart(
     cart.id,
     cart.organization_id,
     {
       coupon_code: null,
+      discount_total: 0,
+      shipping_total: 0,
+      tax_total: 0,
+      subtotal: 0,
+      total: 0,
+      status: "abandoned",
       updated_at: new Date().toISOString(),
     }
   );
 
-  await persistTotals(updatedCart, []);
+  await createCartRealtimeEvent(
+    cart.id,
+    "cart_cleared"
+  );
+
+  const nextCart = await createCart({
+    organization_id:
+      cart.organization_id,
+    customer_email:
+      cart.customer_email,
+    customer_name: cart.customer_name,
+    customer_phone:
+      cart.customer_phone,
+  });
+
+  await setCurrentCartId(nextCart.id);
+  await createCartRealtimeEvent(
+    nextCart.id,
+    "cart_created"
+  );
 }
 
 export async function applyCouponToCart(

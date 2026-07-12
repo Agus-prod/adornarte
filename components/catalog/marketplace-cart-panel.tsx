@@ -58,9 +58,41 @@ export function MarketplaceCartPanel({
   const [isClearing, startClearing] =
     useTransition();
   const lastClearAtRef = useRef(0);
+  const lastClearedCartIdRef = useRef<
+    string | null
+  >(null);
+  const currentCartIdRef = useRef<
+    string | null
+  >(cart?.cart.id ?? null);
+
+  useEffect(() => {
+    currentCartIdRef.current =
+      cart?.cart.id ?? null;
+  }, [cart?.cart.id]);
 
   useEffect(() => {
     const nextItems = cart?.items ?? [];
+    const nextCartId =
+      cart?.cart.id ?? null;
+
+    if (
+      lastClearedCartIdRef.current &&
+      nextCartId &&
+      nextCartId !==
+        lastClearedCartIdRef.current
+    ) {
+      lastClearAtRef.current = 0;
+      lastClearedCartIdRef.current = null;
+    }
+
+    if (
+      nextCartId &&
+      nextCartId ===
+        lastClearedCartIdRef.current &&
+      nextItems.length > 0
+    ) {
+      return;
+    }
 
     if (lastClearAtRef.current > 0) {
       const cartUpdatedAt = cart?.cart.updated_at
@@ -272,6 +304,8 @@ export function MarketplaceCartPanel({
 
     function handleOptimisticClear() {
       lastClearAtRef.current = Date.now();
+      lastClearedCartIdRef.current =
+        currentCartIdRef.current;
       setItems([]);
       setOptimisticTotals(
         getCartTotals([])
