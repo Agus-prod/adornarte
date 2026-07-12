@@ -159,6 +159,7 @@ export type CatalogSettingsView = {
   shopName: string;
   shopTagline: string | null;
   shopDescription: string | null;
+  shopBannerUrl: string | null;
   billingName: string | null;
   billingRtn: string | null;
   billingAddress: string | null;

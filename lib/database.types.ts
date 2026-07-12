@@ -1336,6 +1336,7 @@ export type Database = {
           order_whatsapp_recipient: string | null
           organization_id: string
           privacy_policy_url: string | null
+          shop_banner_url: string | null
           shop_description: string | null
           shop_name: string
           shop_tagline: string | null
@@ -1356,6 +1357,7 @@ export type Database = {
           order_whatsapp_recipient?: string | null
           organization_id: string
           privacy_policy_url?: string | null
+          shop_banner_url?: string | null
           shop_description?: string | null
           shop_name?: string
           shop_tagline?: string | null
@@ -1376,6 +1378,7 @@ export type Database = {
           order_whatsapp_recipient?: string | null
           organization_id?: string
           privacy_policy_url?: string | null
+          shop_banner_url?: string | null
           shop_description?: string | null
           shop_name?: string
           shop_tagline?: string | null

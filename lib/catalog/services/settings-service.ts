@@ -198,6 +198,8 @@ export async function getCatalogSettingsView(
     shopDescription:
       settings?.shop_description ??
       "Encuentra tus productos favoritos y compra en linea de forma facil.",
+    shopBannerUrl:
+      settings?.shop_banner_url ?? null,
     billingName:
       settings?.billing_name ?? null,
     billingRtn:
@@ -249,6 +251,11 @@ export async function saveCatalogSettingsFromForm(
       readOptionalText(
         formData,
         "shop_description"
+      ),
+    shop_banner_url:
+      readOptionalText(
+        formData,
+        "shop_banner_url"
       ),
     billing_name:
       readOptionalText(

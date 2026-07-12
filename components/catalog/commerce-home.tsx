@@ -276,6 +276,28 @@ function CategoryQuickNav({
   );
 }
 
+function CatalogPromoBanner({
+  imageUrl,
+  shopName,
+}: {
+  imageUrl: string | null;
+  shopName: string;
+}) {
+  if (!imageUrl) {
+    return null;
+  }
+
+  return (
+    <section className="overflow-hidden rounded-3xl border border-pink-100 bg-white shadow-sm">
+      <img
+        src={imageUrl}
+        alt={`Banner de ${shopName}`}
+        className="h-28 w-full object-cover sm:h-40 lg:h-48"
+      />
+    </section>
+  );
+}
+
 function ProductSection({
   title,
   subtitle,
@@ -543,6 +565,11 @@ export function CommerceHome({
             </div>
           </div>
         )}
+
+        <CatalogPromoBanner
+          imageUrl={settings.shopBannerUrl}
+          shopName={settings.shopName}
+        />
 
         <div id="buscar">
           <CategoryQuickNav

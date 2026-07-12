@@ -142,6 +142,17 @@ export function CommerceSettingsForm({
             placeholder="Cuenta brevemente que vendes y que puede esperar el cliente."
           />
         </div>
+        <div className="grid gap-2">
+          <FieldLabel>Banner principal del catalogo</FieldLabel>
+          <TextInput
+            name="shop_banner_url"
+            defaultValue={settings.shopBannerUrl}
+            placeholder="https://.../banner-catalogo.jpg"
+          />
+          <p className="text-xs leading-5 text-zinc-500">
+            Imagen horizontal para mostrar sobre las categorias. Recomendado: 1600 x 420 px.
+          </p>
+        </div>
       </Section>
 
       <Section
