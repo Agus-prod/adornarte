@@ -139,7 +139,7 @@
   }
 
   .catalog-brand-marquee {
-    animation: adornarte-brand-marquee 13s linear
+    animation: adornarte-brand-marquee 8s linear
       infinite;
     will-change: transform;
   }
@@ -161,12 +161,6 @@
 
   to {
     transform: translateX(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .catalog-brand-marquee {
-    animation: none;
   }
 }
 

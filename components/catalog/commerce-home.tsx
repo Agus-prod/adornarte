@@ -169,7 +169,7 @@ function BrandMarquee({
           {[0, 1].map((loop) => (
             <div
               key={loop}
-              className="flex min-w-max shrink-0 items-center gap-12 pr-12 sm:gap-20 sm:pr-20"
+              className="flex min-w-max shrink-0 items-center gap-16 pr-16 sm:gap-28 sm:pr-28"
               aria-hidden={loop === 1}
             >
               {publicBrands.map((brand) => {
@@ -180,7 +180,7 @@ function BrandMarquee({
                   <Link
                     key={`${brand.id}-${loop}`}
                     href={`/catalogo?brandId=${brand.id}`}
-                    className="group flex min-w-32 shrink-0 items-center justify-center sm:min-w-44"
+                    className="group flex min-w-36 shrink-0 items-center justify-center sm:min-w-56"
                     aria-label={`Ver productos de ${brand.name}`}
                     tabIndex={
                       loop === 1 ? -1 : 0
@@ -191,7 +191,7 @@ function BrandMarquee({
                         <img
                           src={logoUrl}
                           alt={brand.name}
-                          className="max-h-14 max-w-32 object-contain transition duration-300 group-hover:scale-110 sm:max-w-40"
+                          className="max-h-14 max-w-32 object-contain transition duration-300 group-hover:scale-110 sm:max-w-44"
                         />
                       </span>
                     ) : (
