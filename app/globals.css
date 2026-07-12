@@ -139,9 +139,14 @@
   }
 
   .catalog-brand-marquee {
-    animation: adornarte-brand-marquee 8s linear
+    animation: adornarte-brand-marquee 32s linear
       infinite;
     will-change: transform;
+  }
+
+  .catalog-brand-marquee:hover,
+  .catalog-brand-marquee:focus-within {
+    animation-play-state: paused;
   }
 
   details[data-catalog-menu][open]
