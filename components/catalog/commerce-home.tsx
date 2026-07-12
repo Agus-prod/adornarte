@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  Search,
   ShoppingBag,
 } from "lucide-react";
 import { AdornarteBrandMark } from "@/components/brand/adornarte-brand-mark";
@@ -197,6 +198,79 @@ function BrandMarquee({
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function CategoryQuickNav({
+  categories,
+  activeCategoryId,
+}: {
+  categories: CatalogFilterOptions["categories"];
+  activeCategoryId?: string;
+}) {
+  const visibleCategories =
+    categories.slice(0, 12);
+
+  return (
+    <section
+      aria-label="Categorias principales"
+      className="space-y-3"
+    >
+      <div className="scrollbar-hidden flex snap-x items-center gap-3 overflow-x-auto pb-1">
+        <Link
+          href="/catalogo#buscar"
+          className="flex size-14 shrink-0 snap-start items-center justify-center rounded-2xl bg-white text-zinc-950 shadow-sm ring-1 ring-zinc-100 transition hover:text-pink-700"
+          aria-label="Buscar productos"
+        >
+          <Search
+            className="size-6"
+            aria-hidden="true"
+          />
+        </Link>
+
+        <Link
+          href="/catalogo"
+          className={`flex min-h-14 shrink-0 snap-start items-center rounded-2xl px-6 text-sm font-black uppercase tracking-wide shadow-sm transition ${
+            activeCategoryId
+              ? "bg-white text-zinc-950 ring-1 ring-zinc-100 hover:text-pink-700"
+              : "bg-zinc-950 text-white"
+          }`}
+        >
+          Inicio
+        </Link>
+
+        <Link
+          href="/catalogo#combos"
+          className="flex min-h-14 shrink-0 snap-start items-center rounded-2xl bg-white px-6 text-sm font-bold uppercase tracking-wide text-zinc-950 shadow-sm ring-1 ring-zinc-100 transition hover:text-pink-700"
+        >
+          Combos y promociones
+        </Link>
+
+        <Link
+          href="/catalogo?onOffer=true"
+          className="flex min-h-14 shrink-0 snap-start items-center rounded-2xl bg-white px-6 text-sm font-bold uppercase tracking-wide text-zinc-950 shadow-sm ring-1 ring-zinc-100 transition hover:text-pink-700"
+        >
+          Ofertas
+        </Link>
+
+        {visibleCategories.map(
+          (category) => (
+            <Link
+              key={category.id}
+              href={`/catalogo?categoryId=${category.id}`}
+              className={`flex min-h-14 shrink-0 snap-start items-center rounded-2xl px-6 text-sm font-bold uppercase tracking-wide shadow-sm transition ${
+                activeCategoryId ===
+                category.id
+                  ? "bg-pink-600 text-white"
+                  : "bg-white text-zinc-950 ring-1 ring-zinc-100 hover:text-pink-700"
+              }`}
+            >
+              {category.name}
+            </Link>
+          )
+        )}
       </div>
     </section>
   );
@@ -470,6 +544,17 @@ export function CommerceHome({
           </div>
         )}
 
+        <div id="buscar">
+          <CategoryQuickNav
+            categories={
+              filterOptions.categories
+            }
+            activeCategoryId={
+              filters.categoryId
+            }
+          />
+        </div>
+
         <CatalogFilterPanel
           filters={filters}
           options={filterOptions}
@@ -482,9 +567,11 @@ export function CommerceHome({
           />
         ) : (
           <>
-            <CatalogComboRail
-              combos={home.combos}
-            />
+            <div id="combos">
+              <CatalogComboRail
+                combos={home.combos}
+              />
+            </div>
             <CatalogProductRail
               title="Comprar ahora"
               products={filteredProducts}
