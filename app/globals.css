@@ -139,7 +139,7 @@
   }
 
   .catalog-brand-marquee {
-    animation: adornarte-brand-marquee 32s linear
+    animation: adornarte-brand-marquee 90s linear
       infinite;
     will-change: transform;
   }
