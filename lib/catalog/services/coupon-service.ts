@@ -16,8 +16,30 @@ export function validateCoupon(
   subtotal: number,
   customerId?: string | null
 ) {
-  if (!coupon || !coupon.is_active) {
+  if (
+    getCouponValidationFailure(
+      coupon,
+      subtotal,
+      customerId
+    )
+  ) {
     return null;
+  }
+
+  return coupon;
+}
+
+function getCouponValidationFailure(
+  coupon: CatalogCoupon | null,
+  subtotal: number,
+  customerId?: string | null
+) {
+  if (!coupon) {
+    return "Cupon no encontrado.";
+  }
+
+  if (!coupon.is_active) {
+    return "Cupon inactivo.";
   }
 
   const now = Date.now();
@@ -26,25 +48,25 @@ export function validateCoupon(
     coupon.starts_at &&
     new Date(coupon.starts_at).getTime() > now
   ) {
-    return null;
+    return "Cupon aun no disponible.";
   }
 
   if (
     coupon.expires_at &&
     new Date(coupon.expires_at).getTime() < now
   ) {
-    return null;
+    return "Cupon vencido.";
   }
 
   if (
     coupon.usage_limit !== null &&
     coupon.used_count >= coupon.usage_limit
   ) {
-    return null;
+    return "Cupon sin usos disponibles.";
   }
 
   if (subtotal < coupon.minimum_subtotal) {
-    return null;
+    return `Compra minima requerida: L ${Number(coupon.minimum_subtotal).toFixed(2)}.`;
   }
 
   if (
@@ -52,10 +74,10 @@ export function validateCoupon(
     customerId !== undefined &&
     coupon.customer_id !== customerId
   ) {
-    return null;
+    return "Cupon asignado a otro cliente.";
   }
 
-  return coupon;
+  return null;
 }
 
 export function getCouponDiscount(
@@ -127,6 +149,48 @@ export async function getValidCouponByCode(
     subtotal,
     customerId
   );
+}
+
+export async function getCouponValidationResult(
+  organizationId: string,
+  code: string,
+  subtotal: number,
+  customerEmail?: string | null
+) {
+  const normalizedCode =
+    normalizeCouponCode(code);
+
+  if (!normalizedCode) {
+    return {
+      coupon: null,
+      message: "Ingresa un codigo de cupon.",
+    };
+  }
+
+  const coupon = await getCouponByCode(
+    organizationId,
+    normalizedCode
+  );
+  const customerId =
+    customerEmail && coupon?.customer_id
+      ? await getCustomerIdByEmail(
+          organizationId,
+          customerEmail
+        )
+      : coupon?.customer_id
+        ? null
+        : undefined;
+  const message =
+    getCouponValidationFailure(
+      coupon,
+      subtotal,
+      customerId
+    );
+
+  return {
+    coupon: message ? null : coupon,
+    message,
+  };
 }
 
 export async function registerCouponUse(

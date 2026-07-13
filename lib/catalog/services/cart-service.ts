@@ -18,6 +18,7 @@ import { getVariant } from "@/lib/catalog/repositories/variant-repository";
 import { getPublicCatalogOrganizationId } from "@/lib/catalog/services/catalog-context-service";
 import {
   getCouponDiscount,
+  getCouponValidationResult,
   getValidCouponByCode,
 } from "@/lib/catalog/services/coupon-service";
 import {
@@ -510,8 +511,8 @@ export async function applyCouponToCart(
   );
   const subtotal =
     getTotals(items).subtotal;
-  const coupon =
-    await getValidCouponByCode(
+  const validation =
+    await getCouponValidationResult(
       cart.organization_id,
       code,
       subtotal,
@@ -519,9 +520,10 @@ export async function applyCouponToCart(
         (await getCurrentCustomerEmail())
     );
 
-  if (!coupon) {
+  if (!validation.coupon) {
     throw new Error(
-      "Cupon no valido."
+      validation.message ??
+        "Cupon no valido."
     );
   }
 
@@ -529,7 +531,8 @@ export async function applyCouponToCart(
     cart.id,
     cart.organization_id,
     {
-      coupon_code: coupon.code,
+      coupon_code:
+        validation.coupon.code,
       updated_at: new Date().toISOString(),
     }
   );

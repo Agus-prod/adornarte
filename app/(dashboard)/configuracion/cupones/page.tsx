@@ -1,5 +1,39 @@
 import { createCouponAction } from "@/app/(dashboard)/configuracion/cupones/actions";
 import { getCouponManagementView } from "@/lib/catalog/services/coupon-management-service";
+import type { CatalogCoupon } from "@/lib/catalog/repositories/coupon-repository";
+
+function getCouponStatus(
+  coupon: CatalogCoupon
+) {
+  const now = Date.now();
+
+  if (!coupon.is_active) {
+    return "Inactivo";
+  }
+
+  if (
+    coupon.starts_at &&
+    new Date(coupon.starts_at).getTime() > now
+  ) {
+    return "Programado";
+  }
+
+  if (
+    coupon.expires_at &&
+    new Date(coupon.expires_at).getTime() < now
+  ) {
+    return "Vencido";
+  }
+
+  if (
+    coupon.usage_limit !== null &&
+    coupon.used_count >= coupon.usage_limit
+  ) {
+    return "Agotado";
+  }
+
+  return "Activo";
+}
 
 export default async function CuponesPage() {
   const { coupons, customers } =
@@ -160,9 +194,7 @@ export default async function CuponesPage() {
                     : ""}
                 </td>
                 <td className="p-4">
-                  {coupon.is_active
-                    ? "Activo"
-                    : "Inactivo"}
+                  {getCouponStatus(coupon)}
                 </td>
               </tr>
             ))}

@@ -119,11 +119,8 @@ export async function removeCatalogCoupon() {
 function getCouponErrorMessage(
   error: unknown
 ) {
-  if (
-    error instanceof Error &&
-    error.message === "Cupon no valido."
-  ) {
-    return "Cupon no valido. Revisa el codigo e intenta de nuevo.";
+  if (error instanceof Error) {
+    return error.message;
   }
 
   return "No se pudo aplicar el cupon. Intenta de nuevo.";
